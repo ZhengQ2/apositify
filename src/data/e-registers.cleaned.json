@@ -1,12 +1,18 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "sourceTitle": "Implementation Chart of the e-APP",
   "sourceFile": "e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf",
   "sourceUrl": "https://assets.hcch.net/docs/e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf",
   "generatedFrom": "src/data/eAPP_implementation_chart_full.json",
   "recordsCount": 64,
   "entriesCount": 97,
-  "notes": "Rows marked source_link_missing or hybrid_link_missing need the official embedded HCCH Available Here URL before one-click production redirects are enabled.",
+  "modeCounts": {
+    "source_link_missing": 88,
+    "qr_only": 5,
+    "hybrid_link_missing": 2,
+    "manual_contact": 2
+  },
+  "notes": "Rows with online or hybrid mode include a usable registerUrl. Rows marked source_link_missing or hybrid_link_missing need the official embedded HCCH Available Here URL before one-click redirects can be enabled.",
   "entries": [
     {
       "id": "andorra-ministry-of-foreign-affairs",
@@ -18,6 +24,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 1,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -32,6 +39,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 2,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 1,
       "eApostilleDate": "April 2019",
       "notes": "There are two e-Registers: the first for Apostilles issued between 17 November 2017 and 14 April 2019; the second for Apostilles issued from 15 April 2019."
@@ -46,6 +54,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 3,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 2,
       "eApostilleDate": "April 2021",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -60,6 +69,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 4,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Only Apostilles issued on or after 14 December 2015 can be verified on the e-Register. For verification of Apostilles issued before this date please email legalisations.australia@dfat.gov.au."
@@ -74,6 +84,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 5,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 3,
       "eApostilleDate": "June 2015",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -88,6 +99,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 6,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -102,6 +114,7 @@
       "verificationLabel": "QR-code verification only",
       "eRegisterNumber": 7,
       "eRegisterMethod": "Via QR code",
+      "eRegisterLabel": null,
       "eApostilleNumber": 4,
       "eApostilleDate": "December 2015",
       "notes": "No specific link is available as the e-Register operates by using Quick Response (QR) codes to generate unique URLs."
@@ -116,6 +129,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 8,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 5,
       "eApostilleDate": "April 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -130,6 +144,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 9,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 6,
       "eApostilleDate": "March 2018",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -144,6 +159,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 10,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 7,
       "eApostilleDate": "April 2019",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -158,6 +174,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 11,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 8,
       "eApostilleDate": "July 2021",
       "notes": "There are two e-Registers: the first for Apostilles issued before 3 August 2020; the second for Apostilles issued after this date."
@@ -172,6 +189,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 12,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -186,6 +204,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -200,6 +219,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 9,
       "eApostilleDate": "June 2020",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -214,6 +234,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -228,6 +249,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 13,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -242,6 +264,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -256,6 +279,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -270,6 +294,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -284,6 +309,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -298,6 +324,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -312,6 +339,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 14,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 10,
       "eApostilleDate": "August 2016",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -326,6 +354,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 15,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 11,
       "eApostilleDate": "June 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -340,6 +369,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "September 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -354,6 +384,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -368,6 +399,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 16,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 12,
       "eApostilleDate": "October 2007",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -382,6 +414,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 17,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -396,6 +429,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 18,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Apostilles issued before 1 June 2020 may be verified by contacting the Competent Authority at registry@mjpo.gov.cy."
@@ -410,6 +444,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 19,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 13,
       "eApostilleDate": "November 2017",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -424,6 +459,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 20,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 14,
       "eApostilleDate": "June 2020",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -438,6 +474,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 21,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 15,
       "eApostilleDate": "July 2024",
       "notes": "The e-Apostille is sent to the applicant’s email, along with a QR code that, when scanned, directs the user to the official link for verifying the issued Apostille."
@@ -452,6 +489,7 @@
       "verificationLabel": "QR-code verification only",
       "eRegisterNumber": 22,
       "eRegisterMethod": "Via QR code",
+      "eRegisterLabel": null,
       "eApostilleNumber": 16,
       "eApostilleDate": "December 2022",
       "notes": "QR-code verification only"
@@ -466,6 +504,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 23,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 17,
       "eApostilleDate": "December 2017",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -480,6 +519,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 24,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 18,
       "eApostilleDate": "May 2025",
       "notes": "Apostilles issued by other Competent Authorities are issued in paper format and are not included in the e-Register."
@@ -494,6 +534,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 25,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 19,
       "eApostilleDate": "September 2020",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -508,6 +549,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "September 2023",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -522,6 +564,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 26,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 20,
       "eApostilleDate": "July 2023",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -536,6 +579,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 27,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 21,
       "eApostilleDate": "February 2021",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -550,6 +594,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 28,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -564,6 +609,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 29,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -578,6 +624,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 30,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -592,6 +639,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 31,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 22,
       "eApostilleDate": "December 2021",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -606,6 +654,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 32,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -620,6 +669,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 33,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 23,
       "eApostilleDate": "January 2022",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -634,6 +684,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 34,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 24,
       "eApostilleDate": "November 2016",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -648,6 +699,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 35,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -662,6 +714,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 36,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 25,
       "eApostilleDate": "July 2019",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -676,6 +729,7 @@
       "verificationLabel": "QR-code verification only",
       "eRegisterNumber": 37,
       "eRegisterMethod": "Via QR code",
+      "eRegisterLabel": null,
       "eApostilleNumber": 26,
       "eApostilleDate": "May 2026",
       "notes": "QR-code verification only"
@@ -690,6 +744,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 38,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -704,6 +759,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -718,6 +774,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -732,6 +789,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 27,
       "eApostilleDate": "October 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -746,6 +804,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 39,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 28,
       "eApostilleDate": "October 2013",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -760,6 +819,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 40,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 29,
       "eApostilleDate": "September 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -774,6 +834,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 41,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -788,6 +849,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 42,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 30,
       "eApostilleDate": "May 2009",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -802,6 +864,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 43,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -816,6 +879,7 @@
       "verificationLabel": "Listed as available online and via QR code in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 44,
       "eRegisterMethod": "Available Here and via QR code",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available online and via QR code in HCCH chart; embedded URL not included in source JSON"
@@ -830,6 +894,7 @@
       "verificationLabel": "QR-code verification only",
       "eRegisterNumber": 45,
       "eRegisterMethod": "Via QR Code",
+      "eRegisterLabel": null,
       "eApostilleNumber": 31,
       "eApostilleDate": "April 2023",
       "notes": "QR-code verification only"
@@ -844,6 +909,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "May 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -858,6 +924,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 46,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -872,6 +939,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 47,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 32,
       "eApostilleDate": "February 2021",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -886,6 +954,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 48,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 33,
       "eApostilleDate": "March 2024",
       "notes": "e-Apostilles issued for (i) Philippine Statistics Authority electronic Certificates (PSA eCertificates), covering civil registry documents; (ii) Commission on Higher Education electronic Certification, Authentication, and Verification (CHED eCAVs), covering academic documents; as well as (iii) Apostilles issued on other types of public documents executed from the beginning of December 2022 onwards may be verified on the e-Register. All other Apostilles may be verified by contacting the Competent Authority at oca.verification@dfa.gov.ph."
@@ -900,6 +969,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 49,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -914,6 +984,7 @@
       "verificationLabel": "QR-code verification only",
       "eRegisterNumber": 50,
       "eRegisterMethod": "Via QR code",
+      "eRegisterLabel": null,
       "eApostilleNumber": 34,
       "eApostilleDate": "March 2023",
       "notes": "QR-code verification only"
@@ -928,6 +999,7 @@
       "verificationLabel": "Listed as available online and via QR code in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 51,
       "eRegisterMethod": "Available Here (or via QR code)",
+      "eRegisterLabel": null,
       "eApostilleNumber": 35,
       "eApostilleDate": "June 2024",
       "notes": "Listed as available online and via QR code in HCCH chart; embedded URL not included in source JSON"
@@ -942,6 +1014,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 52,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -956,6 +1029,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 53,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -970,6 +1044,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 54,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 36,
       "eApostilleDate": "June 2025",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -984,6 +1059,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 55,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 37,
       "eApostilleDate": "October 2015",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -998,6 +1074,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 56,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 38,
       "eApostilleDate": "November 2008",
       "notes": "Murcia implemented the e-Apostille component in November 2008 and national implementation was completed in May 2011. A central e-Register is used by all Competent Authorities under the purview of the Ministry of Justice."
@@ -1012,6 +1089,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 57,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1026,6 +1104,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 58,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 39,
       "eApostilleDate": "January 2019",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1040,6 +1119,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 59,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1054,6 +1134,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 40,
       "eApostilleDate": "March 2026",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1068,6 +1149,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 60,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 41,
       "eApostilleDate": "December 2021",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1082,6 +1164,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1096,6 +1179,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 61,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1110,6 +1194,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1124,6 +1209,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1138,6 +1224,7 @@
       "verificationLabel": "Contact authority to verify",
       "eRegisterNumber": null,
       "eRegisterMethod": null,
+      "eRegisterLabel": null,
       "eApostilleNumber": 42,
       "eApostilleDate": "September 2023-September 2025",
       "notes": "The state of Connecticut commenced an e-Apostille pilot programme on 19 September 2023. The pilot programme ended on 30 September 2025. Apostilles issued in the state of Connecticut may be verified by contacting the Competent Authority in Connecticut at 860-509-6002 or through email to bsd@ct.gov. e-Apostilles issued as part of Connecticut’s pilot programme are legitimate and validly issued e-Apostilles."
@@ -1152,6 +1239,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1166,6 +1254,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "May 2024",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1180,6 +1269,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "March 2024-September 2025",
       "notes": "The state of Minnesota commenced an e-Apostille pilot programme on 15 March 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Minnesota’s pilot programme are legitimate and validly issued e-Apostilles."
@@ -1194,6 +1284,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "February 2023",
       "notes": "The state of Montana offers both e-Apostilles and Apostille verification via e-Register."
@@ -1208,6 +1299,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1222,6 +1314,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1236,6 +1329,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1250,6 +1344,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "November 2023-September 2025",
       "notes": "The state of Rhode Island commenced an e-Apostille pilot programme on 1 November 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Rhode Island’s pilot programme are legitimate and validly issued e-Apostilles."
@@ -1264,6 +1359,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1278,6 +1374,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1292,6 +1389,7 @@
       "verificationLabel": "Contact authority to verify",
       "eRegisterNumber": null,
       "eRegisterMethod": null,
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "September 2023-September 2025",
       "notes": "The state of Utah entered into a e-Apostille pilot programme that commenced on 19 September 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Utah’s pilot programme are legitimate and validly issued e-Apostilles."
@@ -1306,6 +1404,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "February 2024-September 2025",
       "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles."
@@ -1320,6 +1419,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": null,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1334,6 +1434,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 62,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 43,
       "eApostilleDate": "September 2023",
       "notes": "Since 18/09/2023, Uruguay has implemented the e-Apostille component of the e-APP for public documents. The procedure is carried out through the website of the Ministry of Foreign Affairs, which is the Competent Authority responsible for the issuance of Apostille on public documents, via the following link: https://www.gub.uy/tramites/apostilla-yo-legalizacion-documentos-publicos-uruguayos-extranjeros-produzcan-efectos-exterior-republica."
@@ -1348,6 +1449,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 63,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 44,
       "eApostilleDate": "August 2022",
       "notes": "Listed as available in HCCH chart; embedded URL not included in source JSON"
@@ -1362,6 +1464,7 @@
       "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
       "eRegisterNumber": 64,
       "eRegisterMethod": "Available Here",
+      "eRegisterLabel": null,
       "eApostilleNumber": 45,
       "eApostilleDate": "April 2019",
       "notes": "There are three e-Registers: the first for Apostilles issued before 23 May 2018, the second for Apostilles issued between 24 May 2018 and 1 May 2019, and the third for Apostilles issued from 2 May 2019. e-Apostilles issued only for Criminal Record Certification and Data Certification for Consular Effects."

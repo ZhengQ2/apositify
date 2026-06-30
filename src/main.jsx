@@ -61,7 +61,7 @@ function App() {
         </article>
         <article>
           <h3>Production data status</h3>
-          <p>The source JSON does not include the embedded URLs behind “Available Here”, so those rows are explicitly marked for URL enrichment instead of exposing placeholder links.</p>
+          <p>Rows with extracted official URLs enable direct redirects; QR-only and missing-link rows are clearly marked instead of exposing placeholder links.</p>
         </article>
       </section>
 
@@ -104,7 +104,7 @@ function ResultPanel({ selected }) {
       <ExternalLink aria-hidden="true" />
       <div>
         <strong>{selected.authority}</strong>
-        <p>{selected.notes}</p>
+        <p>{selected.verificationMode === 'hybrid' ? t.hybrid : selected.notes}</p>
         <a className="button" href={selected.registerUrl} target="_blank" rel="noreferrer">{t.verify}</a>
         <small>{t.privacy}</small>
       </div>

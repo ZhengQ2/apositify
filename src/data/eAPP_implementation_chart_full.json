@@ -1,0 +1,1420 @@
+{
+  "title": "Implementation Chart of the e-APP",
+  "source_file": "e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf",
+  "schema_note": "e_apostille.number and e_register.number preserve the numbered markers shown in the chart. URLs embedded behind 'Available Here' are not included in this version.",
+  "records": [
+    {
+      "id": 1,
+      "contracting_party": "Andorra",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 1,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "contracting_party": "Argentina",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs and Worship",
+          "e_apostille": {
+            "number": 1,
+            "date": "April 2019"
+          },
+          "e_register": {
+            "number": 2,
+            "method": "Available Here"
+          },
+          "notes": "There are two e-Registers: the first for Apostilles issued between 17 November 2017 and 14 April 2019; the second for Apostilles issued from 15 April 2019."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "contracting_party": "Armenia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 2,
+            "date": "April 2021"
+          },
+          "e_register": {
+            "number": 3,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "contracting_party": "Australia",
+      "competent_authorities": [
+        {
+          "name": "Department of Foreign Affairs and Trade",
+          "e_apostille": null,
+          "e_register": {
+            "number": 4,
+            "method": "Available Here"
+          },
+          "notes": "Only Apostilles issued on or after 14 December 2015 can be verified on the e-Register. For verification of Apostilles issued before this date please email legalisations.australia@dfat.gov.au."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "contracting_party": "Austria",
+      "competent_authorities": [
+        {
+          "name": "Federal Ministry for Europe, Integration and Foreign Affairs",
+          "e_apostille": {
+            "number": 3,
+            "date": "June 2015"
+          },
+          "e_register": {
+            "number": 5,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "contracting_party": "Azerbaijan",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": null,
+          "e_register": {
+            "number": 6,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "contracting_party": "Bahrain",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 4,
+            "date": "December 2015"
+          },
+          "e_register": {
+            "number": 7,
+            "method": "Via QR code"
+          },
+          "notes": "No specific link is available as the e-Register operates by using Quick Response (QR) codes to generate unique URLs."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "contracting_party": "Bangladesh",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs of the Government of Bangladesh",
+          "e_apostille": {
+            "number": 5,
+            "date": "April 2025"
+          },
+          "e_register": {
+            "number": 8,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "contracting_party": "Belgium",
+      "competent_authorities": [
+        {
+          "name": "Federal Public Service: Foreign Affairs, Foreign Trade and Development Cooperation",
+          "e_apostille": {
+            "number": 6,
+            "date": "March 2018"
+          },
+          "e_register": {
+            "number": 9,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "contracting_party": "Bolivia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 7,
+            "date": "April 2019"
+          },
+          "e_register": {
+            "number": 10,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "contracting_party": "Brazil",
+      "competent_authorities": [
+        {
+          "name": "National Council of Justice",
+          "e_apostille": {
+            "number": 8,
+            "date": "July 2021"
+          },
+          "e_register": {
+            "number": 11,
+            "method": "Available Here"
+          },
+          "notes": "There are two e-Registers: the first for Apostilles issued before 3 August 2020; the second for Apostilles issued after this date."
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "contracting_party": "Bulgaria",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": null,
+          "e_register": {
+            "number": 12,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "National Center for Information and Documentation",
+          "e_apostille": {
+            "number": 9,
+            "date": "June 2020"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Regional Administrations",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "contracting_party": "Canada",
+      "competent_authorities": [
+        {
+          "name": "The Department of Foreign Affairs, Trade and Development of Canada",
+          "e_apostille": null,
+          "e_register": {
+            "number": 13,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of the Attorney General of the province of British Columbia",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Justice of the province of Alberta",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Justice and Attorney General of the province Saskatchewan",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Public and Business Service Delivery and Procurement of the province of Ontario",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Minister of Justice of the province of Quebec",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "contracting_party": "Chile",
+      "competent_authorities": [
+        {
+          "name": "Relevant authorities of the Ministries of Justice, Education, Health, Foreign Affairs and the Civil and Identification Registration Service",
+          "e_apostille": {
+            "number": 10,
+            "date": "August 2016"
+          },
+          "e_register": {
+            "number": 14,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "contracting_party": "China",
+      "competent_authorities": [
+        {
+          "name": "China (Mainland): Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 11,
+            "date": "June 2025"
+          },
+          "e_register": {
+            "number": 15,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Hong Kong SAR: The Registrar, the Senior Deputy Registrar, and the Deputy Registrar of the High Court",
+          "e_apostille": {
+            "number": null,
+            "date": "September 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Macao SAR: Director of the Legal Affairs Bureau",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "contracting_party": "Colombia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 12,
+            "date": "October 2007"
+          },
+          "e_register": {
+            "number": 16,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "contracting_party": "Costa Rica",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs and Worship",
+          "e_apostille": null,
+          "e_register": {
+            "number": 17,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "contracting_party": "Cyprus",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice and Public Order",
+          "e_apostille": null,
+          "e_register": {
+            "number": 18,
+            "method": "Available Here"
+          },
+          "notes": "Apostilles issued before 1 June 2020 may be verified by contacting the Competent Authority at registry@mjpo.gov.cy."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "contracting_party": "Denmark",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 13,
+            "date": "November 2017"
+          },
+          "e_register": {
+            "number": 19,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "contracting_party": "Dominican Republic",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 14,
+            "date": "June 2020"
+          },
+          "e_register": {
+            "number": 20,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "contracting_party": "Ecuador",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs and Human Mobility",
+          "e_apostille": {
+            "number": 15,
+            "date": "July 2024"
+          },
+          "e_register": {
+            "number": 21,
+            "method": "Available Here"
+          },
+          "notes": "The e-Apostille is sent to the applicant’s email, along with a QR code that, when scanned, directs the user to the official link for verifying the issued Apostille."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "contracting_party": "El Salvador",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 16,
+            "date": "December 2022"
+          },
+          "e_register": {
+            "number": 22,
+            "method": "Via QR code"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "contracting_party": "Estonia",
+      "competent_authorities": [
+        {
+          "name": "Chamber of Notaries",
+          "e_apostille": {
+            "number": 17,
+            "date": "December 2017"
+          },
+          "e_register": {
+            "number": 23,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "contracting_party": "France",
+      "competent_authorities": [
+        {
+          "name": "Regional Councils and Interdepartmental Chambers of Notaries",
+          "e_apostille": {
+            "number": 18,
+            "date": "May 2025"
+          },
+          "e_register": {
+            "number": 24,
+            "method": "Available Here"
+          },
+          "notes": "Apostilles issued by other Competent Authorities are issued in paper format and are not included in the e-Register."
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "contracting_party": "Georgia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 19,
+            "date": "September 2020"
+          },
+          "e_register": {
+            "number": 25,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Internal Affairs",
+          "e_apostille": {
+            "number": null,
+            "date": "September 2023"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "contracting_party": "Greece",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Digital Governance",
+          "e_apostille": {
+            "number": 20,
+            "date": "July 2023"
+          },
+          "e_register": {
+            "number": 26,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "contracting_party": "Guatemala",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 21,
+            "date": "February 2021"
+          },
+          "e_register": {
+            "number": 27,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "contracting_party": "India",
+      "competent_authorities": [
+        {
+          "name": "Ministry of External Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 28,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "contracting_party": "Indonesia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Law and Human Rights",
+          "e_apostille": null,
+          "e_register": {
+            "number": 29,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "contracting_party": "Ireland",
+      "competent_authorities": [
+        {
+          "name": "Department of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 30,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "contracting_party": "Israel",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 22,
+            "date": "December 2021"
+          },
+          "e_register": {
+            "number": 31,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "contracting_party": "Japan",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 32,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "contracting_party": "Kazakhstan",
+      "competent_authorities": [
+        {
+          "name": "Relevant authorities of several Ministries and services",
+          "e_apostille": {
+            "number": 23,
+            "date": "January 2022"
+          },
+          "e_register": {
+            "number": 33,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "contracting_party": "Korea, Republic of",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs; Ministry of Justice",
+          "e_apostille": {
+            "number": 24,
+            "date": "November 2016"
+          },
+          "e_register": {
+            "number": 34,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "contracting_party": "Kosovo",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs (Department for Consular Affairs); Ministry of Internal Affairs (Civil Registration Agency)",
+          "e_apostille": null,
+          "e_register": {
+            "number": 35,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "contracting_party": "Latvia",
+      "competent_authorities": [
+        {
+          "name": "Council of Sworn Notaries",
+          "e_apostille": {
+            "number": 25,
+            "date": "July 2019"
+          },
+          "e_register": {
+            "number": 36,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "contracting_party": "Luxembourg",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 26,
+            "date": "May 2026"
+          },
+          "e_register": {
+            "number": 37,
+            "method": "Via QR code"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "contracting_party": "Mexico",
+      "competent_authorities": [
+        {
+          "name": "Baja California Sur",
+          "e_apostille": null,
+          "e_register": {
+            "number": 38,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Federal District – Legal Department",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Jalisco – Secretary of Government",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Interior",
+          "e_apostille": {
+            "number": 27,
+            "date": "October 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "contracting_party": "Moldova, Republic of",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 28,
+            "date": "October 2013"
+          },
+          "e_register": {
+            "number": 39,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "contracting_party": "Mongolia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 29,
+            "date": "September 2025"
+          },
+          "e_register": {
+            "number": 40,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "contracting_party": "Morocco",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": null,
+          "e_register": {
+            "number": 41,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "contracting_party": "New Zealand",
+      "competent_authorities": [
+        {
+          "name": "Department of Internal Affairs",
+          "e_apostille": {
+            "number": 30,
+            "date": "May 2009"
+          },
+          "e_register": {
+            "number": 42,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "contracting_party": "Nicaragua",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 43,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "contracting_party": "Pakistan",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 44,
+            "method": "Available Here and via QR code"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "contracting_party": "Panama",
+      "competent_authorities": [
+        {
+          "name": "Órgano Judicial",
+          "e_apostille": {
+            "number": 31,
+            "date": "April 2023"
+          },
+          "e_register": {
+            "number": 45,
+            "method": "Via QR Code"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": null,
+            "date": "May 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "contracting_party": "Paraguay",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 46,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "contracting_party": "Peru",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 32,
+            "date": "February 2021"
+          },
+          "e_register": {
+            "number": 47,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "contracting_party": "Philippines",
+      "competent_authorities": [
+        {
+          "name": "Department of Foreign Affairs",
+          "e_apostille": {
+            "number": 33,
+            "date": "March 2024"
+          },
+          "e_register": {
+            "number": 48,
+            "method": "Available Here"
+          },
+          "notes": "e-Apostilles issued for (i) Philippine Statistics Authority electronic Certificates (PSA eCertificates), covering civil registry documents; (ii) Commission on Higher Education electronic Certification, Authentication, and Verification (CHED eCAVs), covering academic documents; as well as (iii) Apostilles issued on other types of public documents executed from the beginning of December 2022 onwards may be verified on the e-Register. All other Apostilles may be verified by contacting the Competent Authority at oca.verification@dfa.gov.ph."
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "contracting_party": "Romania",
+      "competent_authorities": [
+        {
+          "name": "Offices of the Prefect",
+          "e_apostille": null,
+          "e_register": {
+            "number": 49,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "contracting_party": "Russian Federation",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 34,
+            "date": "March 2023"
+          },
+          "e_register": {
+            "number": 50,
+            "method": "Via QR code"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "contracting_party": "Rwanda",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs and International Cooperation",
+          "e_apostille": {
+            "number": 35,
+            "date": "June 2024"
+          },
+          "e_register": {
+            "number": 51,
+            "method": "Available Here (or via QR code)"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "contracting_party": "Saint Kitts and Nevis",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 52,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "contracting_party": "Saudi Arabia",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": null,
+          "e_register": {
+            "number": 53,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "contracting_party": "Singapore",
+      "competent_authorities": [
+        {
+          "name": "Singapore Academy of Law",
+          "e_apostille": {
+            "number": 36,
+            "date": "June 2025"
+          },
+          "e_register": {
+            "number": 54,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "contracting_party": "Slovenia",
+      "competent_authorities": [
+        {
+          "name": "11 District Courts",
+          "e_apostille": {
+            "number": 37,
+            "date": "October 2015"
+          },
+          "e_register": {
+            "number": 55,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "contracting_party": "Spain",
+      "competent_authorities": [
+        {
+          "name": "44 judicial and administrative Competent Authorities",
+          "e_apostille": {
+            "number": 38,
+            "date": "November 2008"
+          },
+          "e_register": {
+            "number": 56,
+            "method": "Available Here"
+          },
+          "notes": "Murcia implemented the e-Apostille component in November 2008 and national implementation was completed in May 2011. A central e-Register is used by all Competent Authorities under the purview of the Ministry of Justice."
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "contracting_party": "Tajikistan",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs; Ministry of Justice",
+          "e_apostille": null,
+          "e_register": {
+            "number": 57,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "contracting_party": "Türkiye",
+      "competent_authorities": [
+        {
+          "name": "Supervisory Competent Authorities: Ministry of Justice; Ministry of Internal Affairs",
+          "e_apostille": {
+            "number": 39,
+            "date": "January 2019"
+          },
+          "e_register": {
+            "number": 58,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "contracting_party": "Ukraine",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Education and Science",
+          "e_apostille": null,
+          "e_register": {
+            "number": 59,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Ministry of Justice",
+          "e_apostille": {
+            "number": 40,
+            "date": "March 2026"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "contracting_party": "United Kingdom",
+      "competent_authorities": [
+        {
+          "name": "Foreign and Commonwealth Office",
+          "e_apostille": {
+            "number": 41,
+            "date": "December 2021"
+          },
+          "e_register": {
+            "number": 60,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Cayman Islands: Passport & Corporate Services Office",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "contracting_party": "United States of America",
+      "competent_authorities": [
+        {
+          "name": "Arkansas – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": 61,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "California – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Colorado – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Connecticut – Secretary of State",
+          "e_apostille": {
+            "number": 42,
+            "date": "September 2023-September 2025"
+          },
+          "e_register": null,
+          "notes": "The state of Connecticut commenced an e-Apostille pilot programme on 19 September 2023. The pilot programme ended on 30 September 2025. Apostilles issued in the state of Connecticut may be verified by contacting the Competent Authority in Connecticut at 860-509-6002 or through email to bsd@ct.gov. e-Apostilles issued as part of Connecticut’s pilot programme are legitimate and validly issued e-Apostilles."
+        },
+        {
+          "name": "Delaware – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Kentucky – Secretary of State",
+          "e_apostille": {
+            "number": null,
+            "date": "May 2024"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Minnesota – Secretary of State",
+          "e_apostille": {
+            "number": null,
+            "date": "March 2024-September 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": "The state of Minnesota commenced an e-Apostille pilot programme on 15 March 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Minnesota’s pilot programme are legitimate and validly issued e-Apostilles."
+        },
+        {
+          "name": "Montana – Secretary of State",
+          "e_apostille": {
+            "number": null,
+            "date": "February 2023"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": "The state of Montana offers both e-Apostilles and Apostille verification via e-Register."
+        },
+        {
+          "name": "Nevada – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "New York – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "North Carolina – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Rhode Island – Secretary of State",
+          "e_apostille": {
+            "number": null,
+            "date": "November 2023-September 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": "The state of Rhode Island commenced an e-Apostille pilot programme on 1 November 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Rhode Island’s pilot programme are legitimate and validly issued e-Apostilles."
+        },
+        {
+          "name": "Tennessee – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Texas – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        },
+        {
+          "name": "Utah – Office of Lieutenant Governor",
+          "e_apostille": {
+            "number": null,
+            "date": "September 2023-September 2025"
+          },
+          "e_register": null,
+          "notes": "The state of Utah entered into a e-Apostille pilot programme that commenced on 19 September 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Utah’s pilot programme are legitimate and validly issued e-Apostilles."
+        },
+        {
+          "name": "Washington – Secretary of State",
+          "e_apostille": {
+            "number": null,
+            "date": "February 2024-September 2025"
+          },
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles."
+        },
+        {
+          "name": "West Virginia – Secretary of State",
+          "e_apostille": null,
+          "e_register": {
+            "number": null,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "contracting_party": "Uruguay",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs",
+          "e_apostille": {
+            "number": 43,
+            "date": "September 2023"
+          },
+          "e_register": {
+            "number": 62,
+            "method": "Available Here"
+          },
+          "notes": "Since 18/09/2023, Uruguay has implemented the e-Apostille component of the e-APP for public documents. The procedure is carried out through the website of the Ministry of Foreign Affairs, which is the Competent Authority responsible for the issuance of Apostille on public documents, via the following link: https://www.gub.uy/tramites/apostilla-yo-legalizacion-documentos-publicos-uruguayos-extranjeros-produzcan-efectos-exterior-republica."
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "contracting_party": "Uzbekistan",
+      "competent_authorities": [
+        {
+          "name": "Ministry of Foreign Affairs, Ministry of Justice, Supreme Court and other authorities",
+          "e_apostille": {
+            "number": 44,
+            "date": "August 2022"
+          },
+          "e_register": {
+            "number": 63,
+            "method": "Available Here"
+          },
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "contracting_party": "Venezuela",
+      "competent_authorities": [
+        {
+          "name": "Ministry of People’s Power of Foreign Affairs",
+          "e_apostille": {
+            "number": 45,
+            "date": "April 2019"
+          },
+          "e_register": {
+            "number": 64,
+            "method": "Available Here"
+          },
+          "notes": "There are three e-Registers: the first for Apostilles issued before 23 May 2018, the second for Apostilles issued between 24 May 2018 and 1 May 2019, and the third for Apostilles issued from 2 May 2019. e-Apostilles issued only for Criminal Record Certification and Data Certification for Consular Effects."
+        }
+      ]
+    }
+  ]
+}

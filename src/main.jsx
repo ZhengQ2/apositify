@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AlertTriangle, ExternalLink, MailQuestion, QrCode, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, Check, Copy, ExternalLink, MailQuestion, QrCode, ShieldCheck, UploadCloud } from 'lucide-react'
 import { eRegisters, sourceUrl } from './data/e-registers'
+import { verificationFields } from './data/verification-fields'
 import { messages as t } from './i18n/en'
 import './styles.css'
 
@@ -107,7 +108,80 @@ function ResultPanel({ selected }) {
         <p>{selected.verificationMode === 'hybrid' ? t.hybrid : selected.notes}</p>
         <a className="button" href={selected.registerUrl} target="_blank" rel="noreferrer">{t.verify}</a>
         <small>{t.privacy}</small>
+        <VerificationHelper entry={selected} />
       </div>
+    </div>
+  )
+}
+
+function VerificationHelper({ entry }) {
+  const config = verificationFields[entry.id]
+  const [values, setValues] = useState({})
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    setValues({})
+    setCopied(false)
+  }, [entry.id])
+
+  if (!config) return null
+
+  if (config.kind === 'upload') {
+    return (
+      <div className="verify-helper">
+        <div className="verify-helper-heading">
+          <UploadCloud size={16} aria-hidden="true" />
+          <span>{t.uploadKindNote}</span>
+        </div>
+        {config.note && <small>{config.note}</small>}
+      </div>
+    )
+  }
+
+  const onFieldChange = (field, value) => {
+    setValues((prev) => ({ ...prev, [field]: value }))
+    setCopied(false)
+  }
+
+  const hasAnyValue = config.fields.some((field) => (values[field] || '').trim())
+  const summary = config.fields
+    .map((field) => `${field}: ${(values[field] || '').trim() || '(not entered)'}`)
+    .join('\n')
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(summary)
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  return (
+    <div className="verify-helper">
+      <h4>{t.helperTitle}</h4>
+      <p className="muted small-muted">{t.helperIntro}</p>
+      {config.fields.map((field) => (
+        <label key={field} className="field-row">
+          <span>{field}</span>
+          <input
+            type="text"
+            value={values[field] || ''}
+            onChange={(event) => onFieldChange(field, event.target.value)}
+          />
+        </label>
+      ))}
+      {config.note && <small>{config.note}</small>}
+      {hasAnyValue && (
+        <div className="copy-panel">
+          <p className="muted small-muted">{t.helperCopyIntro}</p>
+          <pre>{summary}</pre>
+          <button type="button" className="button secondary" onClick={onCopy}>
+            {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+            {copied ? t.copied : t.copyValues}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

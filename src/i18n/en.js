@@ -13,5 +13,11 @@ export const messages = {
   manualContact: 'The HCCH chart does not list a fixed e-Register link for this authority. Use the contact or status details in the notes.',
   noSelection: 'Select a country and authority to continue.',
   sourceNote: 'Data is normalized from the full HCCH e-APP implementation chart JSON committed under src/data.',
-  privacy: 'You are leaving this site for an official government or authority portal. Do not enter sensitive data unless you trust the destination.'
+  privacy: 'You are leaving this site for an official government or authority portal. Do not enter sensitive data unless you trust the destination.',
+  helperTitle: 'What you’ll need',
+  helperIntro: 'Enter what’s printed on your Apostille. We never send this anywhere — it stays in your browser so you can copy it into the official site yourself.',
+  helperCopyIntro: 'Copy these values, then paste them into the official e-Register:',
+  copyValues: 'Copy values',
+  copied: 'Copied!',
+  uploadKindNote: 'This authority verifies by uploading the Apostille file itself rather than looking up a number.'
 }

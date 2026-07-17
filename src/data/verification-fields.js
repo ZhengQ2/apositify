@@ -1,41 +1,21 @@
-// Phase 2 field-definition metadata, keyed by e-registers.cleaned.json entry `id`.
+// Verification helper metadata keyed by `e-registers.cleaned.json` entry `id`.
 //
-// Scope note: real deep-linking was tested by actually filling in and submitting the
-// live form for every one of the 73 fielded authorities below, not just inspecting
-// static HTML — most "GET-looking" forms turned out to be JS/AJAX SPAs, CSRF-token-
-// guarded, or CAPTCHA-gated, and silently ignore query parameters entirely (confirmed
-// false positives include Belgium, Bolivia, Indonesia, and Delaware/USA — the latter two
-// looked like the strongest GET candidates on paper). Three authorities came back as
-// genuine one-click cases: `method: 'get'` builds a URL and opens it directly (Ukraine's
-// Ministry of Education); `method: 'post'` builds a hidden form and submits it to a new
-// tab, which works identically to a real user submitting the official form themselves —
-// confirmed for both Bulgaria authorities below by an actual cross-origin auto-submit
-// that returned a real result page from their server. A handful of authorities (Andorra,
-// several unreachable government sites, Guatemala mid-maintenance, Kazakhstan) could not
-// be conclusively tested due to site/tooling issues on the day of testing and default to
-// the copy-assist flow, same as every confirmed non-deep-linkable authority. New
-// Zealand's "Verify" button was found to fire an AJAX GET, but the response is raw XML
-// meant for their own JS to parse, not a human-readable page — rendering that ourselves
-// would mean parsing and asserting their verification result, which is explicitly out of
-// scope (see DEVELOPMENT_PLAN.md), so it stays copy-assist despite being GET-shaped.
-// Every other entry is `kind: 'fields'`: we collect what the user reads off their
-// Apostille and hand them a ready-to-paste summary plus the official link, rather than
-// attempting (and, per this research, almost certainly failing) to open a pre-filled
-// result page ourselves.
+// `kind: 'fields'` lists what the user must enter on the official site.
+// `deepLink` is included only when the official verifier supports a reliable direct GET
+// or form POST navigation.
 //
 // `kind: 'upload'` marks authorities that verify by uploading the e-Apostille file itself
 // rather than by looking up a number — conceptually closer to Phase 4 than Phase 2.
 //
 // Authorities absent from this file (but `online`/`hybrid` in the main dataset) had no
-// confirmed field list from research — the UI falls back to the plain Phase 1 link.
+// confirmed field list from research — the UI falls back to the plain official link.
 
 export const verificationFields = {
   'andorra-ministry-of-foreign-affairs': {
     kind: 'fields',
     fields: ['Apostille/Legalization Number', 'Date'],
-    // Confirmed live 2026-07: clean POST, no CSRF/CAPTCHA. Auto-submitted with test
-    // values and got a real result page ("No s'ha trobat la postil·la amb el número
-    // de registre ..."). Legacy IBM LANSA app requires several static routing params.
+    // Clean POST form with no CSRF/CAPTCHA. Auto-submitted test values returned a real
+    // result page. Legacy IBM LANSA app requires several static routing params.
     deepLink: {
       method: 'post',
       actionUrl: 'https://isi.govern.ad/CGI-BIN/lansaweb?webapp=POEX0010+webrtn=consulta+ml=LANSA:XHTML+partition=H3W+language=CAT',
@@ -67,16 +47,9 @@ export const verificationFields = {
   },
   'austria-federal-ministry-for-europe-integration-and-foreign-affairs': {
     kind: 'upload',
-    // Corrected 2026-07: a prior pass reclassified Austria to contact-only after the old
-    // signaturpruefung.gv.at URL turned out to redirect to an RTR informational hub with
-    // no direct tool. RTR's actual signature-verification service is live at a different
-    // subdomain (signaturpruefung.egiz.gv.at) — confirmed a real upload form (`documents`
-    // file input, optional `detachedSignature` file). Same upload-based pattern as
-    // Bangladesh/Türkiye: verifies the e-Apostille's digital signature/seal directly.
-    // Confirmed live 2026-07: the tool's own description says it verifies "electronic
-    // signatures embedded in PDF files" — it checks a cryptographic signature that only
-    // exists in the original digital file, so a photo or scan of a printed apostille
-    // (which strips any embedded signature) cannot be verified here, full stop.
+    // Austria verifies e-Apostilles through RTR's signature-verification upload service
+    // at signaturpruefung.egiz.gv.at. The tool checks the embedded digital signature in
+    // the original file, so a printed copy or photo cannot be verified here.
     note: 'Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won\'t work. Paper apostilles have no separate e-Register for this authority.'
   },
   'azerbaijan-ministry-of-justice': {
@@ -103,10 +76,8 @@ export const verificationFields = {
   'bulgaria-ministry-of-foreign-affairs': {
     kind: 'fields',
     fields: ['Apostille ID'],
-    // Confirmed live 2026-07: clean POST form, no CSRF/CAPTCHA. A same-origin submit of a
-    // fake ID bounced back to the blank form rather than showing a distinct "not found"
-    // message, so we can't fully confirm this site displays a clear result for valid IDs —
-    // but the POST itself genuinely reaches their server either way.
+    // Clean POST form with no CSRF/CAPTCHA. Invalid test values bounced back to the blank
+    // form rather than a distinct "not found" page, but the POST navigation is real.
     deepLink: {
       method: 'post',
       actionUrl: 'https://apostille.mfa.bg/MFAL/apostille_index.nsf/apostilleCheck.lss',
@@ -121,8 +92,8 @@ export const verificationFields = {
   'bulgaria-regional-administrations': {
     kind: 'fields',
     fields: ['Apostille ID'],
-    // Confirmed live 2026-07: clean POST form (no CSRF/CAPTCHA), auto-submitted with a
-    // fake ID and returned a real, clear result page ("NO APOSTILLE FOUND WITH ID: ...").
+    // Clean POST form with no CSRF/CAPTCHA. Auto-submitted test values returned a clear
+    // result page.
     deepLink: {
       method: 'post',
       actionUrl: 'https://apostille.gov.bg/apostille/check',
@@ -161,7 +132,7 @@ export const verificationFields = {
   'china-macao-sar-director-of-the-legal-affairs-bureau': {
     kind: 'fields',
     fields: ['Apostille No. (e.g. 12345/2023)', 'Issue date (DDMMYYYY)'],
-    note: 'Confirmed live 2026-07 (fields identified for the first time — the site is a React SPA that takes ~8s to render past a loading spinner). Requires solving an image CAPTCHA, so it cannot be deep-linked.'
+    note: 'The official site requires solving an image CAPTCHA and may take a few seconds to load.'
   },
   'colombia-ministry-of-foreign-affairs': {
     kind: 'fields',
@@ -170,10 +141,8 @@ export const verificationFields = {
   'costa-rica-ministry-of-foreign-affairs-and-worship': {
     kind: 'fields',
     fields: ['Código de la apostilla', 'Fecha de la apostilla (as YYYY-MM-DD)'],
-    // Confirmed live 2026-07: plain POST form, no working CSRF/CAPTCHA (the page still
-    // references a retired Google ReCaptcha v1 widget, but the check silently passes
-    // since the referenced element no longer exists in the DOM). Auto-submitted with
-    // test values and got a real result page ("No se encontró ninguna apostilla...").
+    // Plain POST form with no working CSRF/CAPTCHA. The page still references a retired
+    // Google ReCaptcha v1 widget, but submissions proceed and return a real result page.
     deepLink: {
       method: 'post',
       actionUrl: 'https://www.rree.go.cr/?sec=servicios&cat=autenticaciones&cont=726',
@@ -274,15 +243,14 @@ export const verificationFields = {
   'mexico-ministry-of-interior': {
     kind: 'fields',
     fields: ['Fecha (Date)', 'Clave (Code)'],
-    note: 'Confirmed live 2026-07: reachable via a frameset at consultasislac.segob.gob.mx, but the form requires an image-based verification code (a legacy CAPTCHA), so it cannot be deep-linked.'
+    note: 'The official site requires solving an image-based verification code.'
   },
   'moldova-republic-of-ministry-of-justice': {
     kind: 'fields',
     fields: ['Apostille code', 'Security code'],
-    note: 'Confirmed live 2026-07. Apostille numbers with an "ARIJ" prefix use a separate, MPass-gated system (eservicii.gov.md) not covered here — this deep link only applies to other apostille codes (e.g. starting with "201").',
-    // Confirmed live 2026-07: the visible page lazy-loads this form via an iframe; it is
-    // a clean POST with only the two named fields, no hidden CSRF/CAPTCHA. Auto-submitted
-    // with test values and the server processed the real navigation (200 OK).
+    note: 'Apostille numbers with an "ARIJ" prefix use a separate MPass-gated system (eservicii.gov.md). This direct flow applies only to other apostille codes.',
+    // The visible page lazy-loads this form via an iframe; it is a clean POST with only
+    // the two named fields and no hidden CSRF/CAPTCHA.
     deepLink: {
       method: 'post',
       actionUrl: 'https://apostila.gov.md/apostila/site/search',
@@ -345,7 +313,7 @@ export const verificationFields = {
   'slovenia-11-district-courts': {
     kind: 'fields',
     fields: ['Certificate ID', 'Issue date'],
-    note: 'Confirmed live 2026-07 (fields identified for the first time — the URL is the genuine public verifier, not a filing form despite the misleading "create.jsf" name). Requires solving an image CAPTCHA on a session-bound form, so it cannot be deep-linked.'
+    note: 'The official site requires solving an image CAPTCHA on a session-bound form.'
   },
   'spain-44-judicial-and-administrative-competent-authorities': {
     kind: 'fields',
@@ -361,9 +329,8 @@ export const verificationFields = {
     kind: 'fields',
     fields: ['Apostille number (item 8)', 'Application number', 'Apostille date (item 6)'],
     note: 'Covers apostilles from 18 January 2013 onward.',
-    // Confirmed live 2026-07 by actually filling and submitting the real form: this is a
-    // plain Joomla GET form, and the resulting URL is a real, sharable result page (not
-    // an AJAX call) — the one confirmed exception among 49 authorities tested this way.
+    // Plain Joomla GET form. The resulting URL is a real, shareable result page rather
+    // than an AJAX call.
     deepLink: {
       baseUrl: 'https://enic.in.ua/index.php/en/aporegen',
       extraParams: { task: 'searchApo' },
@@ -431,24 +398,17 @@ export const verificationFields = {
   'united-states-of-america-texas-secretary-of-state': {
     kind: 'fields',
     fields: ['Certificate Number'],
-    // Corrected 2026-07: a prior pass reclassified Texas to contact-only after finding
-    // the previously-listed URL verified corporate filing certificates, not apostilles.
-    // The real verifier — linked as "Verify Issuance of an Apostille" from the Texas SOS
-    // Apostille/Authentication page — is confirmed live at this URL. Classic ASP.NET
-    // WebForms POST with __VIEWSTATE/__EVENTVALIDATION, so not deep-linkable.
+    // Texas uses the Secretary of State's apostille verifier at this URL. It is a
+    // classic ASP.NET WebForms POST with __VIEWSTATE/__EVENTVALIDATION, so it is not
+    // deep-linkable.
     note: 'Applies to certificates issued on or after 31 October 1994.'
   },
   'united-states-of-america-washington-secretary-of-state': {
     kind: 'fields',
     fields: ['Date Printed (MM-DD-YYYY)', 'Document Number'],
-    // Corrected 2026-07: the HCCH chart marked this "Available Here" but no hyperlink
-    // was extractable from the source PDF, and a prior pass mistakenly filed it as
-    // having no e-Register at all. It has a real, working one at sos.wa.gov, covering
-    // both paper apostilles and Washington's e-Apostille pilot documents. Fields
-    // confirmed live 2026-07: the search box has no enclosing <form> (Drupal Webform,
-    // JS-driven) and a test submission produced no visible result or network activity
-    // in automated testing — likely session/JS-gated rather than a plain deep link, so
-    // this stays copy-assist rather than a confirmed deep link.
+    // Washington has a real verifier at sos.wa.gov for both paper apostilles and the
+    // state's e-Apostille pilot documents. The search box is JS-driven with no enclosing
+    // form, so this stays copy-assist rather than a confirmed deep link.
     note: 'Only covers documents completed by the Washington Secretary of State.'
   },
   'united-states-of-america-west-virginia-secretary-of-state': {
@@ -471,18 +431,13 @@ export const verificationFields = {
   },
   'bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh': {
     kind: 'upload',
-    // Confirmed live 2026-07: page title is "Verification of Digitally Signed PDF
-    // Documents" and the file picker is hard-restricted to accept="pdf/*" — a photo
-    // can't even be selected, let alone verified. e-Apostille-only, no exceptions.
+    // The file picker is restricted to PDF uploads, so this path is e-Apostille-only.
     note: 'Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won\'t work (the site only accepts PDF uploads). Paper apostilles have no separate e-Register for this authority.'
   },
   'turkiye-supervisory-competent-authorities-ministry-of-justice-ministry-of-internal-affairs': {
     kind: 'upload',
-    // Confirmed live 2026-07: the tool computes and compares an exact file hash (shows
-    // Hash Value/File Size/File Type after upload) against the originally issued file,
-    // and the file picker is restricted to accept="application/pdf". Stricter than a
-    // signature check - the uploaded bytes must match the issued file exactly, so a
-    // photo or re-saved copy won't match even if it "looks" the same.
+    // The tool compares the uploaded file's exact hash against the originally issued
+    // file. A photo, scan, or re-saved copy will not match.
     note: 'Upload the exact original e-Apostille PDF file — the site compares its file hash against the one it issued, so even a photo, scan, or re-saved copy won\'t match. Paper apostilles have no separate e-Register for this authority.'
   }
 }

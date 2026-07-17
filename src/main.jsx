@@ -25,7 +25,7 @@ function App() {
   return (
     <main className="page-shell">
       <section className="hero">
-        <div className="badge"><ShieldCheck size={18} /> Phase 1 directory</div>
+        <div className="badge"><ShieldCheck size={18} /> Official sources only</div>
         <h1>{t.appTitle}</h1>
         <p>{t.subtitle}</p>
       </section>
@@ -57,16 +57,16 @@ function App() {
 
       <section className="notes-grid">
         <article>
-          <h3>What Phase 1 does</h3>
-          <p>It uses the full HCCH chart JSON to show every listed contracting party and competent authority.</p>
+          <h3>How it works</h3>
+          <p>Choose the country and issuing authority, then follow the official verification route listed for that authority.</p>
         </article>
         <article>
-          <h3>Production data status</h3>
-          <p>Rows with extracted official URLs enable direct redirects; QR-only and missing-link rows are clearly marked instead of exposing placeholder links.</p>
+          <h3>What to expect</h3>
+          <p>Some authorities support direct online lookup, while others require a QR code, a file upload, or direct contact with the issuing office.</p>
         </article>
       </section>
 
-      <p className="source-note"><a href={sourceUrl} target="_blank" rel="noreferrer">HCCH e-APP implementation chart source PDF</a></p>
+      <p className="source-note"><a href={sourceUrl} target="_blank" rel="noreferrer">Source: HCCH e-APP implementation chart</a></p>
     </main>
   )
 }

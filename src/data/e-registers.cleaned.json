@@ -87,7 +87,7 @@
       "eRegisterLabel": "Available Here",
       "eApostilleNumber": 3,
       "eApostilleDate": "June 2015",
-      "notes": "Corrected 2026-07: the old signaturpruefung.gv.at URL redirects to an RTR informational hub with no direct tool, but RTR's actual signature-verification service is live at signaturpruefung.egiz.gv.at (upload the e-Apostille file to verify its digital signature/seal)."
+      "notes": "Use the RTR signature-verification service to upload the original e-Apostille PDF and verify its digital signature."
     },
     {
       "id": "azerbaijan-ministry-of-justice",
@@ -417,7 +417,7 @@
       "eRegisterLabel": "Available Here",
       "eApostilleNumber": null,
       "eApostilleDate": null,
-      "notes": "Corrected 2026-07: prior URL was an erroneous duplicate of Colombia's e-Register. Verification fields: Código de la apostilla, Fecha de la apostilla."
+      "notes": "Use Costa Rica's Consultar Apostilla page. It asks for Código de la apostilla and Fecha de la apostilla."
     },
     {
       "id": "cyprus-ministry-of-justice-and-public-order",
@@ -747,7 +747,7 @@
       "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
-      "notes": "Corrected 2026-07: the government page claims apostilles can be verified via alphanumeric code and QR, but no working online lookup tool exists anywhere on the site. Contact the Coordination of Certifications/Legalizations, Anuencias and Apostille directly (apostillabcs@gmail.com / age@bcs.gob.mx / tel. 612-122-0482) to verify."
+      "notes": "No working online lookup tool is available. Contact the Coordination of Certifications/Legalizations, Anuencias and Apostille directly (apostillabcs@gmail.com / age@bcs.gob.mx / tel. 612-122-0482) to verify."
     },
     {
       "id": "mexico-federal-district-legal-department",
@@ -867,7 +867,7 @@
       "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": null,
-      "notes": "Corrected 2026-07: no public e-Register verification tool exists. citas.cancilleria.gob.ni and related domains are appointment-booking systems for requesting a NEW apostille, not for verifying an existing one. Contact the Cancillería directly (tel. 2244-8008) to verify."
+      "notes": "No public e-Register verification tool is available. The cited Cancillería sites are appointment systems for requesting a new apostille, not for verifying an existing one. Contact the Cancillería directly (tel. 2244-8008) to verify."
     },
     {
       "id": "pakistan-ministry-of-foreign-affairs",
@@ -1002,7 +1002,7 @@
       "eRegisterLabel": "Via QR code",
       "eApostilleNumber": 35,
       "eApostilleDate": "June 2024",
-      "notes": "Corrected 2026-07: the previously listed irembo.gov.rw link is a generic government file-status tracker, not an apostille e-Register. No working online lookup found; verification is via the QR code printed on the Apostille only."
+      "notes": "No working online lookup tool is available. Verification is via the QR code printed on the Apostille."
     },
     {
       "id": "saint-kitts-and-nevis-ministry-of-foreign-affairs",
@@ -1347,7 +1347,7 @@
       "eRegisterLabel": null,
       "eApostilleNumber": null,
       "eApostilleDate": "November 2023-September 2025",
-      "notes": "The state of Rhode Island commenced an e-Apostille pilot programme on 1 November 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Rhode Island’s pilot programme are legitimate and validly issued e-Apostilles. Corrected 2026-07: the e-Register URL (business.sos.ri.gov) now returns 503; the only remaining portal (services.sos.ri.gov) is an application/ordering system, not a verification tool. Contact the RI Department of State directly (401-222-3040) to verify."
+      "notes": "Rhode Island's e-Apostille pilot ended on 30 September 2025. Apostilles issued during the pilot remain valid, but no public online verifier is currently available. Contact the RI Department of State directly (401-222-3040) to verify."
     },
     {
       "id": "united-states-of-america-tennessee-secretary-of-state",
@@ -1377,7 +1377,7 @@
       "eRegisterLabel": "Available Here",
       "eApostilleNumber": null,
       "eApostilleDate": null,
-      "notes": "Corrected 2026-07: the originally listed URL (sosdirectws.sos.state.tx.us) verified corporate filing certificates, not apostilles. The correct verifier, linked as \"Verify Issuance of an Apostille\" from the Texas SOS Apostille/Authentication page, is at webservices.sos.state.tx.us/certificationsA/index.aspx, validating by certificate number."
+      "notes": "Use the Texas Secretary of State's apostille verifier to validate by certificate number."
     },
     {
       "id": "united-states-of-america-utah-office-of-lieutenant-governor",

@@ -63,12 +63,11 @@ const curatedEntryOverrides = {
     registerGuide: {
       title: 'Which link should I use?',
       steps: [
-        'Choose APOSTIL if the Apostille identifies the APOSTIL system.',
-        'Choose legacy SEI Apostila if the Apostille identifies the SEI Apostila system.',
-        'If neither system is named, use the verification URL printed on the Apostille.'
+        'Choose legacy SEI Apostila for an Apostille issued before 3 August 2020.',
+        'Choose APOSTIL for an Apostille issued on or after 3 August 2020.'
       ]
     },
-    notes: 'Choose the official system named on the Apostille: APOSTIL or legacy SEI Apostila.'
+    notes: 'Choose the official verification portal based on the Apostille issue date.'
   }
 }
 

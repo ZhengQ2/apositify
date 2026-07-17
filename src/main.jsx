@@ -144,6 +144,7 @@ function VerificationHelper({ entry }) {
   }
 
   const hasAnyValue = config.fields.some((field) => (values[field] || '').trim())
+  const allFieldsFilled = config.fields.every((field) => (values[field] || '').trim())
   const summary = config.fields
     .map((field) => `${field}: ${(values[field] || '').trim() || '(not entered)'}`)
     .join('\n')
@@ -157,10 +158,44 @@ function VerificationHelper({ entry }) {
     }
   }
 
+  const deepLinkReady = Boolean(config.deepLink) && allFieldsFilled
+  const deepLinkMethod = config.deepLink?.method === 'post' ? 'post' : 'get'
+
+  const deepLinkUrl = deepLinkReady && deepLinkMethod === 'get'
+    ? (() => {
+        const url = new URL(config.deepLink.baseUrl)
+        Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => url.searchParams.set(key, value))
+        config.deepLink.paramOrder.forEach((param, index) => {
+          url.searchParams.set(param, values[config.fields[index]].trim())
+        })
+        return url.toString()
+      })()
+    : null
+
+  const onDeepLinkPost = () => {
+    const form = document.createElement('form')
+    form.method = 'post'
+    form.action = config.deepLink.actionUrl
+    form.target = '_blank'
+    form.rel = 'noreferrer'
+    const appendHidden = (name, value) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = name
+      input.value = value
+      form.appendChild(input)
+    }
+    Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => appendHidden(key, value))
+    config.deepLink.paramOrder.forEach((param, index) => appendHidden(param, values[config.fields[index]].trim()))
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
+  }
+
   return (
     <div className="verify-helper">
       <h4>{t.helperTitle}</h4>
-      <p className="muted small-muted">{t.helperIntro}</p>
+      <p className="muted small-muted">{config.deepLink ? t.helperIntroDeepLink : t.helperIntro}</p>
       {config.fields.map((field) => (
         <label key={field} className="field-row">
           <span>{field}</span>
@@ -172,7 +207,19 @@ function VerificationHelper({ entry }) {
         </label>
       ))}
       {config.note && <small>{config.note}</small>}
-      {hasAnyValue && (
+      {deepLinkUrl && (
+        <a className="button" href={deepLinkUrl} target="_blank" rel="noreferrer">
+          <ExternalLink size={16} aria-hidden="true" />
+          {t.verifyNow}
+        </a>
+      )}
+      {deepLinkReady && deepLinkMethod === 'post' && (
+        <button type="button" className="button" onClick={onDeepLinkPost}>
+          <ExternalLink size={16} aria-hidden="true" />
+          {t.verifyNow}
+        </button>
+      )}
+      {hasAnyValue && !deepLinkReady && (
         <div className="copy-panel">
           <p className="muted small-muted">{t.helperCopyIntro}</p>
           <pre>{summary}</pre>

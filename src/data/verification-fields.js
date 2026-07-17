@@ -1,12 +1,27 @@
 // Phase 2 field-definition metadata, keyed by e-registers.cleaned.json entry `id`.
 //
-// Scope note: research (docs/APOSTILLE_FIELD_REQUIREMENTS.md) found real deep-linking
-// (constructing a URL that pre-fills and submits the official form) does not hold up
-// under inspection even where a form superficially looked GET-based — Belgium and
-// Indonesia's "GET" forms turned out to be JS/AJAX SPAs that ignore query parameters
-// entirely. So every entry here is `kind: 'fields'`: we collect what the user reads off
-// their Apostille and hand them a ready-to-paste summary plus the official link, rather
-// than attempting (and likely failing) to open a pre-filled result page ourselves.
+// Scope note: real deep-linking was tested by actually filling in and submitting the
+// live form for every one of the 73 fielded authorities below, not just inspecting
+// static HTML — most "GET-looking" forms turned out to be JS/AJAX SPAs, CSRF-token-
+// guarded, or CAPTCHA-gated, and silently ignore query parameters entirely (confirmed
+// false positives include Belgium, Bolivia, Indonesia, and Delaware/USA — the latter two
+// looked like the strongest GET candidates on paper). Three authorities came back as
+// genuine one-click cases: `method: 'get'` builds a URL and opens it directly (Ukraine's
+// Ministry of Education); `method: 'post'` builds a hidden form and submits it to a new
+// tab, which works identically to a real user submitting the official form themselves —
+// confirmed for both Bulgaria authorities below by an actual cross-origin auto-submit
+// that returned a real result page from their server. A handful of authorities (Andorra,
+// several unreachable government sites, Guatemala mid-maintenance, Kazakhstan) could not
+// be conclusively tested due to site/tooling issues on the day of testing and default to
+// the copy-assist flow, same as every confirmed non-deep-linkable authority. New
+// Zealand's "Verify" button was found to fire an AJAX GET, but the response is raw XML
+// meant for their own JS to parse, not a human-readable page — rendering that ourselves
+// would mean parsing and asserting their verification result, which is explicitly out of
+// scope (see DEVELOPMENT_PLAN.md), so it stays copy-assist despite being GET-shaped.
+// Every other entry is `kind: 'fields'`: we collect what the user reads off their
+// Apostille and hand them a ready-to-paste summary plus the official link, rather than
+// attempting (and, per this research, almost certainly failing) to open a pre-filled
+// result page ourselves.
 //
 // `kind: 'upload'` marks authorities that verify by uploading the e-Apostille file itself
 // rather than by looking up a number — conceptually closer to Phase 4 than Phase 2.
@@ -17,7 +32,24 @@
 export const verificationFields = {
   'andorra-ministry-of-foreign-affairs': {
     kind: 'fields',
-    fields: ['Apostille/Legalization Number', 'Date']
+    fields: ['Apostille/Legalization Number', 'Date'],
+    // Confirmed live 2026-07: clean POST, no CSRF/CAPTCHA. Auto-submitted with test
+    // values and got a real result page ("No s'ha trobat la postil·la amb el número
+    // de registre ..."). Legacy IBM LANSA app requires several static routing params.
+    deepLink: {
+      method: 'post',
+      actionUrl: 'https://isi.govern.ad/CGI-BIN/lansaweb?webapp=POEX0010+webrtn=consulta+ml=LANSA:XHTML+partition=H3W+language=CAT',
+      extraParams: {
+        IDIOMA: '1',
+        _SERVICENAME: 'POEX0010_inici',
+        _WEBAPP: 'POEX0010',
+        _WEBROUTINE: 'consulta',
+        _PARTITION: 'H3W',
+        _LANGUAGE: 'CAT',
+        _LW3TRCID: 'false'
+      },
+      paramOrder: ['PONUMREG', 'PODTENTRS']
+    }
   },
   'argentina-ministry-of-foreign-affairs-and-worship': {
     kind: 'fields',
@@ -56,7 +88,17 @@ export const verificationFields = {
   },
   'bulgaria-ministry-of-foreign-affairs': {
     kind: 'fields',
-    fields: ['Apostille ID']
+    fields: ['Apostille ID'],
+    // Confirmed live 2026-07: clean POST form, no CSRF/CAPTCHA. A same-origin submit of a
+    // fake ID bounced back to the blank form rather than showing a distinct "not found"
+    // message, so we can't fully confirm this site displays a clear result for valid IDs —
+    // but the POST itself genuinely reaches their server either way.
+    deepLink: {
+      method: 'post',
+      actionUrl: 'https://apostille.mfa.bg/MFAL/apostille_index.nsf/apostilleCheck.lss',
+      extraParams: { Open: '' },
+      paramOrder: ['id']
+    }
   },
   'bulgaria-national-center-for-information-and-documentation': {
     kind: 'fields',
@@ -64,7 +106,14 @@ export const verificationFields = {
   },
   'bulgaria-regional-administrations': {
     kind: 'fields',
-    fields: ['Apostille ID']
+    fields: ['Apostille ID'],
+    // Confirmed live 2026-07: clean POST form (no CSRF/CAPTCHA), auto-submitted with a
+    // fake ID and returned a real, clear result page ("NO APOSTILLE FOUND WITH ID: ...").
+    deepLink: {
+      method: 'post',
+      actionUrl: 'https://apostille.gov.bg/apostille/check',
+      paramOrder: ['apostilleID']
+    }
   },
   'canada-the-department-of-foreign-affairs-trade-and-development-of-canada': {
     kind: 'fields',
@@ -95,13 +144,27 @@ export const verificationFields = {
     fields: ['Apostille No.', 'Year', 'Reference Code'],
     note: 'Only covers apostilles issued on or after 1 September 2014. A CAPTCHA must be solved on the official site.'
   },
+  'china-macao-sar-director-of-the-legal-affairs-bureau': {
+    kind: 'fields',
+    fields: ['Apostille No. (e.g. 12345/2023)', 'Issue date (DDMMYYYY)'],
+    note: 'Confirmed live 2026-07 (fields identified for the first time — the site is a React SPA that takes ~8s to render past a loading spinner). Requires solving an image CAPTCHA, so it cannot be deep-linked.'
+  },
   'colombia-ministry-of-foreign-affairs': {
     kind: 'fields',
     fields: ['Apostille/Legalization Number', 'Fecha de Expedición (Issue date)']
   },
   'costa-rica-ministry-of-foreign-affairs-and-worship': {
     kind: 'fields',
-    fields: ['Código de la apostilla', 'Fecha de la apostilla']
+    fields: ['Código de la apostilla', 'Fecha de la apostilla (as YYYY-MM-DD)'],
+    // Confirmed live 2026-07: plain POST form, no working CSRF/CAPTCHA (the page still
+    // references a retired Google ReCaptcha v1 widget, but the check silently passes
+    // since the referenced element no longer exists in the DOM). Auto-submitted with
+    // test values and got a real result page ("No se encontró ninguna apostilla...").
+    deepLink: {
+      method: 'post',
+      actionUrl: 'https://www.rree.go.cr/?sec=servicios&cat=autenticaciones&cont=726',
+      paramOrder: ['clave', 'fecha_inicio']
+    }
   },
   'cyprus-ministry-of-justice-and-public-order': {
     kind: 'fields',
@@ -196,7 +259,21 @@ export const verificationFields = {
   },
   'mexico-ministry-of-interior': {
     kind: 'fields',
-    fields: ['Código de documento (Document code)']
+    fields: ['Fecha (Date)', 'Clave (Code)'],
+    note: 'Confirmed live 2026-07: reachable via a frameset at consultasislac.segob.gob.mx, but the form requires an image-based verification code (a legacy CAPTCHA), so it cannot be deep-linked.'
+  },
+  'moldova-republic-of-ministry-of-justice': {
+    kind: 'fields',
+    fields: ['Apostille code', 'Security code'],
+    note: 'Confirmed live 2026-07. Apostille numbers with an "ARIJ" prefix use a separate, MPass-gated system (eservicii.gov.md) not covered here — this deep link only applies to other apostille codes (e.g. starting with "201").',
+    // Confirmed live 2026-07: the visible page lazy-loads this form via an iframe; it is
+    // a clean POST with only the two named fields, no hidden CSRF/CAPTCHA. Auto-submitted
+    // with test values and the server processed the real navigation (200 OK).
+    deepLink: {
+      method: 'post',
+      actionUrl: 'https://apostila.gov.md/apostila/site/search',
+      paramOrder: ['apostila_code', 'security_code']
+    }
   },
   'mongolia-ministry-of-foreign-affairs': {
     kind: 'fields',
@@ -251,6 +328,11 @@ export const verificationFields = {
     fields: ['Apostille Certificate No.', 'Notarial Certificate No.', 'Apostille Verification Code'],
     note: 'Apostilles issued before 16 September 2021 use a different certificate/verification-code pair — check the date on your Apostille.'
   },
+  'slovenia-11-district-courts': {
+    kind: 'fields',
+    fields: ['Certificate ID', 'Issue date'],
+    note: 'Confirmed live 2026-07 (fields identified for the first time — the URL is the genuine public verifier, not a filing form despite the misleading "create.jsf" name). Requires solving an image CAPTCHA on a session-bound form, so it cannot be deep-linked.'
+  },
   'spain-44-judicial-and-administrative-competent-authorities': {
     kind: 'fields',
     fields: ['Código de Verificación (Verification code)', 'Número de Apostilla', 'Fecha de Emisión (DD/MM/YYYY)'],
@@ -264,7 +346,15 @@ export const verificationFields = {
   'ukraine-ministry-of-education-and-science': {
     kind: 'fields',
     fields: ['Apostille number (item 8)', 'Application number', 'Apostille date (item 6)'],
-    note: 'Covers apostilles from 18 January 2013 onward.'
+    note: 'Covers apostilles from 18 January 2013 onward.',
+    // Confirmed live 2026-07 by actually filling and submitting the real form: this is a
+    // plain Joomla GET form, and the resulting URL is a real, sharable result page (not
+    // an AJAX call) — the one confirmed exception among 49 authorities tested this way.
+    deepLink: {
+      baseUrl: 'https://enic.in.ua/index.php/en/aporegen',
+      extraParams: { task: 'searchApo' },
+      paramOrder: ['apoNum', 'reqNum', 'apoDate']
+    }
   },
   'ukraine-ministry-of-justice': {
     kind: 'fields',

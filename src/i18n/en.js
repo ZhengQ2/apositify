@@ -16,8 +16,10 @@ export const messages = {
   privacy: 'You are leaving this site for an official government or authority portal. Do not enter sensitive data unless you trust the destination.',
   helperTitle: 'What you’ll need',
   helperIntro: 'Enter what’s printed on your Apostille. We never send this anywhere — it stays in your browser so you can copy it into the official site yourself.',
+  helperIntroDeepLink: 'Enter what’s printed on your Apostille. This authority supports opening your result directly — once every field is filled in, we’ll build the link for you.',
   helperCopyIntro: 'Copy these values, then paste them into the official e-Register:',
   copyValues: 'Copy values',
   copied: 'Copied!',
+  verifyNow: 'Verify now',
   uploadKindNote: 'This authority verifies by uploading the Apostille file itself rather than looking up a number.'
 }

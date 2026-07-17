@@ -55,6 +55,14 @@ for (const config of directLinkConfigs) {
   assert.equal(config.fields.length, config.deepLink.paramOrder.length, 'direct-link field order must match verifier parameters')
 }
 
+const brazil = eRegisters.find((entry) => entry.id === 'brazil-national-council-of-justice')
+assert.ok(brazil, 'Brazil National Council of Justice entry is required')
+assert.equal(brazil.registerUrl, 'https://apostil.cnj.jus.br/pt/validation')
+assert.deepEqual(brazil.registerLinks, [
+  { label: 'Validate in APOSTIL', url: 'https://apostil.cnj.jus.br/pt/validation' },
+  { label: 'Validate in legacy SEI Apostila', url: 'https://apostila.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&acao_origem=documento_conferir&lang=pt_BR&id_orgao_acesso_externo=0' }
+])
+
 assert.equal(validateVerificationField({ format: 'date-iso' }, '2026-02-28'), '')
 assert.notEqual(validateVerificationField({ format: 'date-iso' }, '2026-02-30'), '')
 assert.equal(validateVerificationField({ format: 'date-dotted' }, '28.02.2026'), '')

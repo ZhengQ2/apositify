@@ -50,6 +50,20 @@ const modeLabels = {
   manual_contact: 'Contact authority to verify'
 }
 
+// The HCCH chart has one generic Brazil URL, while CNJ maintains separate official
+// validation systems. Keep independently verified destinations stable across refreshes.
+const curatedEntryOverrides = {
+  'brazil-national-council-of-justice': {
+    registerUrl: 'https://apostil.cnj.jus.br/pt/validation',
+    eRegisterMethod: 'https://apostil.cnj.jus.br/pt/validation',
+    registerLinks: [
+      { label: 'Validate in APOSTIL', url: 'https://apostil.cnj.jus.br/pt/validation' },
+      { label: 'Validate in legacy SEI Apostila', url: 'https://apostila.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&acao_origem=documento_conferir&lang=pt_BR&id_orgao_acesso_externo=0' }
+    ],
+    notes: 'Choose the official system named on the Apostille: APOSTIL or legacy SEI Apostila.'
+  }
+}
+
 const raw = JSON.parse(await readFile(sourcePath, 'utf8'))
 const entries = raw.records.flatMap((record) => {
   const country = normalizeWhitespace(record.contracting_party)
@@ -64,7 +78,7 @@ const entries = raw.records.flatMap((record) => {
     const notes = normalizeWhitespace(authority.notes || register.url_missing_note)
     const registerUrl = isHttpUrl(method) ? unwrapSafelink(method) : ''
 
-    return {
+    const entry = {
       id: `${slugify(country)}-${slugify(authorityName) || authorityIndex + 1}`,
       sourceRecordId: record.id,
       country,
@@ -79,6 +93,8 @@ const entries = raw.records.flatMap((record) => {
       eApostilleDate: eApostille?.date ? normalizeWhitespace(eApostille.date) : null,
       notes: notes || modeLabels[verificationMode]
     }
+
+    return { ...entry, ...curatedEntryOverrides[entry.id] }
   })
 })
 

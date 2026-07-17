@@ -170,6 +170,14 @@
       "country": "Brazil",
       "authority": "National Council of Justice",
       "registerUrl": "https://apostil.cnj.jus.br/pt/validation",
+      "verificationMode": "online",
+      "verificationLabel": "Official e-Register link available",
+      "eRegisterNumber": 11,
+      "eRegisterMethod": "https://apostil.cnj.jus.br/pt/validation",
+      "eRegisterLabel": "Available Here",
+      "eApostilleNumber": 8,
+      "eApostilleDate": "July 2021",
+      "notes": "Choose the official system named on the Apostille: APOSTIL or legacy SEI Apostila.",
       "registerLinks": [
         {
           "label": "Validate in APOSTIL",
@@ -179,15 +187,7 @@
           "label": "Validate in legacy SEI Apostila",
           "url": "https://apostila.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&acao_origem=documento_conferir&lang=pt_BR&id_orgao_acesso_externo=0"
         }
-      ],
-      "verificationMode": "online",
-      "verificationLabel": "Official e-Register link available",
-      "eRegisterNumber": 11,
-      "eRegisterMethod": "https://apostil.cnj.jus.br/pt/validation",
-      "eRegisterLabel": "Available Here",
-      "eApostilleNumber": 8,
-      "eApostilleDate": "July 2021",
-      "notes": "Choose the official system named on the Apostille: APOSTIL or legacy SEI Apostila."
+      ]
     },
     {
       "id": "bulgaria-ministry-of-justice",

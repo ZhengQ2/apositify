@@ -414,6 +414,29 @@ export const verificationFields = {
     fields: ['Document Number'],
     note: 'Only covers filings on or after 3/24/2014.'
   },
+  'united-states-of-america-texas-secretary-of-state': {
+    kind: 'fields',
+    fields: ['Certificate Number'],
+    // Corrected 2026-07: a prior pass reclassified Texas to contact-only after finding
+    // the previously-listed URL verified corporate filing certificates, not apostilles.
+    // The real verifier — linked as "Verify Issuance of an Apostille" from the Texas SOS
+    // Apostille/Authentication page — is confirmed live at this URL. Classic ASP.NET
+    // WebForms POST with __VIEWSTATE/__EVENTVALIDATION, so not deep-linkable.
+    note: 'Applies to certificates issued on or after 31 October 1994.'
+  },
+  'united-states-of-america-washington-secretary-of-state': {
+    kind: 'fields',
+    fields: ['Date Printed (MM-DD-YYYY)', 'Document Number'],
+    // Corrected 2026-07: the HCCH chart marked this "Available Here" but no hyperlink
+    // was extractable from the source PDF, and a prior pass mistakenly filed it as
+    // having no e-Register at all. It has a real, working one at sos.wa.gov, covering
+    // both paper apostilles and Washington's e-Apostille pilot documents. Fields
+    // confirmed live 2026-07: the search box has no enclosing <form> (Drupal Webform,
+    // JS-driven) and a test submission produced no visible result or network activity
+    // in automated testing — likely session/JS-gated rather than a plain deep link, so
+    // this stays copy-assist rather than a confirmed deep link.
+    note: 'Only covers documents completed by the Washington Secretary of State.'
+  },
   'united-states-of-america-west-virginia-secretary-of-state': {
     kind: 'fields',
     fields: ['Document Code, OR Apostille/Certificate Number + Date Printed']

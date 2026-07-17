@@ -7,11 +7,10 @@
   "recordsCount": 64,
   "entriesCount": 97,
   "modeCounts": {
-    "online": 82,
-    "manual_contact": 7,
+    "online": 84,
+    "manual_contact": 6,
     "qr_only": 6,
-    "hybrid": 1,
-    "source_link_missing": 1
+    "hybrid": 1
   },
   "notes": "Rows with online or hybrid mode include a usable registerUrl. Rows marked source_link_missing or hybrid_link_missing need the official embedded HCCH Available Here URL before one-click redirects can be enabled.",
   "entries": [
@@ -1370,15 +1369,15 @@
       "sourceRecordId": 61,
       "country": "United States of America",
       "authority": "Texas – Secretary of State",
-      "registerUrl": "",
-      "verificationMode": "manual_contact",
-      "verificationLabel": "Contact authority to verify",
+      "registerUrl": "https://webservices.sos.state.tx.us/certificationsA/index.aspx",
+      "verificationMode": "online",
+      "verificationLabel": "Official e-Register link available",
       "eRegisterNumber": null,
-      "eRegisterMethod": null,
-      "eRegisterLabel": null,
+      "eRegisterMethod": "https://webservices.sos.state.tx.us/certificationsA/index.aspx",
+      "eRegisterLabel": "Available Here",
       "eApostilleNumber": null,
       "eApostilleDate": null,
-      "notes": "Corrected 2026-07: the previously listed URL (sosdirectws.sos.state.tx.us) verifies corporate filing certificates, not apostilles, and never mentions \"apostille\". No correct e-Register URL has been confirmed yet; contact the Texas Secretary of State Authentications Unit directly."
+      "notes": "Corrected 2026-07: the originally listed URL (sosdirectws.sos.state.tx.us) verified corporate filing certificates, not apostilles. The correct verifier, linked as \"Verify Issuance of an Apostille\" from the Texas SOS Apostille/Authentication page, is at webservices.sos.state.tx.us/certificationsA/index.aspx, validating by certificate number."
     },
     {
       "id": "united-states-of-america-utah-office-of-lieutenant-governor",
@@ -1400,11 +1399,11 @@
       "sourceRecordId": 61,
       "country": "United States of America",
       "authority": "Washington – Secretary of State",
-      "registerUrl": "",
-      "verificationMode": "source_link_missing",
-      "verificationLabel": "Listed as available in HCCH chart; embedded URL not included in source JSON",
+      "registerUrl": "https://www.sos.wa.gov/corporations-charities/apostilles-program/apostille-and-certificate-authenticity-search",
+      "verificationMode": "online",
+      "verificationLabel": "Official e-Register link available",
       "eRegisterNumber": null,
-      "eRegisterMethod": null,
+      "eRegisterMethod": "https://www.sos.wa.gov/corporations-charities/apostilles-program/apostille-and-certificate-authenticity-search",
       "eRegisterLabel": "Available Here",
       "eApostilleNumber": null,
       "eApostilleDate": "February 2024-September 2025",

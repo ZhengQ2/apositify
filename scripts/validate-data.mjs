@@ -34,7 +34,7 @@ for (const entry of eRegisters) {
 assert.equal(countries.size, 64, 'dataset should cover all 64 HCCH implementation chart contracting-party rows')
 assert.equal(eRegisters.length, 97, 'dataset should include all 97 competent-authority rows')
 assert.equal(modeCounts.qr_only, 6, 'dataset should include the six QR-only authority rows (includes Rwanda, reclassified 2026-07 after its listed link turned out to be a non-apostille file tracker)')
-assert.equal(modeCounts.manual_contact, 7, 'dataset should include seven manual-contact authority rows (Connecticut and Utah from expired pilots, plus Nicaragua, Baja California Sur, Rhode Island, Austria and Texas reclassified 2026-07 after no working e-Register was found)')
+assert.equal(modeCounts.manual_contact, 6, 'dataset should include six manual-contact authority rows (Connecticut and Utah from expired pilots, plus Nicaragua, Baja California Sur, Rhode Island and Austria reclassified 2026-07 after no working e-Register was found; Texas was restored to online 2026-07 once its real "Verify Issuance of an Apostille" verifier was identified)')
 assert.ok(modeCounts.online + modeCounts.hybrid + modeCounts.source_link_missing + modeCounts.hybrid_link_missing > 0, 'dataset should include e-Register rows')
 
 console.log(`Validated ${eRegisters.length} e-Register entries across ${countries.size} jurisdictions.`)

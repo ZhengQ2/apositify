@@ -10,7 +10,7 @@ This is the field-definition input for Phase 2 (see [DEVELOPMENT_PLAN.md](DEVELO
 
 Treat every row as "spot-check before fully trusting," not immutable ground truth — these are live government sites and a few remain genuinely unresolved (flagged below). If you want to verify a specific one yourself, the exact mechanism found (POST/CSRF token/CAPTCHA/AJAX/etc.) is in the table so you know what to look for.
 
-## Headline finding: 6 confirmed one-click authorities out of 73 tested
+## Headline finding: 6 confirmed one-click authorities out of 75 tested
 
 **Ukraine's Ministry of Education (ENIC)** supports a real GET deep link. Its form is a plain Joomla GET request; submitting test values with the actual form and clicking search produced a new, shareable URL that the server processed and rendered a result for:
 
@@ -30,7 +30,7 @@ https://enic.in.ua/index.php/en/aporegen?task=searchApo&apoNum={apostille number
 
 All six are wired up in `src/data/verification-fields.js` (the `deepLink` field, with `method: 'get'` or `method: 'post'`) and render a one-click "Verify now" button in the app once all fields are filled in.
 
-Everything else — including forms that looked like strong GET candidates in the first research pass (**Belgium, Bolivia, Indonesia, Delaware/USA**) — turned out, once actually submitted, to be POST forms, CSRF/anti-forgery-token-guarded, CAPTCHA-gated, or JS/SPA calls to a JSON API with no URL change. Real one-click coverage tops out at 6 of 73 — a small handful of authorities whose government sites happen to have simple, unprotected forms. This is a strong, direct confirmation of the Phase 2 design in [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md): copy-assist is the realistic default, not automation.
+Everything else — including forms that looked like strong GET candidates in the first research pass (**Belgium, Bolivia, Indonesia, Delaware/USA**) — turned out, once actually submitted, to be POST forms, CSRF/anti-forgery-token-guarded, CAPTCHA-gated, or JS/SPA calls to a JSON API with no URL change. Real one-click coverage tops out at 6 of 75 — a small handful of authorities whose government sites happen to have simple, unprotected forms. This is a strong, direct confirmation of the Phase 2 design in [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md): copy-assist is the realistic default, not automation.
 
 **Two near-misses worth knowing about:**
 - Georgia's Ministry of Internal Affairs fires a same-origin AJAX **GET** request with clean query parameters (`?DocNumber=...&DocDate=...`) — but navigating directly to that exact URL renders a blank page. It needs session/referrer context from the real page first, so despite looking like a deep link, it doesn't actually work as a shareable one.
@@ -41,7 +41,7 @@ Everything else — including forms that looked like strong GET candidates in th
 | Authority | Issue | Action |
 |---|---|---|
 | Costa Rica | Source URL was byte-identical to Colombia's — confirmed copy-paste error | Replaced with `rree.go.cr` "Consultar Apostilla" page (fields: Código de la apostilla, Fecha) — already applied |
-| USA/Texas | The listed URL verifies corporate filing certificates — the word "apostille" never appears on the page | Reclassified to contact-only — already applied |
+| USA/Texas | The listed URL verifies corporate filing certificates — the word "apostille" never appears on the page | **Corrected 2026-07**: initially reclassified to contact-only, but the real verifier exists — linked as "Verify Issuance of an Apostille" from the Texas SOS Apostille/Authentication page, at `webservices.sos.state.tx.us/certificationsA/index.aspx` (validates by certificate number). Restored to online — already applied |
 | Austria | Redirects to an RTR informational page with no lookup tool at all | Reclassified to contact-only — already applied |
 | Rwanda | The listed URL is a generic Irembo file-status tracker, not an apostille e-register | Reclassified to QR-only — already applied |
 | Bangladesh | Listed URL is a homepage; the real tool is a generic signed-PDF/digital-signature checker (upload-based), not a number+date lookup | Modeled as `kind: 'upload'` in the app, not a field form |
@@ -120,7 +120,7 @@ Everything else — including forms that looked like strong GET candidates in th
 | Spain | eRegister (44 authorities) | Verification Code; Apostille Number; Issue Date | ❌ Not deep-linkable | Text-based CAPTCHA required on every load; session-bound Spring Web Flow token |
 | Tajikistan | MFA/Justice | Apostille Number; Date (Y/M/D) | ❌ Not deep-linkable | Image CAPTCHA confirmed |
 | Türkiye | PTT e-Apostil | (File upload / hash check — not fields) | — | Upload-based, not applicable |
-| Ukraine — Education | ENIC | Apostille number (item 8); Application number; Apostille date (item 6) | ✅ **Confirmed** | Plain Joomla GET form — see URL template above. The one confirmed deep link out of 73 tested. |
+| Ukraine — Education | ENIC | Apostille number (item 8); Application number; Apostille date (item 6) | ✅ **Confirmed** | Plain Joomla GET form — see URL template above. One of 6 confirmed deep links out of 75 tested. |
 | Ukraine — Justice | Ministry of Justice | Apostille number; Issue date; Control code (newer only); OR upload e-document | ❌ Not deep-linkable | Angular form with a CAPTCHA field |
 | United Kingdom | FCDO | Apostille issue date; Apostille number | ❌ Not deep-linkable | Confirmed POST form with named fields on a separate `verifyapostille.service.gov.uk` domain |
 | UK — Cayman Islands | Passport & Corporate Services | Apostille Number; Issue Date | ❌ Not deep-linkable | Oracle APEX, POSTs to `wwv_flow.accept`, has a CAPTCHA field |
@@ -135,7 +135,8 @@ Everything else — including forms that looked like strong GET candidates in th
 | USA — New York | Secretary of State | Document Number; Issue Date | ❌ Not deep-linkable | Confirmed classic ASP.NET POST form |
 | USA — North Carolina | Secretary of State | Certificate Type (dropdown); Certificate #; Issued Date | ❌ Not deep-linkable | POST with a CSRF anti-forgery token; page also explicitly bans automated/scripted searches |
 | USA — Tennessee | Secretary of State | Document Number | ❌ Not deep-linkable | SPA gated by a Cloudflare Turnstile CAPTCHA token |
-| USA — Texas | Secretary of State | Document Number | — | **Wrong tool — verifies corporate certs, not apostilles**; reclassified to contact-only |
+| USA — Texas | Secretary of State | Certificate Number | ❌ Not deep-linkable | **Corrected 2026-07**: the originally listed URL was the wrong tool (verified corporate certs, not apostilles); restored to the real "Verify Issuance of an Apostille" verifier. Classic ASP.NET WebForms POST with `__VIEWSTATE`/`__EVENTVALIDATION` |
+| USA — Washington | Secretary of State | Date Printed (MM-DD-YYYY); Document Number | ❌ Not deep-linkable | **Corrected 2026-07** — previously misfiled as having no e-Register at all; it has a real, working one at `sos.wa.gov`. Search box has no enclosing `<form>` (Drupal Webform, JS-driven); a test submission produced no visible result or network activity in automated testing |
 | USA — West Virginia | Secretary of State | Document Code, OR Apostille/Certificate Number + Date Printed | ❌ Not deep-linkable | Classic ASP.NET WebForms POST with `__VIEWSTATE` |
 | Uruguay | MFA | Apostille Number (`vAPOSTILLAID`); Apostille Date (`vAPOSTILLAFECHA`); Holder's name (`vAPOSTILLATDP`) | ❌ Not deep-linkable | GeneXus JS submission plus a large per-session `GXState` token, and a required Google reCAPTCHA checkbox |
 | Uzbekistan | MFA/Justice/Supreme Court | Apostille number; Date of affixing | ❌ Not deep-linkable | Pure SPA, no form/name attrs; a visible Google reCAPTCHA directly gates the "Find" button |
@@ -157,11 +158,9 @@ No e-Register exists at all (contact-only, per [DEVELOPMENT_PLAN.md](DEVELOPMENT
 - Nicaragua — Ministry of Foreign Affairs
 - Mexico — Baja California Sur
 - Austria — Federal Ministry (reclassified — see corrections table above)
-- USA — Texas (reclassified — see corrections table above)
 - USA — Connecticut (e-Apostille pilot ended Sept 2025)
 - USA — Rhode Island (e-Apostille pilot ended Sept 2025)
 - USA — Utah (e-Apostille pilot ended Sept 2025)
-- USA — Washington (no hyperlink extractable from source chart)
 
 ## A note on test reliability
 

@@ -1397,8 +1397,12 @@
         {
           "name": "Texas – Secretary of State",
           "e_apostille": null,
-          "e_register": null,
-          "notes": "Corrected 2026-07: the previously listed URL (sosdirectws.sos.state.tx.us) verifies corporate filing certificates, not apostilles, and never mentions \"apostille\". No correct e-Register URL has been confirmed yet; contact the Texas Secretary of State Authentications Unit directly."
+          "e_register": {
+            "number": null,
+            "method": "https://webservices.sos.state.tx.us/certificationsA/index.aspx",
+            "label": "Available Here"
+          },
+          "notes": "Corrected 2026-07: the originally listed URL (sosdirectws.sos.state.tx.us) verified corporate filing certificates, not apostilles. The correct verifier, linked as \"Verify Issuance of an Apostille\" from the Texas SOS Apostille/Authentication page, is at webservices.sos.state.tx.us/certificationsA/index.aspx, validating by certificate number."
         },
         {
           "name": "Utah – Office of Lieutenant Governor",
@@ -1417,9 +1421,8 @@
           },
           "e_register": {
             "number": null,
-            "method": null,
-            "label": "Available Here",
-            "url_missing_note": "The table says 'Available Here', but no embedded hyperlink was extractable from the PDF for this row."
+            "method": "https://www.sos.wa.gov/corporations-charities/apostilles-program/apostille-and-certificate-authenticity-search",
+            "label": "Available Here"
           },
           "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles."
         },

@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AlertTriangle, ExternalLink, MailQuestion, QrCode, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, Check, Copy, ExternalLink, MailQuestion, QrCode, ShieldCheck, UploadCloud } from 'lucide-react'
 import { eRegisters, sourceUrl } from './data/e-registers'
+import { verificationFields } from './data/verification-fields'
 import { messages as t } from './i18n/en'
 import './styles.css'
 
@@ -24,7 +25,7 @@ function App() {
   return (
     <main className="page-shell">
       <section className="hero">
-        <div className="badge"><ShieldCheck size={18} /> Phase 1 directory</div>
+        <div className="badge"><ShieldCheck size={18} /> Official sources only</div>
         <h1>{t.appTitle}</h1>
         <p>{t.subtitle}</p>
       </section>
@@ -56,16 +57,16 @@ function App() {
 
       <section className="notes-grid">
         <article>
-          <h3>What Phase 1 does</h3>
-          <p>It uses the full HCCH chart JSON to show every listed contracting party and competent authority.</p>
+          <h3>How it works</h3>
+          <p>Choose the country and issuing authority, then follow the official verification route listed for that authority.</p>
         </article>
         <article>
-          <h3>Production data status</h3>
-          <p>Rows with extracted official URLs enable direct redirects; QR-only and missing-link rows are clearly marked instead of exposing placeholder links.</p>
+          <h3>What to expect</h3>
+          <p>Some authorities support direct online lookup, while others require a QR code, a file upload, or direct contact with the issuing office.</p>
         </article>
       </section>
 
-      <p className="source-note"><a href={sourceUrl} target="_blank" rel="noreferrer">HCCH e-APP implementation chart source PDF</a></p>
+      <p className="source-note"><a href={sourceUrl} target="_blank" rel="noreferrer">Source: HCCH e-APP implementation chart</a></p>
     </main>
   )
 }
@@ -107,7 +108,127 @@ function ResultPanel({ selected }) {
         <p>{selected.verificationMode === 'hybrid' ? t.hybrid : selected.notes}</p>
         <a className="button" href={selected.registerUrl} target="_blank" rel="noreferrer">{t.verify}</a>
         <small>{t.privacy}</small>
+        <VerificationHelper entry={selected} />
       </div>
+    </div>
+  )
+}
+
+function VerificationHelper({ entry }) {
+  const config = verificationFields[entry.id]
+  const [values, setValues] = useState({})
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    setValues({})
+    setCopied(false)
+  }, [entry.id])
+
+  if (!config) return null
+
+  if (config.kind === 'upload') {
+    return (
+      <div className="verify-helper">
+        <div className="verify-helper-heading">
+          <UploadCloud size={16} aria-hidden="true" />
+          <span>{t.uploadKindNote}</span>
+        </div>
+        {config.note && <small>{config.note}</small>}
+      </div>
+    )
+  }
+
+  const onFieldChange = (field, value) => {
+    setValues((prev) => ({ ...prev, [field]: value }))
+    setCopied(false)
+  }
+
+  const hasAnyValue = config.fields.some((field) => (values[field] || '').trim())
+  const allFieldsFilled = config.fields.every((field) => (values[field] || '').trim())
+  const summary = config.fields
+    .map((field) => `${field}: ${(values[field] || '').trim() || '(not entered)'}`)
+    .join('\n')
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(summary)
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  const deepLinkReady = Boolean(config.deepLink) && allFieldsFilled
+  const deepLinkMethod = config.deepLink?.method === 'post' ? 'post' : 'get'
+
+  const deepLinkUrl = deepLinkReady && deepLinkMethod === 'get'
+    ? (() => {
+        const url = new URL(config.deepLink.baseUrl)
+        Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => url.searchParams.set(key, value))
+        config.deepLink.paramOrder.forEach((param, index) => {
+          url.searchParams.set(param, values[config.fields[index]].trim())
+        })
+        return url.toString()
+      })()
+    : null
+
+  const onDeepLinkPost = () => {
+    const form = document.createElement('form')
+    form.method = 'post'
+    form.action = config.deepLink.actionUrl
+    form.target = '_blank'
+    form.rel = 'noreferrer'
+    const appendHidden = (name, value) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = name
+      input.value = value
+      form.appendChild(input)
+    }
+    Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => appendHidden(key, value))
+    config.deepLink.paramOrder.forEach((param, index) => appendHidden(param, values[config.fields[index]].trim()))
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
+  }
+
+  return (
+    <div className="verify-helper">
+      <h4>{t.helperTitle}</h4>
+      <p className="muted small-muted">{config.deepLink ? t.helperIntroDeepLink : t.helperIntroSimple}</p>
+      {config.fields.map((field) => (
+        <label key={field} className="field-row">
+          <span>{field}</span>
+          <input
+            type="text"
+            value={values[field] || ''}
+            onChange={(event) => onFieldChange(field, event.target.value)}
+          />
+        </label>
+      ))}
+      {config.note && <small>{config.note}</small>}
+      {deepLinkUrl && (
+        <a className="button" href={deepLinkUrl} target="_blank" rel="noreferrer">
+          <ExternalLink size={16} aria-hidden="true" />
+          {t.verifyNow}
+        </a>
+      )}
+      {deepLinkReady && deepLinkMethod === 'post' && (
+        <button type="button" className="button" onClick={onDeepLinkPost}>
+          <ExternalLink size={16} aria-hidden="true" />
+          {t.verifyNow}
+        </button>
+      )}
+      {hasAnyValue && !deepLinkReady && (
+        <div className="copy-panel">
+          <p className="muted small-muted">{t.helperCopyIntro}</p>
+          <pre>{summary}</pre>
+          <button type="button" className="button secondary" onClick={onCopy}>
+            {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+            {copied ? t.copied : t.copyValues}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

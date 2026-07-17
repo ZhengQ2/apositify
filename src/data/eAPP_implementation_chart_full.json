@@ -50,7 +50,7 @@
           },
           "e_register": {
             "number": 3,
-            "method": "http://www.e-verify.am/",
+            "method": "https://www.e-verify.am/",
             "label": "Available Here"
           },
           "notes": null
@@ -85,10 +85,10 @@
           },
           "e_register": {
             "number": 5,
-            "method": "http://www.signaturpruefung.gv.at/",
+            "method": "https://signaturpruefung.egiz.gv.at/signature-verification/file-upload",
             "label": "Available Here"
           },
-          "notes": null
+          "notes": "Use the RTR signature-verification service to upload the original e-Apostille PDF and verify its digital signature."
         }
       ]
     },
@@ -407,10 +407,10 @@
           "e_apostille": null,
           "e_register": {
             "number": 17,
-            "method": "https://tramites.cancilleria.gov.co/ciudadano/consulta/documento.aspx",
+            "method": "https://www.rree.go.cr/?sec=servicios&cat=autenticaciones&cont=726",
             "label": "Available Here"
           },
-          "notes": null
+          "notes": "Use Costa Rica's Consultar Apostilla page. It asks for Código de la apostilla and Fecha de la apostilla."
         }
       ]
     },
@@ -461,7 +461,7 @@
           },
           "e_register": {
             "number": 20,
-            "method": "https://servicios.mirex.gob.do/legalizacion-apostilla/consultar-certificacion?_gl=1*1v68l94*_ga*MjA0MDIwNDE2Ni4xNjgwNjg2NTE4*_ga_E1QFLJXEZ8*MTY4MDY4NjUxOC4xLjEuMTY4MDY4NjU3Ni4wLjAuMA..*_ga_DSQC3DBQ3B*MTY4MDY4NjUxOC4xLjEuMTY4MDY4NjU3Ny4wLjAuMA..&_ga=2.225362398.552081090.1680686518-2040204166.1680686518",
+            "method": "https://servicios.mirex.gob.do/legalizacion-apostilla/consultar-certificacion",
             "label": "Available Here"
           },
           "notes": null
@@ -796,12 +796,8 @@
         {
           "name": "Baja California Sur",
           "e_apostille": null,
-          "e_register": {
-            "number": 38,
-            "method": "http://www.bcs.gob.mx/anuencias/",
-            "label": "Available Here"
-          },
-          "notes": null
+          "e_register": null,
+          "notes": "No working online lookup tool is available. Contact the Coordination of Certifications/Legalizations, Anuencias and Apostille directly (apostillabcs@gmail.com / age@bcs.gob.mx / tel. 612-122-0482) to verify."
         },
         {
           "name": "Federal District – Legal Department",
@@ -918,12 +914,8 @@
         {
           "name": "Ministry of Foreign Affairs",
           "e_apostille": null,
-          "e_register": {
-            "number": 43,
-            "method": "https://www.cancilleria.gob.ni/certificacion.html",
-            "label": "Available Here"
-          },
-          "notes": null
+          "e_register": null,
+          "notes": "No public e-Register verification tool is available. The cited Cancillería sites are appointment systems for requesting a new apostille, not for verifying an existing one. Contact the Cancillería directly (tel. 2244-8008) to verify."
         }
       ]
     },
@@ -1003,7 +995,7 @@
           },
           "e_register": {
             "number": 47,
-            "method": "http://apostillaconsulta.rree.gob.pe/consulta/frmConsultaApostilla.aspx",
+            "method": "https://apostillaconsulta.rree.gob.pe/consulta/",
             "label": "Available Here"
           },
           "notes": null
@@ -1022,7 +1014,7 @@
           },
           "e_register": {
             "number": 48,
-            "method": "https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fe-registry.apostille.gov.ph%2F&data=05%7C02%7Ccgf%40hcch.net%7C3af41b1cca584606171808de9c56aaad%7Cf63757c537de44adb498b24589a7eb0b%7C0%7C0%7C639120093198477601%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=EJKE6ecfRRf3DHB4KrsTUz0qdKEWoYeTlWgkeW%2FStr0%3D&reserved=0",
+            "method": "https://e-registry.apostille.gov.ph/",
             "label": "Available Here"
           },
           "notes": "e-Apostilles issued for (i) Philippine Statistics Authority electronic Certificates (PSA eCertificates), covering civil registry documents; (ii) Commission on Higher Education electronic Certification, Authentication, and Verification (CHED eCAVs), covering academic documents; as well as (iii) Apostilles issued on other types of public documents executed from the beginning of December 2022 onwards may be verified on the e-Register. All other Apostilles may be verified by contacting the Competent Authority at oca.verification@dfa.gov.ph."
@@ -1076,10 +1068,10 @@
           },
           "e_register": {
             "number": 51,
-            "method": "https://irembo.gov.rw/support/documents",
-            "label": "Available Here (or via QR code)"
+            "method": "Via QR code",
+            "label": "Via QR code"
           },
-          "notes": null
+          "notes": "No working online lookup tool is available. Verification is via the QR code printed on the Apostille."
         }
       ]
     },
@@ -1294,7 +1286,7 @@
           "e_apostille": null,
           "e_register": {
             "number": null,
-            "method": "https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.coloradosos.gov%2Fauth%2FVerifyApostilleSearch.do&data=05%7C02%7Ccgf%40hcch.net%7C78b905cc44a94808296208debbbf3358%7Cf63757c537de44adb498b24589a7eb0b%7C0%7C0%7C639154627050300327%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=e8XRfJCl%2BekcAoAqh%2Bbkfg3i4aGFkPMsWOcaMiOnuuU%3D&reserved=0",
+            "method": "https://www.coloradosos.gov/auth/VerifyApostilleSearch.do",
             "label": "Available Here"
           },
           "notes": null
@@ -1326,7 +1318,7 @@
           },
           "e_register": {
             "number": null,
-            "method": "https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fweb.sos.ky.gov%2Fapostille%2Fverification.aspx&data=05%7C02%7Cbr%40hcch.net%7Cc214eba9c1554b2ab75908dc7504b69a%7Cf63757c537de44adb498b24589a7eb0b%7C0%7C0%7C638513910364427227%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=BbLhnzq6tqFdnwsW9WjVLd1%2FcbCqVA5ZX7EQr3J0wEk%3D&reserved=0",
+            "method": "https://web.sos.ky.gov/apostille/verification.aspx",
             "label": "Available here"
           },
           "notes": null
@@ -1382,7 +1374,7 @@
           "e_apostille": null,
           "e_register": {
             "number": null,
-            "method": "http://www.secretary.state.nc.us/verification/",
+            "method": "https://www.sosnc.gov/divisions/authentications",
             "label": "Available Here"
           },
           "notes": null
@@ -1393,19 +1385,15 @@
             "number": null,
             "date": "November 2023-September 2025"
           },
-          "e_register": {
-            "number": null,
-            "method": "https://business.sos.ri.gov/Apostille/ApostilleSearch",
-            "label": "Available Here"
-          },
-          "notes": "The state of Rhode Island commenced an e-Apostille pilot programme on 1 November 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Rhode Island’s pilot programme are legitimate and validly issued e-Apostilles."
+          "e_register": null,
+          "notes": "Rhode Island's e-Apostille pilot ended on 30 September 2025. Apostilles issued during the pilot remain valid, but no public online verifier is currently available. Contact the RI Department of State directly (401-222-3040) to verify."
         },
         {
           "name": "Tennessee – Secretary of State",
           "e_apostille": null,
           "e_register": {
             "number": null,
-            "method": "https://tnbear.tn.gov/apostille/verify.aspx",
+            "method": "https://tncab.tnsos.gov/portal/apostille-search",
             "label": "Available Here"
           },
           "notes": null
@@ -1415,10 +1403,10 @@
           "e_apostille": null,
           "e_register": {
             "number": null,
-            "method": "https://sosdirectws.sos.state.tx.us/pdfondemand/CertValidation.aspx",
+            "method": "https://webservices.sos.state.tx.us/certificationsA/index.aspx",
             "label": "Available Here"
           },
-          "notes": null
+          "notes": "Use the Texas Secretary of State's apostille verifier to validate by certificate number."
         },
         {
           "name": "Utah – Office of Lieutenant Governor",
@@ -1437,9 +1425,8 @@
           },
           "e_register": {
             "number": null,
-            "method": null,
-            "label": "Available Here",
-            "url_missing_note": "The table says 'Available Here', but no embedded hyperlink was extractable from the PDF for this row."
+            "method": "https://www.sos.wa.gov/corporations-charities/apostilles-program/apostille-and-certificate-authenticity-search",
+            "label": "Available Here"
           },
           "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles."
         },
@@ -1448,7 +1435,7 @@
           "e_apostille": null,
           "e_register": {
             "number": null,
-            "method": "http://apps.sos.wv.gov/business/apostilles/",
+            "method": "https://apps.sos.wv.gov/business/apostilles/",
             "label": "Available Here"
           },
           "notes": null

@@ -62,6 +62,14 @@ assert.deepEqual(brazil.registerLinks, [
   { label: 'Validate in APOSTIL', url: 'https://apostil.cnj.jus.br/pt/validation' },
   { label: 'Validate in legacy SEI Apostila', url: 'https://apostila.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&acao_origem=documento_conferir&lang=pt_BR&id_orgao_acesso_externo=0' }
 ])
+assert.deepEqual(brazil.registerGuide, {
+  title: 'Which link should I use?',
+  steps: [
+    'Choose APOSTIL if the Apostille identifies the APOSTIL system.',
+    'Choose legacy SEI Apostila if the Apostille identifies the SEI Apostila system.',
+    'If neither system is named, use the verification URL printed on the Apostille.'
+  ]
+})
 
 assert.equal(validateVerificationField({ format: 'date-iso' }, '2026-02-28'), '')
 assert.notEqual(validateVerificationField({ format: 'date-iso' }, '2026-02-30'), '')

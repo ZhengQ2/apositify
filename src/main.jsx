@@ -108,6 +108,14 @@ function ResultPanel({ selected }) {
       <div>
         <strong>{selected.authority}</strong>
         <p>{selected.verificationMode === 'hybrid' ? t.hybrid : selected.notes}</p>
+        {selected.registerGuide && (
+          <div className="register-guide">
+            <strong>{selected.registerGuide.title}</strong>
+            <ol>
+              {selected.registerGuide.steps.map((step) => <li key={step}>{step}</li>)}
+            </ol>
+          </div>
+        )}
         <div className="register-links">
           {registerLinks.map((link) => (
             <a key={link.url} className="button" href={link.url} target="_blank" rel="noreferrer">{link.label}</a>

@@ -1,89 +1,94 @@
 # Phase 3: QR Code Support — Research & Implementation Guide
 
-This document covers QR-code adoption across apostille-issuing authorities, technical encoding details discovered during Phase 2 research, and implementation strategy for Phase 3's scoped QR-scanning feature.
+This document maps QR-code adoption across apostille-issuing authorities to prepare for Phase 3's scoped QR-scanning feature. It covers **which countries' apostilles actually carry a QR code**, what each QR code *does* when scanned, a critical fraud caveat, and the resulting implementation strategy.
 
-## Jurisdictions supporting QR verification
+> **Correction to an earlier draft of this document.** A first pass equated "QR support" with the `verificationMode: "qr_only"` tag in our own dataset (6 authorities). That was circular and wrong. The `qr_only` tag means "the *only* verification path we found is QR" — it says nothing about the far larger set of authorities that print a QR code on the apostille **and also** run an online e-Register. QR is a property of the physical/electronic apostille, largely **orthogonal** to whether an e-Register exists. External research (below) shows QR codes are widespread — especially across Latin America, newer e-Apostille adopters, and South/Central Asia — including on apostilles from authorities we currently classify as `online` or even `upload`.
 
-### QR-only (6 authorities)
+## The one finding that shapes the whole feature: not every QR is a verification link
 
-These authorities issue apostilles with QR codes and have **no online number-lookup e-Register at all** — QR scanning is the only remote verification path.
+Scanning research surfaced **three functionally different things** a QR code on an apostille can encode. They are not interchangeable, and treating them as such is a security risk:
 
-| Country | Authority | Source of QR code | Verification mechanism |
-|---------|-----------|-------------------|------------------------|
-| **Bahrain** | Ministry of Foreign Affairs | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
-| **El Salvador** | Ministry of Foreign Affairs | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
-| **Luxembourg** | Ministry of Foreign Affairs | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
-| **Panama** | Órgano Judicial | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
-| **Russian Federation** | Ministry of Justice | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
-| **Rwanda** | Ministry of Foreign Affairs and International Cooperation | Printed/embedded on physical apostille | Scanning decodes to verification URL or result |
+| QR function | What scanning does | Verification value | Examples (by report) |
+|---|---|---|---|
+| **A. Deep-link to a verification result** | Opens the authority's own e-Register page showing this apostille's status | ✅ High — genuine one-tap verification, result comes from the government | Kazakhstan (MoJ registry), India eSanad (PDF-with-QR → e-Register), many e-Apostille systems |
+| **B. Download the apostille PDF** | Fetches the apostille document itself — **not** a verification result | ⚠️ Low, and dangerous — proves nothing about authenticity | Venezuela (QR only downloads the PDF) |
+| **C. Encode a code/token** | Yields a reference number the user must type into the official form | ➖ Medium — saves typing, still needs the e-Register | Some hybrid systems; Pakistan likely |
 
-### Hybrid (1 authority)
+### ⚠️ QR codes are an active fraud vector — this is the liability line
 
-This authority issues apostilles with QR codes **and** also provides an online number-lookup e-Register for cases where QR scanning isn't practical (PDF-only apostille, QR unreadable due to damage, etc.).
+Venezuelan consular-services guidance explicitly warns: **fraudsters generate a fake "verification page" image, encode it in a QR code, and print it on a forged apostille** so that scanning the QR "confirms" the fake. Because a QR code is just opaque encoded text, **a QR that opens a convincing-looking verification page proves nothing on its own** — the page could be attacker-controlled.
 
-| Country | Authority | QR-only path | Also supports | Online form fields |
-|---------|-----------|-------------|---------------|------------------|
-| **Pakistan** | Ministry of Foreign Affairs | Scanning decodes to verification URL | Number-based lookup | Apostille Number; Date |
+This maps directly onto the liability boundary in [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md): the app must never assert a verification result itself, and must never launder a fraudster's page as if it were the government's.
 
-### Conditional QR support (known cases)
-
-Several authorities mentioned QR as a fallback or alternative within their existing online forms, though these did not test as having primary QR-verification portals:
-
-- **Cyprus** — form lists "CAPTCHA or scan QR code" as alternatives for human verification
-- **Costa Rica** — explicitly noted in form design, but testing found no exposed QR-code endpoint
-- **Greece** — form explicitly offers "Electronic apostille number, **or QR scan**" as input alternatives (both route to the same POST verification)
-
-**Note:** These are modeled as field-based (Tier C) in Phase 2 since their online forms exist and work fine; QR is a user convenience option at the government's discretion, not a primary route. If you discover a specific jurisdiction where QR scanning is *faster* than the web form (e.g., a dedicated QR-only endpoint they don't advertise in their web UI), flag it and it can be split into a separate QR-scanning row.
+**Binding design rule for Phase 3:** after decoding a QR to a URL, **validate the decoded host against the known-official domain for that authority** (from our dataset) *before* treating it as verification. If the host doesn't match, do **not** auto-open it as "verification" — show the raw decoded content and warn the user it does not match the official domain on file. This turns our existing per-authority `registerUrl` data into a QR allowlist and is the single most important safety feature of this phase.
 
 ---
 
-## QR code content & encoding (from Phase 2 research)
+## Country / authority QR status
 
-### What does the QR code encode?
+**Confidence legend:** ✅ **Confirmed** = specific, credible source describes a QR on that authority's apostille · 🟡 **Likely** = regional pattern or secondary source, needs a sample to confirm · ❓ **Needs sample** = plausible but unconfirmed · ➖ **No/queuing-only** = no verification QR found (or QR is for something else).
 
-Research during Phase 2 testing and document review found two main patterns:
+All confidence here is documentary — **none of these were confirmed against a physical apostille sample.** Obtaining samples (see Discovery tasks) is the gate before writing decode logic for any given authority. Treat this table as a research lead list, not ground truth.
 
-#### Pattern 1: Direct URL encoding (most common)
+### Already `qr_only` in our dataset (QR is the primary/only path)
 
-The QR code encodes a complete, navigable URL that, when opened in a browser, displays the verification result directly. Examples observed:
+| Country | Authority | QR function (expected) | Confidence |
+|---|---|---|---|
+| Bahrain | Ministry of Foreign Affairs | A (deep-link) | ❓ Needs sample |
+| El Salvador | Ministry of Foreign Affairs | A (deep-link) | ❓ Needs sample |
+| Luxembourg | Ministry of Foreign Affairs | A (deep-link) | ❓ Needs sample |
+| Panama | Órgano Judicial | A (deep-link) | ❓ Needs sample |
+| Russian Federation | Ministry of Justice | A (deep-link) | ❓ Needs sample |
+| Rwanda | MFA & Int'l Cooperation | A or C — listed link was a generic file tracker | ❓ Needs sample |
 
-- **Ukraine (ENIC)** — encodes the deep-link template `enic.in.ua/index.php/en/aporegen?task=searchApo&apoNum={number}&reqNum={reqNum}&apoDate={date}` with actual values substituted
-- **Bulgaria** — several authorities encode URLs to their POST-based verification endpoints with embedded parameters
-- **Bahrain, El Salvador, Luxembourg, Panama, Russian Federation** — exact encoding unknown without physical apostille samples, but government documentation for several indicates direct URL encoding is the model
+### `hybrid` in our dataset (QR **and** online e-Register)
 
-**Implication for Phase 3:** Scanning → decode → navigate directly is likely to work for many of these, with no need for a field form after the QR is read.
+| Country | Authority | QR function (expected) | Confidence |
+|---|---|---|---|
+| Pakistan | Ministry of Foreign Affairs | C (token) → its own number-lookup form; MFA site lists "QR-Code Scan" as a method | ✅ Confirmed |
 
-#### Pattern 2: Code/token encoding
+### Currently `online` / `upload` in our dataset — but the apostille carries a QR (the important, previously-missed set)
 
-The QR code encodes a reference code or security token (not a full URL) that the government's website can use to look up the record:
+These are the authorities my first draft missed entirely. They have working online forms (so they're not `qr_only`), but their apostilles **also** carry a QR code that in most cases deep-links to the same e-Register.
 
-- **Rwanda** — originally reclassified as QR-only after finding that the listed URL (`irembo.gov.rw`) was a generic file-status tracker with no apostille-specific lookup. The actual QR-based verification mechanism is unknown without a physical sample.
-- **Pakistan (hybrid)** — the QR code likely encodes the apostille number and/or date for convenience, decoding to that same form's input fields
+| Country | Our current mode | QR evidence | QR function | Confidence |
+|---|---|---|---|---|
+| **Philippines** | online (fields) | DFA e-Apostille: verify by **scanning the QR on the cover sheet**, or link, or serial+keycode at `e-app1.apostille.gov.ph/eAppVerification` | A (deep-link) | ✅ Confirmed |
+| **India** | online (fields, CAPTCHA) | MEA affixes a **QR-coded sticker with unique ID**; digital apostille is a PDF with QR → verify via eSanad e-Register | A (deep-link) | ✅ Confirmed |
+| **Kazakhstan** | online (fields, CAPTCHA) | e-Apostille carries a QR that **directs to the MoJ registry** verification page | A (deep-link) | ✅ Confirmed |
+| **Bangladesh** | upload | MFA guide: **scan the QR code** to verify it was authenticated by MoFA Bangladesh (in addition to the signed-PDF upload tool) | A (deep-link) | ✅ Confirmed |
+| **Ukraine** | Education: deep-link GET; Justice: online | Since **Feb 2026**, apostilles on civil-status certificates are issued via the Unified electronic register and **must contain a QR code** | A (deep-link) | ✅ Confirmed |
+| **Colombia** | online (fields) | Apostilles carry a QR; Cancillería runs a full online apostille + verification system | A (deep-link) | ✅ Confirmed |
+| **Venezuela** | online (fields, CAPTCHA) | Apostilles carry a QR, **but it only downloads the PDF** — official guidance says verify via the site, not the QR; **known fraud vector** | **B (PDF only)** | ✅ Confirmed |
+| **Ecuador** | online (fields, CAPTCHA) | Regional reporting: "all apostilles have QR codes" + number/code/date security elements | A (deep-link) | 🟡 Likely |
+| **Peru** | online (fields, CAPTCHA) | Same regional reporting as Ecuador | A (deep-link) | 🟡 Likely |
+| **Chile** | online (fields, CAPTCHA) | e-Apostille issued/stored electronically, verifiable online; e-Registers use QR to generate unique verification URLs | A (deep-link) | 🟡 Likely |
+| **Uruguay** | online (fields) | Regional pattern (Southern Cone e-Apostille rollout) | A (deep-link) | ❓ Needs sample |
+| **Dominican Republic** | online (fields) | Regional pattern; MFA runs an online verifier | A/C | ❓ Needs sample |
 
-**Implication for Phase 3:** Scanning → decode → extract fields → submit to the authority's form. This requires knowing the exact encoding scheme per authority — likely a per-country research task if we want to support it.
+### United States — special case (mostly paper + e-Register, QR uncommon)
 
-### Barcode formats beyond QR
+US practice is distinct and a good source of **false positives** to avoid:
 
-The HCCH chart references several authorities with "code" or "barcode" verification; Phase 2 research was QR-focused. Known non-QR formats used in apostilles include:
+- Most US states that appear in our dataset (California, Texas, New York, North Carolina, Arkansas, Delaware, Tennessee, West Virginia) issue **paper apostilles with an online e-Register**, *not* a QR printed on the document. Where a QR does appear on a US e-Apostille, it routes to the state's e-Register.
+- **Texas "QR" is a trap:** the QR at the Texas SOS office is for **queuing at the walk-in desk**, not document verification. Do not model it as an apostille QR.
+- The former e-Apostille pilots (Connecticut, Rhode Island, Utah — all ended Sept 2025) issued QR-coded e-Apostilles, but they no longer issue and their verification sites are gone/application-only (Tier D in our dataset).
 
-- **Code 128** — some European authorities (e.g., Czech Republic, referenced but not in our 75-authority set)
-- **PDF417** — some US states and Latin American jurisdictions
-- **Aztec Code** — less common but used by some Caribbean/Latin American authorities
+**Takeaway:** for the US, default to the existing field-based / e-Register flow. Only add a QR path for a specific state once a real sample apostille with a verification QR is in hand.
 
-**Note:** The Phase 3 plan explicitly excludes non-QR barcode scanning in the web product; it stays scoped to QR only. Barcode support beyond QR is moved to Phase 5 (native mobile app).
+### Authorities that mention QR only as a form alternative (not a separate scan path)
+
+Greece and Cyprus expose "enter number **or** scan QR" *inside* their online forms; both route to the same POST verification. These stay Tier C (field-based) in Phase 2 — the QR is a convenience the government offers on its own page, not a separate endpoint we'd scan client-side. No action for Phase 3 unless a sample shows a distinct QR-only route.
 
 ---
 
-## Authorities with QR capability noted but not in the primary set
+## How big is the real footprint?
 
-These appeared in research but fell outside the 75-authority scope we tested (either no confirmed e-Register row, pilot programs, or historical data):
+- **Confirmed QR on the apostille:** ~8 authorities beyond the `qr_only`/`hybrid` set (Philippines, India, Kazakhstan, Bangladesh, Ukraine, Colombia, Venezuela, + Pakistan), plus the 6 existing `qr_only`. That's already **~2–3× my original "6+1" estimate**, and it excludes the "likely" tier.
+- **Likely / regional:** Ecuador, Peru, Chile, Uruguay, Dominican Republic and probably more of Latin America — the region has broadly rolled out QR-bearing e-Apostilles.
+- **Direction of travel:** newer adopters (Ukraine's 2026 civil-status rollout is the clearest example) are making QR *mandatory*. The set will grow; the dataset needs a dedicated `hasQrCode` flag rather than inferring QR from `verificationMode`.
 
-| Jurisdiction | Status | QR capability | Notes |
-|--------------|--------|-----|-------|
-| **USA — Connecticut** | e-Apostille pilot (ended Sept 2025) | Issued with QR codes | Pilot ended; no longer issuing. Not in HCCH chart. |
-| **USA — Rhode Island** | e-Apostille pilot (ended Sept 2025) | Issued with QR codes | Pilot ended Sept 2025; remaining site is application-only, not verification. Reclassified Tier D (contact-only). |
-| **USA — Utah** | e-Apostille pilot (ended Sept 2025) | Issued with QR codes | Pilot ended; no longer issuing. Not in HCCH chart. |
-| **China — Mainland** | Online + alternate paths | Mentioned in forms | Some forms reference QR as a fallback, but no primary QR-verification endpoint found during Phase 2 research. |
+**Recommended schema change:** add an independent boolean/enum to each dataset row — e.g. `qrCode: { present: true, function: 'deeplink' | 'pdf_download' | 'token' | 'unknown', officialHost: 'apostille.gov.ph' }` — instead of overloading `verificationMode`. This lets an `online` authority also advertise a QR path, and gives the domain-validation rule (above) its allowlist source.
 
 ---
 
@@ -91,137 +96,78 @@ These appeared in research but fell outside the 75-authority scope we tested (ei
 
 ### Scope
 
-**In:** QR-code scanning for the 6 QR-only authorities + Pakistan (hybrid) using `getUserMedia` (browser camera) or a fallback file picker (for saved QR images).
+**In:** client-side QR scanning (camera via `getUserMedia`, plus a file-picker fallback for saved images), decode, **domain-validate against the authority's official host**, then either open the verified deep-link or show the decoded token/content for the user to use on the official site. Applies to every authority with `qrCode.present` — the `qr_only` set, the hybrid set, and the `online`-with-QR set above.
 
-**Out of Phase 3, into Phase 5:** Barcode formats other than QR, OCR field extraction, photo upload of paper apostilles.
+**Out (moved to Phase 5, native app):** non-QR barcodes (Code 128, PDF417, Aztec), OCR field extraction, photo capture of paper apostilles.
 
 ### User workflow
 
-1. User navigates to an apostille they're trying to verify.
-2. App detects it's from a QR-only jurisdiction or offers QR as an alternative (hybrid).
-3. User taps "Scan QR code" → browser requests camera permission.
-4. User points camera at the apostille's QR code → client-side `jsQR` or similar library decodes it.
-5. Decoded content is processed:
-   - **If it's a URL:** open it directly (one-tap verification, same as Phase 2's deep-link mechanism).
-   - **If it's a code/token:** attempt to match against known patterns per authority; if a pattern exists, build and submit a form; otherwise, show the code and let the user paste it into the official site.
-6. Result is displayed (either from the government's page or, if the code was decoded but no form pattern exists, as a fallback).
+1. User selects the authority. If it has `qrCode.present`, offer **"Scan QR code"** (alongside "Open official e-Register" for hybrid/online authorities; as the primary action for `qr_only`).
+2. Camera permission requested **on tap** (never on load). File-picker fallback always available.
+3. Client-side decode (`jsQR`).
+4. **Domain-validate** the decoded content:
+   - **Function A (deep-link), host matches official:** open it directly → user reads the government's own result. One-tap verification.
+   - **Function A, host does NOT match:** ⚠️ stop. Show "This QR points to `X`, which is not `authority.officialHost`. Do not trust it as verification." (fraud guard).
+   - **Function B (PDF download, e.g. Venezuela):** explicitly tell the user the QR only fetches the document and is **not** proof of authenticity; route them to the real e-Register form instead.
+   - **Function C (token):** extract and pre-fill the Phase 2 field form / show the value to paste.
+5. Never parse, store, or assert the government's result ourselves (same rule as Phase 2).
 
-### Fallback for no camera / saved image
+### Technical notes
 
-- File picker input that accepts `.png`, `.jpg`, `.jpeg`, `.gif` (common image formats).
-- Same `jsQR` decode-and-process logic.
-- Useful for users on a desktop or with a camera-incompatible browser, or who have a saved screenshot of a QR code.
+- **Decoder:** `jsQR` (client-only, lightweight). Alternative: ZXing-JS (heavier, more formats — only needed if we later pull some barcode work forward).
+- **Camera:** `getUserMedia` requires HTTPS (or localhost). Request on user action; handle denial by falling back to the file picker without friction.
+- **Mobile:** works on modern iOS Safari (15+) and Android; desktop varies — file-picker fallback is mandatory, not optional.
+- **Privacy:** decode happens entirely in-browser; the image never leaves the device. Say so in the UI.
 
-### Technical considerations
+### Data / discovery work (the real gate)
 
-- **QR decode library:** `jsQR` (https://github.com/cozmo/jsQR) is lightweight, client-only, and well-tested. Alternative: `zxing` (ZXing JavaScript), but jsQR is smaller.
-- **Camera permissions:** `getUserMedia` API; request only on user action (button tap), not page load. Handle permission denial gracefully.
-- **HTTPS requirement:** `getUserMedia` only works over HTTPS (or `localhost` for testing).
-- **Mobile considerations:** browser camera works on most modern mobile browsers (iOS 15+, Android 4.4+). Desktop browsers vary; fallback to file picker is essential.
+1. **Obtain 2–3 sample apostilles** from each `qrCode.present` authority (embassies, notary/apostille services, or public sample documents governments post). This is required before writing decode logic — we cannot guess the encoding.
+2. For each sample, record: is it function A/B/C? What host does a URL point to (→ populate `officialHost`)? Any per-record params or expiry/referrer requirements?
+3. Populate the new `qrCode` schema field per authority; version it like the e-registers dataset.
+4. Extend the planned `scripts/check-links.mjs` health-check to also flag when a known QR `officialHost` stops resolving or changes — QR endpoints rot exactly like e-Register links do.
 
-### Phase 3 data needs
-
-To implement the code-decoding paths (if QR codes in some jurisdictions encode tokens rather than URLs), we need:
-
-1. **Sample QR codes from each jurisdiction** (or documentation of their encoding scheme).
-2. **Per-authority decode mapping:** a config that says "if authority is Rwanda and QR contains X pattern, extract fields Y and Z" — similar to the existing `verification-fields.js` structure, but for QR decoding.
-
-This is a research task that happens in parallel with the implementation:
-
-- Request sample apostilles from the government or a service that issues apostilles in those countries.
-- Decode them and document the format.
-- Build decode mappings accordingly.
-
-**Until this research is done:** the fallback is to show the raw decoded text to the user ("Here's what the QR code contained: `...`") and guide them to paste it into the official site manually.
-
-### UI/UX patterns
-
-1. **QR button placement:** For QR-only jurisdictions, a prominent "Scan QR code" button replaces the usual "Open official e-Register" link. For hybrid (Pakistan), both buttons appear side-by-side.
-2. **Camera UI:** Consider a full-screen camera viewfinder with corner guides (like a mobile banking app) for better UX. Minimum requirement: a simple `<video>` element with the camera stream.
-3. **Scanning success:** Once a QR is decoded, show the result inline (either the government's verification page in an iframe or, for auto-submit URLs, a "Verified!" banner).
-4. **Scanning failure:** If `getUserMedia` fails or no camera is detected, present the file-picker fallback without friction.
-5. **Hybrid option:** For Pakistan, clearly label which button leads to which flow — "Scan QR" vs. "Enter apostille number manually."
-
----
-
-## Recommended discovery tasks before implementation
-
-1. **Obtain sample apostilles** from each of the 6 QR-only jurisdictions + Pakistan (hybrid). This is essential to understand QR encoding.
-   - Contact embassies, notary services, or government sites directly.
-   - Look for public examples on government websites (some post sample documents).
-
-2. **Document QR encoding schemes** — for each jurisdiction, extract and analyze 2–3 QR samples:
-   - Does it encode a full URL? If so, does it navigate directly to a result page or to a form?
-   - Does it encode a code/token? If so, what format and what does the official site expect?
-   - Are there any per-record parameters (date, sticker number, etc.) or is the QR self-contained?
-
-3. **Verify camera API support** in the target user base:
-   - Test on iOS Safari (historically the most restrictive).
-   - Test on older Android browsers.
-   - Establish minimum OS versions for full QR support; design graceful fallbacks for older devices.
-
-4. **Test with real government sites:**
-   - For authorities that publish sample apostilles with QR codes, scan them and follow the decoded URL to confirm it works.
-   - Document any quirks (e.g., does the government's URL require a referrer, or expire after a time limit?).
-
----
-
-## Related Phase 3 risks & mitigations
-
-### Risk 1: QR code format variation per authority
-
-**Problem:** Each government may encode QR differently (URL vs. token vs. mixed). Without sample apostilles, we can't build decode logic.
-
-**Mitigation:** 
-- Discovery phase (above) must include analyzing actual QR codes from each jurisdiction.
-- Start Phase 3 implementation with URL-based decoding only (simplest case); add token-based decoding only for authorities where we've verified the encoding scheme.
-- Fallback to "show the raw decoded text" for authorities we can't decode yet.
-
-### Risk 2: Government changes QR encoding or URL structure
-
-**Problem:** Like link rot in Phase 2, QR encoding can become stale or change. A government might migrate their verification endpoint.
-
-**Mitigation:**
-- Plan for ongoing monitoring (add to the `scripts/check-links.mjs` health-check mentioned in DEVELOPMENT_PLAN.md § Data foundation).
-- Document the QR format per authority so changes are easy to spot.
-- Version the decode mappings (similar to how we version the e-registers dataset).
-
-### Risk 3: Camera permissions / privacy concerns
-
-**Problem:** Some users won't grant camera permission; iOS in particular prompts noisily.
-
-**Mitigation:**
-- File-picker fallback for every camera-based flow (already planned above).
-- Clear messaging: "We'll use your camera to scan the QR code — the image is never sent to our servers."
-- Consider offering the option to upload an image instead of live-camera scanning on first-time setup.
+Until a given authority's sample is analyzed, the safe fallback is: decode, show the raw text, and (if it's a URL) apply the domain check but do **not** claim it's verification.
 
 ---
 
 ## Success criteria for Phase 3
 
-1. ✅ QR scanning works for all 6 QR-only + 1 hybrid authority without server-side API calls (purely client-side decode).
-2. ✅ User can scan a physical apostille's QR code in under 3 seconds (from button tap to result displayed).
-3. ✅ File-picker fallback works identically to live camera on desktop / older browsers.
-4. ✅ Decoded QR result (whether URL or token) navigates to a verification result that does **not** come from our servers (user sees the government's own page or result).
-5. ✅ App handles camera permission denial gracefully (offers file picker, doesn't crash).
-6. ✅ All 7 authorities' QR flows are tested against real sample apostilles (not mocked QR codes).
+1. ✅ QR scanning works client-side (no server round-trip) for every `qrCode.present` authority with a confirmed sample.
+2. ✅ Decoded URLs are **domain-validated against the authority's official host**; non-matching hosts are refused as verification and flagged to the user.
+3. ✅ Function B (PDF-only, Venezuela-style) and function C (token) QRs are handled distinctly from function A — the app never presents a PDF download or a mismatched page as "verified."
+4. ✅ File-picker fallback is at parity with live camera; camera-permission denial degrades gracefully.
+5. ✅ The app never asserts a verification outcome itself (Phase 2 liability rule preserved).
+6. ✅ Every supported authority's QR flow is tested against a real sample apostille, not a synthetic QR.
 
 ---
 
-## Appendix: Authorities removed from QR consideration
+## Open questions / risks
 
-| Jurisdiction | Original status | Why removed from QR support |
-|--------------|-----------------|-----|
-| **Rwanda** | Initially QR-only per source data | Irembo file-status tracker is not an apostille e-register; actual QR-verification mechanism unknown without a sample apostille. Kept as QR-only in the dataset pending sample verification. |
-| **Cyprus** | Offers "CAPTCHA or QR code" in form | But the form itself is also available and works fine via field-based lookup (Tier C); QR is a user convenience option the government offers, not a primary path. No dedicated QR-only endpoint found. |
-| **Greece** | Offers "Number or QR code" as input alternatives | Both route to the same POST form; form-based lookup is primary and works (Tier C). No dedicated QR verification portal. |
-| **Costa Rica** | QR noted in form but no separate endpoint | Form-based lookup works; QR appeared to be a planned feature mentioned in comments but not exposed in the UI. |
+- **Encoding varies per authority** — no single standard. Mitigation: sample-driven, per-authority decode config; URL-deep-link (function A) first, tokens later.
+- **QR fraud** (documented for Venezuela; structurally possible anywhere) — Mitigation: the domain-validation rule is non-negotiable and is the core safety mechanism of this phase.
+- **Endpoint/host rot** — Mitigation: fold QR `officialHost` monitoring into the link-health script.
+- **Regional "likely" rows unconfirmed** — Mitigation: don't ship a QR path for a "likely"/"needs sample" authority until a sample confirms function and host.
+- **Scope creep to OCR/barcodes** — Mitigation: keep those in Phase 5 per [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md); Phase 3 is QR-only.
 
 ---
 
-## References & further reading
+## Sources
 
-- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — Phase 3 scope & timeline
-- [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md) — detailed per-authority research results
-- `src/data/verification-fields.js` — per-authority configuration (will add QR decode mappings here in Phase 3)
-- `src/data/e-registers.cleaned.json` — master dataset with `verificationMode: "qr_only"` and `"hybrid"` entries
+External research (July 2026):
+- [IUCA — Is a QR Code Mandatory for an Apostille?](https://iuca.org/is-qr-code-mandatory-for-an-apostille/)
+- [Apostille.ong — The Non-Mandatory Nature of QR Codes on Apostilles](https://apostille.ong/debunking-the-myth-the-non-mandatory-nature-of-qr-codes-on-apostilles/)
+- [Philippines DFA — e-Apostille (verify via QR on cover sheet)](https://www.apostille.gov.ph/e-apostille/) · [DFA e-App verification portal](https://e-app1.apostille.gov.ph/eAppVerification)
+- [India MEA eSanad](https://esanad.nic.in/) · [eSanad on National Government Services Portal](https://services.india.gov.in/service/detail/e-register-esanad-1)
+- [Bangladesh MoFA — e-Apostille Verification Guide (scan QR)](https://mofa-servicedirectory.apostille.mygov.bd/how-to-verify)
+- [Pakistan MoFA apostille portal (QR-Code Scan method)](https://apostille.mofa.gov.pk/)
+- [Ukraine 2026 — QR-code apostille on civil-status certificates](https://prikhodko.com.ua/en/media/media/article/affixing-an-apostille-with-a-qr-code-to-a-civil-registration-certificate-new-procedure-for-2026/)
+- [Serviapostilla — Venezuela QR only downloads the PDF; QR fraud warning](https://serviapostillainternacional.wordpress.com/2021/08/08/apostillas-con-codigo-qr-son-validas/)
+- [Colombia Cancillería — Verificación de Apostilla](https://tramites.cancilleria.gov.co/apostillalegalizacion/consulta/documento.aspx)
+- [ezApostille — e-Apostille in the USA (states with e-Registers)](https://www.ezapostille.com/what-is-e-apostille-in-the-usa-states-that-provide-digital-apostille-services/)
+- [Global Document Solutions — e-Apostille Registry by Country](https://www.globaldocumentsolutions.com/e-apostille-registry-by-country/)
+- [Apostille London — Countries Accepting the e-Apostille in 2026](https://apostillelondon.com/blog/countries-accepting-the-e-apostille/)
+
+Internal:
+- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — Phase 3 scope & liability boundary
+- [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md) — per-authority field/deep-link research
+- `src/data/e-registers.cleaned.json` · `src/data/verification-fields.js` — dataset (needs the new `qrCode` field)

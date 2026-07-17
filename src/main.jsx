@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AlertTriangle, Check, Copy, ExternalLink, MailQuestion, QrCode, ShieldCheck, UploadCloud } from 'lucide-react'
+import { AlertTriangle, ExternalLink, MailQuestion, QrCode, ShieldCheck, UploadCloud } from 'lucide-react'
 import { eRegisters, sourceUrl } from './data/e-registers'
 import { verificationFields } from './data/verification-fields'
 import { messages as t } from './i18n/en'
+import { fieldKey, fieldLabel, validateVerificationField } from './verification-validation'
 import './styles.css'
 
 function App() {
@@ -78,6 +79,7 @@ function ResultPanel({ selected }) {
     selected.eRegisterNumber ? `e-Register marker: ${selected.eRegisterNumber}` : null,
     selected.eApostilleDate ? `e-Apostille since: ${selected.eApostilleDate}` : null
   ].filter(Boolean)
+  const registerLinks = selected.registerLinks || [{ label: t.verify, url: selected.registerUrl }]
 
   if (selected.verificationMode === 'qr_only') {
     return <Status icon={<QrCode aria-hidden="true" />} title="QR-code verification only" message={t.qrOnly} selected={selected} details={details} tone="warning" />
@@ -106,7 +108,11 @@ function ResultPanel({ selected }) {
       <div>
         <strong>{selected.authority}</strong>
         <p>{selected.verificationMode === 'hybrid' ? t.hybrid : selected.notes}</p>
-        <a className="button" href={selected.registerUrl} target="_blank" rel="noreferrer">{t.verify}</a>
+        <div className="register-links">
+          {registerLinks.map((link) => (
+            <a key={link.url} className="button" href={link.url} target="_blank" rel="noreferrer">{link.label}</a>
+          ))}
+        </div>
         <small>{t.privacy}</small>
         <VerificationHelper entry={selected} />
       </div>
@@ -117,14 +123,14 @@ function ResultPanel({ selected }) {
 function VerificationHelper({ entry }) {
   const config = verificationFields[entry.id]
   const [values, setValues] = useState({})
-  const [copied, setCopied] = useState(false)
+  const [touched, setTouched] = useState({})
 
   useEffect(() => {
     setValues({})
-    setCopied(false)
+    setTouched({})
   }, [entry.id])
 
-  if (!config) return null
+  if (!config || (config.kind !== 'upload' && !config.deepLink)) return null
 
   if (config.kind === 'upload') {
     return (
@@ -138,27 +144,17 @@ function VerificationHelper({ entry }) {
     )
   }
 
-  const onFieldChange = (field, value) => {
-    setValues((prev) => ({ ...prev, [field]: value }))
-    setCopied(false)
+  const onFieldChange = (field, index, value) => {
+    const key = fieldKey(field, index)
+    setValues((prev) => ({ ...prev, [key]: value }))
+    setTouched((prev) => ({ ...prev, [key]: true }))
   }
 
-  const hasAnyValue = config.fields.some((field) => (values[field] || '').trim())
-  const allFieldsFilled = config.fields.every((field) => (values[field] || '').trim())
-  const summary = config.fields
-    .map((field) => `${field}: ${(values[field] || '').trim() || '(not entered)'}`)
-    .join('\n')
-
-  const onCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(summary)
-      setCopied(true)
-    } catch {
-      setCopied(false)
-    }
-  }
-
-  const deepLinkReady = Boolean(config.deepLink) && allFieldsFilled
+  const errors = Object.fromEntries(config.fields.map((field, index) => {
+    const key = fieldKey(field, index)
+    return [key, validateVerificationField(field, values[key] || '')]
+  }))
+  const deepLinkReady = Boolean(config.deepLink) && Object.values(errors).every((error) => !error)
   const deepLinkMethod = config.deepLink?.method === 'post' ? 'post' : 'get'
 
   const deepLinkUrl = deepLinkReady && deepLinkMethod === 'get'
@@ -166,7 +162,7 @@ function VerificationHelper({ entry }) {
         const url = new URL(config.deepLink.baseUrl)
         Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => url.searchParams.set(key, value))
         config.deepLink.paramOrder.forEach((param, index) => {
-          url.searchParams.set(param, values[config.fields[index]].trim())
+          url.searchParams.set(param, values[fieldKey(config.fields[index], index)].trim())
         })
         return url.toString()
       })()
@@ -186,7 +182,7 @@ function VerificationHelper({ entry }) {
       form.appendChild(input)
     }
     Object.entries(config.deepLink.extraParams || {}).forEach(([key, value]) => appendHidden(key, value))
-    config.deepLink.paramOrder.forEach((param, index) => appendHidden(param, values[config.fields[index]].trim()))
+    config.deepLink.paramOrder.forEach((param, index) => appendHidden(param, values[fieldKey(config.fields[index], index)].trim()))
     document.body.appendChild(form)
     form.submit()
     document.body.removeChild(form)
@@ -195,17 +191,25 @@ function VerificationHelper({ entry }) {
   return (
     <div className="verify-helper">
       <h4>{t.helperTitle}</h4>
-      <p className="muted small-muted">{config.deepLink ? t.helperIntroDeepLink : t.helperIntroSimple}</p>
-      {config.fields.map((field) => (
-        <label key={field} className="field-row">
-          <span>{field}</span>
+      <p className="muted small-muted">{t.helperIntroDeepLink}</p>
+      {config.fields.map((field, index) => {
+        const key = fieldKey(field, index)
+        const error = errors[key]
+        return (
+        <label key={key} className="field-row">
+          <span>{fieldLabel(field)}</span>
           <input
             type="text"
-            value={values[field] || ''}
-            onChange={(event) => onFieldChange(field, event.target.value)}
+            value={values[key] || ''}
+            placeholder={field.placeholder}
+            aria-invalid={touched[key] && Boolean(error)}
+            aria-describedby={touched[key] && error ? `${key}-error` : undefined}
+            onChange={(event) => onFieldChange(field, index, event.target.value)}
           />
+          {touched[key] && error && <small id={`${key}-error`} className="field-error">{error}</small>}
         </label>
-      ))}
+        )
+      })}
       {config.note && <small>{config.note}</small>}
       {deepLinkUrl && (
         <a className="button" href={deepLinkUrl} target="_blank" rel="noreferrer">
@@ -213,21 +217,11 @@ function VerificationHelper({ entry }) {
           {t.verifyNow}
         </a>
       )}
-      {deepLinkReady && deepLinkMethod === 'post' && (
-        <button type="button" className="button" onClick={onDeepLinkPost}>
+      {deepLinkMethod === 'post' && (
+        <button type="button" className="button" onClick={onDeepLinkPost} disabled={!deepLinkReady}>
           <ExternalLink size={16} aria-hidden="true" />
           {t.verifyNow}
         </button>
-      )}
-      {hasAnyValue && !deepLinkReady && (
-        <div className="copy-panel">
-          <p className="muted small-muted">{t.helperCopyIntro}</p>
-          <pre>{summary}</pre>
-          <button type="button" className="button secondary" onClick={onCopy}>
-            {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-            {copied ? t.copied : t.copyValues}
-          </button>
-        </div>
       )}
     </div>
   )

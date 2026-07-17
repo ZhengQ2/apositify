@@ -83,8 +83,12 @@
             "number": 3,
             "date": "June 2015"
           },
-          "e_register": null,
-          "notes": "Corrected 2026-07: signaturpruefung.gv.at redirects to an RTR informational page with no working verification tool. No online e-Register currently exists; contact the Federal Ministry directly."
+          "e_register": {
+            "number": 5,
+            "method": "https://signaturpruefung.egiz.gv.at/signature-verification/file-upload",
+            "label": "Available Here"
+          },
+          "notes": "Corrected 2026-07: the old signaturpruefung.gv.at URL redirects to an RTR informational hub with no direct tool, but RTR's actual signature-verification service is live at signaturpruefung.egiz.gv.at (upload the e-Apostille file to verify its digital signature/seal)."
         }
       ]
     },

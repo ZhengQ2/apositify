@@ -1,9 +1,10 @@
 # Apostille Verification & e-Register App — Development Plan (Revised)
 
-This revises the original 5-phase plan after two things surfaced during Phase 1 work:
+This revises the original 5-phase plan after three things surfaced during Phase 1/2 work:
 
 1. **Automating form submission against official government portals (original Phase 2) is the wrong foundation.** It risks violating portal terms of use, requires maintaining a scraper per jurisdiction with no stable contract, and creates real liability if a broken scraper or stale cache asserts "Valid" incorrectly. See "What changed" below.
 2. **e-Apostille and e-Register are different things and must not be conflated in data or code.** An **e-Apostille** is the electronic certificate itself (a signed PDF/XML issued by the competent authority). An **e-Register** is the government's own online lookup where anyone can check whether a given Apostille (paper or electronic) is genuine. A jurisdiction can have either, both, or neither — and several rows in our source data pointed at an e-Apostille *application* page when the chart claimed an e-Register. Investigating our "dead link" list (see Appendix) found this exact conflation in Nicaragua and Rhode Island.
+3. **Most authorities have no direct online path at all — Phase 2's own research confirmed this.** Of 75 fielded authorities tested by actually submitting their live forms, only 6 support one-click deep-linking; the rest are copy-assist. Given that, building a full QR/barcode/OCR image pipeline into the general web product (original Phase 3) front-loads OCR complexity onto the cases where it can't lead anywhere better than copy-assist anyway. Phase 3 is now scoped down to just QR-code scanning for the authorities that actually support it (Tier E); general photo-upload/OCR extraction moves to Phase 5, as an in-app-only feature of the native mobile app rather than a web feature — see below.
 
 ## Terminology (binding for schema and code)
 
@@ -17,8 +18,8 @@ Every dataset row must carry both `hasEApostille` and `hasERegister` as independ
 ## What changed from the original plan
 
 - **Original Phase 2** (headless-browser automated form submission + result scraping) is replaced with **structured manual verification + smart routing** — no server-side automation, no scraping of result pages, nothing that touches a government portal except a normal user-driven browser navigation.
-- **Original Phase 3** (image upload / QR / OCR) is unchanged in spirit but now explicitly described as *feeding into* Phase 2's routing layer, rather than needing its own submission logic.
-- Phase 4/5 are lightly corrected (a wrong library recommendation, a scoping suggestion) but structurally the same.
+- **Original Phase 3** (image upload / QR / OCR, all in one phase) is split up: QR-code scanning stays in Phase 3, scoped to only the authorities that actually support QR verification. General photo-upload/OCR field extraction moves to Phase 5 and becomes an **in-app-only** feature of the native mobile app — it is explicitly not part of the web product.
+- Phase 4 is lightly corrected (a wrong library recommendation) but structurally the same. Phase 5 absorbs the OCR/barcode/image-preprocessing work that used to be Phase 3's, on top of its original mobile-app scope.
 
 ---
 
@@ -37,9 +38,9 @@ Country/authority dropdowns backed by the HCCH e-APP implementation chart, with 
 Every authority row gets classified into exactly one tier, driven by data, not guesswork:
 
 - **Tier A — Direct link, no fields needed.** The e-Register is a simple portal; Phase 1 already covers this (open link in new tab).
-- **Tier B — Deep-link (GET URL, or POST auto-submit).** The e-Register either accepts query parameters on a plain URL, or is a clean POST form with no CSRF token/CAPTCHA — the latter is driven by building a hidden `<form>` with the values and auto-submitting it client-side, the same mechanism payment-gateway redirects use (a real navigation, not a blocked cross-origin fetch). **Confirmed by testing to be rare: only 6 of 74 fielded authorities qualify** (Ukraine's Ministry of Education via GET; Bulgaria ×2, Andorra, Costa Rica, and Moldova via POST auto-submit — see [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md) for the full per-authority breakdown and exact URL/field templates). Several forms that looked GET-based in static HTML (Belgium, Bolivia, Indonesia, Delaware/USA) turned out, once actually filled in and submitted, to be JS/SPA forms in disguise — so this tier is populated only from live-verified cases, never guessed from a form's `method` attribute alone. Either mechanism is indistinguishable from a human submitting the same form themselves, so it carries none of the ToS/automation risk of headless submission.
+- **Tier B — Deep-link (GET URL, or POST auto-submit).** The e-Register either accepts query parameters on a plain URL, or is a clean POST form with no CSRF token/CAPTCHA — the latter is driven by building a hidden `<form>` with the values and auto-submitting it client-side, the same mechanism payment-gateway redirects use (a real navigation, not a blocked cross-origin fetch). **Confirmed by testing to be rare: only 6 of 75 fielded authorities qualify** (Ukraine's Ministry of Education via GET; Bulgaria ×2, Andorra, Costa Rica, and Moldova via POST auto-submit — see [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md) for the full per-authority breakdown and exact URL/field templates). Several forms that looked GET-based in static HTML (Belgium, Bolivia, Indonesia, Delaware/USA) turned out, once actually filled in and submitted, to be JS/SPA forms in disguise — so this tier is populated only from live-verified cases, never guessed from a form's `method` attribute alone. Either mechanism is indistinguishable from a human submitting the same form themselves, so it carries none of the ToS/automation risk of headless submission.
 - **Tier C — POST-only or JS-driven portal, no stable URL scheme.** This is the default outcome for the large majority of authorities (confirmed CAPTCHA-gated, CSRF-token-guarded, or AJAX/SPA-based). We still collect the same fields (number, date, etc.) via a review/edit form, but instead of submitting anything ourselves we show a "here are your values — copy these, then open the official site" panel. The user pastes and submits it themselves, and reads the verdict on the government's own page. We never parse or store the result.
-- **Tier D — No e-Register exists.** (Nicaragua, Rhode Island post-pilot, Baja California Sur, and Austria all landed here after investigation — see Appendix. USA/Texas was briefly misclassified here too, before its real verifier was found — see corrections in [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md).) Show a clear "contact the issuing authority directly" message with the authority's contact info, exactly like Phase 1's manual-contact state.
+- **Tier D — No e-Register exists.** (Nicaragua, Rhode Island post-pilot, and Baja California Sur all landed here after investigation — see Appendix. USA/Texas and Austria were briefly misclassified here too, before their real verifiers were found — see corrections in [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md).) Show a clear "contact the issuing authority directly" message with the authority's contact info, exactly like Phase 1's manual-contact state.
 - **Tier E — QR-only or hybrid.** Unchanged from Phase 1: QR-only authorities (including Rwanda, reclassified after its listed link turned out to be a non-apostille file tracker) get an informational message; hybrid authorities (Pakistan) get both the link and the QR note.
 
 ### Field-definition metadata
@@ -48,7 +49,7 @@ A small per-authority config (extending the existing dataset, not a new database
 
 ### Why this is meaningful on its own (not just a stepping-stone to Phase 3)
 
-Phase 1 already gets a user to the right portal. Phase 2's actual new value is: the user no longer has to *guess* what fields that portal wants, and where a deep link is possible, they skip a manual form entirely. This ships and is useful before any OCR/image work exists in Phase 3 — Phase 3 later just becomes another way to fill in the same fields (from an image instead of a keyboard).
+Phase 1 already gets a user to the right portal. Phase 2's actual new value is: the user no longer has to *guess* what fields that portal wants, and where a deep link is possible, they skip a manual form entirely. This ships and is useful independent of Phase 3's QR scanning or Phase 5's photo-upload/OCR — both later just become other ways to fill in the same fields (from a QR code or an image instead of a keyboard).
 
 ### Explicitly out of scope for Phase 2
 
@@ -58,14 +59,18 @@ Phase 1 already gets a user to the right portal. Phase 2's actual new value is: 
 
 ---
 
-## Phase 3 — Image upload: QR / Barcode / OCR extraction
+## Phase 3 — QR-code scanning (downscoped)
 
-Unchanged from the original plan's technical approach (ZXing/jsQR for QR/barcode, Tesseract.js for OCR, prefer client-side processing so images don't need to leave the browser when avoidable — better for privacy and for GDPR-style data minimization). The one structural change: extracted fields flow into Phase 2's tier-based routing instead of into a scraper. Concretely:
+**Rescoped:** the original Phase 3 (QR + barcode + OCR from an uploaded image) tried to cover every authority uniformly. Given Phase 2's own research found the large majority of authorities have no deep link and would only get copy-assist value out of extracted fields anyway, that made OCR the most expensive part of the plan for the least payoff. Phase 3 now covers **only QR-code scanning, only for the authorities that actually support QR verification** — the existing Tier E set (QR-only: Bahrain, El Salvador, Luxembourg, Panama/Órgano Judicial, Russian Federation; hybrid: Pakistan) plus any authority whose e-Register also happens to expose a QR option. Barcode scanning and OCR field extraction are cut from this phase entirely and move to Phase 5 (see below).
 
-1. User uploads an image.
-2. Client-side QR/barcode scan. If the QR encodes a direct verification URL (the common case — many e-Registers' QR codes are just a link with the record ID baked in), open it directly — this is actually a Tier A-like path requiring zero extra infrastructure.
-3. If no QR/barcode, OCR extracts the candidate fields (number, date, etc.) and pre-fills the same review form Phase 2 already has for manual entry, including confidence flags on uncertain characters.
-4. From there it's identical to Phase 2's Tier B/C routing — deep link or copy-assist.
+**Why QR-only is a good place to stop for the web product:** many of these QR codes encode a direct verification URL (the record ID is baked into the link itself), so scanning one client-side (`getUserMedia` + a lightweight decoder like `jsQR`, no server round-trip) and opening the decoded URL is a true one-tap verification — no field-definition metadata needed, no OCR accuracy problem, no image ever leaves the browser. This is a small, self-contained feature: it only touches the handful of Tier E authorities, and it slots into the existing Phase 1 "scan the QR code" messaging by actually doing the scan instead of just telling the user to do it themselves.
+
+Workflow:
+1. User opens their camera in-browser (or uses a file picker as a fallback for a saved QR image).
+2. Client-side QR decode. If it resolves to a URL, open it directly.
+3. If the authority is hybrid (QR + a real e-Register link, e.g. Pakistan), the QR path is offered alongside Phase 2's existing link/routing — not a replacement for it.
+
+Out of scope for this phase (see Phase 5): barcode formats other than QR, OCR of any kind, and general photo upload for authorities without QR support.
 
 ---
 
@@ -77,9 +82,18 @@ This is the one part of the plan that's genuinely about the e-Apostille (the cer
 
 ---
 
-## Phase 5 — Mobile app
+## Phase 5 — Mobile app with in-app-only photo upload/OCR
 
-**Suggested scoping change:** build this as a camera-capable PWA on the existing React codebase first (`getUserMedia` + the same ZXing/Tesseract.js stack from Phase 3), rather than committing to a separate Flutter/React Native codebase up front. This likely covers most of the real-world use case (scan on your phone, verify) without maintaining two codebases. Only invest in a true native app if App Store/Play Store distribution specifically matters (e.g. for discoverability or offline ML Kit-quality OCR).
+**Rescoped:** this phase now absorbs the barcode-scanning and OCR field-extraction work cut from Phase 3. Given that most authorities only offer copy-assist even with perfectly-extracted fields, and that reliable OCR from a photo genuinely benefits from native camera integration (framing guidance, autofocus, on-device recognition quality) rather than a plain web file-upload input, photo-upload/OCR is now scoped as an **in-app-only** capability of the native mobile app — it will not exist on the website at all, by design, not just as a "PWA for now" placeholder.
+
+What this phase covers:
+- A native mobile app (Flutter or React Native) with camera-based photo capture of an Apostille.
+- On-device OCR (e.g. Google ML Kit on Android/iOS, or a bundled Tesseract model) extracts candidate field values (number, date, sticker number, etc.), with confidence flags on uncertain characters for the user to correct.
+- Barcode formats beyond QR (1D Code 128, PDF417, etc.) are handled here too, since some jurisdictions use them instead of QR.
+- Extracted fields feed into the same Phase 2 field-definition routing (deep link / copy-assist) already built for the web app — the routing logic isn't duplicated, only the input method (photo vs. keyboard vs. QR) differs.
+- QR scanning is also available natively here (better performance than browser camera APIs), in addition to the web version from Phase 3 — the web QR path isn't replaced, just no longer the only place QR scanning happens.
+
+This is a genuine native-app commitment, not a PWA stand-in — a previous version of this plan suggested a camera-capable PWA to avoid a second codebase, but since photo-upload/OCR is now explicitly in-app-only, that PWA path no longer applies to this feature. (A PWA could still make sense purely for surfacing Phase 1–3's existing web features on mobile, but that's a distribution question, not a requirement for this phase.)
 
 ---
 
@@ -104,10 +118,10 @@ Link rot and data-entry conflation are the actual ongoing operational cost of th
 Dropping the automation-fleet requirement shortens Phase 2 meaningfully versus the original estimate — it's now a data-modeling and forms task, not a scraping-infrastructure task.
 
 1. **Phase 1** — done.
-2. **Phase 2** — tier classification for all ~97 authority rows + field-definition metadata + deep-link/copy-assist UI. Realistic at 3–4 weeks given Phase 1's UI patterns already exist to extend.
-3. **Phase 3** — QR/barcode/OCR pipeline feeding Phase 2's forms. 6–8 weeks, most of it OCR accuracy tuning and image preprocessing, not routing logic (already built in Phase 2).
+2. **Phase 2** — done (tier classification, field-definition metadata, deep-link/copy-assist UI, live for all 97 authority rows).
+3. **Phase 3** — QR-code scanning for the ~6-7 Tier E authorities only. Much smaller than the original OCR-inclusive scope: 1–2 weeks, mostly camera-permission UX and wiring the decoded URL into the existing Phase 1/2 flow, no OCR accuracy work at all.
 4. **Phase 4** — e-Apostille signature verification. Budget 2+ months; this is the hardest phase technically (per-country trust chains) and should not be compressed to hit a date.
-5. **Phase 5** — PWA-first mobile scanning experience reusing Phase 3's client-side code; native app only if a specific distribution need justifies the second codebase.
+5. **Phase 5** — native mobile app with in-app-only photo-upload/OCR and barcode scanning, absorbing the complexity cut from Phase 3. Budget accordingly (this now carries the OCR accuracy tuning and image-preprocessing work that used to be Phase 3's, on top of standard native-app development) — realistically the largest single phase after Phase 4.
 6. **Ongoing** — link-health monitoring and dataset reconciliation against HCCH updates (see Data foundation above) — this is a permanent cost, not a milestone.
 
 ---

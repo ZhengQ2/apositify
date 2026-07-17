@@ -65,6 +65,20 @@ export const verificationFields = {
     kind: 'fields',
     fields: ['Apostille number (format AAAA-A1-1111)', 'Date of issue']
   },
+  'austria-federal-ministry-for-europe-integration-and-foreign-affairs': {
+    kind: 'upload',
+    // Corrected 2026-07: a prior pass reclassified Austria to contact-only after the old
+    // signaturpruefung.gv.at URL turned out to redirect to an RTR informational hub with
+    // no direct tool. RTR's actual signature-verification service is live at a different
+    // subdomain (signaturpruefung.egiz.gv.at) — confirmed a real upload form (`documents`
+    // file input, optional `detachedSignature` file). Same upload-based pattern as
+    // Bangladesh/Türkiye: verifies the e-Apostille's digital signature/seal directly.
+    // Confirmed live 2026-07: the tool's own description says it verifies "electronic
+    // signatures embedded in PDF files" — it checks a cryptographic signature that only
+    // exists in the original digital file, so a photo or scan of a printed apostille
+    // (which strips any embedded signature) cannot be verified here, full stop.
+    note: 'Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won\'t work. Paper apostilles have no separate e-Register for this authority.'
+  },
   'azerbaijan-ministry-of-justice': {
     kind: 'fields',
     fields: ['Document number', 'Date (DD.MM.YYYY)']
@@ -457,10 +471,18 @@ export const verificationFields = {
   },
   'bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh': {
     kind: 'upload',
-    note: 'This authority verifies by uploading the signed PDF itself (a digital-signature check), not by looking up a number.'
+    // Confirmed live 2026-07: page title is "Verification of Digitally Signed PDF
+    // Documents" and the file picker is hard-restricted to accept="pdf/*" — a photo
+    // can't even be selected, let alone verified. e-Apostille-only, no exceptions.
+    note: 'Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won\'t work (the site only accepts PDF uploads). Paper apostilles have no separate e-Register for this authority.'
   },
   'turkiye-supervisory-competent-authorities-ministry-of-justice-ministry-of-internal-affairs': {
     kind: 'upload',
-    note: 'This authority verifies by uploading the e-Apostille file itself, which the site hashes and checks, rather than by looking up a number.'
+    // Confirmed live 2026-07: the tool computes and compares an exact file hash (shows
+    // Hash Value/File Size/File Type after upload) against the originally issued file,
+    // and the file picker is restricted to accept="application/pdf". Stricter than a
+    // signature check - the uploaded bytes must match the issued file exactly, so a
+    // photo or re-saved copy won't match even if it "looks" the same.
+    note: 'Upload the exact original e-Apostille PDF file — the site compares its file hash against the one it issued, so even a photo, scan, or re-saved copy won\'t match. Paper apostilles have no separate e-Register for this authority.'
   }
 }

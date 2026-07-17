@@ -42,13 +42,27 @@ Everything else — including forms that looked like strong GET candidates in th
 |---|---|---|
 | Costa Rica | Source URL was byte-identical to Colombia's — confirmed copy-paste error | Replaced with `rree.go.cr` "Consultar Apostilla" page (fields: Código de la apostilla, Fecha) — already applied |
 | USA/Texas | The listed URL verifies corporate filing certificates — the word "apostille" never appears on the page | **Corrected 2026-07**: initially reclassified to contact-only, but the real verifier exists — linked as "Verify Issuance of an Apostille" from the Texas SOS Apostille/Authentication page, at `webservices.sos.state.tx.us/certificationsA/index.aspx` (validates by certificate number). Restored to online — already applied |
-| Austria | Redirects to an RTR informational page with no lookup tool at all | Reclassified to contact-only — already applied |
+| Austria | The old signaturpruefung.gv.at URL redirects to an RTR informational page with no lookup tool at all | **Corrected 2026-07**: RTR's actual signature-verification service is live at a different subdomain (`signaturpruefung.egiz.gv.at`) — a real upload-based verifier for the e-Apostille's digital signature/seal, same pattern as Bangladesh/Türkiye. Restored to online — already applied |
 | Rwanda | The listed URL is a generic Irembo file-status tracker, not an apostille e-register | Reclassified to QR-only — already applied |
 | Bangladesh | Listed URL is a homepage; the real tool is a generic signed-PDF/digital-signature checker (upload-based), not a number+date lookup | Modeled as `kind: 'upload'` in the app, not a field form |
 | Türkiye | Verification is file-upload/hash-check, not typed fields | Same as Bangladesh — modeled as `kind: 'upload'` |
 | Venezuela | Only one unified verification form found; source notes describe three separate date-range registers | Reconfirmed live in a later pass — still only one form found; treat the "3 registers" claim as likely outdated, though not definitively disproven |
 | Slovenia, Moldova | Fields were unknown (site unreachable/unrendering) | Both resolved in a later pass — fields identified for both; Moldova is deep-linkable (see headline), Slovenia is CAPTCHA-blocked |
 | Mexico/Federal District, USA/Arkansas | Could not confirm a working verification form at all | Still unresolved after a second attempt — Mexico's site appears genuinely down; Arkansas's SPA is blocked by a WAF at the JS-bundle level. No field data modeled; app falls back to the plain Phase 1 link for these |
+
+## The three upload-based verifiers are e-Apostille only — a photo will never work
+
+Austria, Bangladesh, and Türkiye don't have a number-lookup e-Register at all — their only verification path is uploading the e-Apostille file itself. Checked each one directly (2026-07) to answer a specific question: do these also handle a photo or scan of a **paper** apostille, and if so, how?
+
+**Answer: no, none of them do, and there's no special handling — photos are simply out of scope.** Each tool works by checking something that only exists in the original, unmodified digital file:
+
+| Authority | Mechanism | What happens with a photo/scan |
+|---|---|---|
+| Austria (EGIZ/RTR) | Verifies "electronic signatures embedded in PDF files" (their own description) | No embedded signature in a photo — fails, though the file picker doesn't block the attempt |
+| Bangladesh | Verifies a digitally-signed PDF (page titled "Verification of Digitally Signed PDF Documents") | Can't even upload one — file picker is hard-restricted to `accept="pdf/*"` |
+| Türkiye (PTT e-Apostil) | Computes the uploaded file's exact hash and compares it against the file originally issued (displays Hash Value/Size/Type) | Won't match — this is stricter than a signature check, since even a re-saved *PDF* copy of the same content can hash differently. File picker restricted to `accept="application/pdf"` |
+
+None of the three HCCH chart entries for these authorities list a separate paper-apostille verification channel — the upload tool is the *only* documented mechanism. So a user who only has a paper apostille (or a photo of one) from Austria, Bangladesh, or Türkiye currently has no online verification path at all, digital or otherwise; they'd need to contact the issuing authority directly. Worth keeping in mind for Phase 3 (image upload/OCR) — the "upload a photo" flow that will exist for field-based authorities cannot be reused for these three, and the in-app copy should say so before a user wastes an upload attempt.
 
 ## Full field table
 
@@ -61,9 +75,9 @@ Everything else — including forms that looked like strong GET candidates in th
 | Argentina (historic, 2017–2019) | MFA & Worship | Order Number; Year; Security Code | — | Not independently tested (separate URL for this date range) |
 | Armenia | Ministry of Justice | 16-digit document tracking code | ❌ Not deep-linkable | React SPA, reCAPTCHA present; submitted, URL unchanged (AJAX) |
 | Australia | DFAT | Apostille number (AAAA-A1-1111); Date of issue | ❌ Not deep-linkable | ASP.NET Webforms postback, VIEWSTATE-based |
-| Austria | — | — | — | No verification tool exists at all — contact-only |
+| Austria | Federal Ministry | (Upload the e-Apostille file — not field-based) | — | **Corrected 2026-07**: real upload-based verifier at `signaturpruefung.egiz.gv.at`, same pattern as Bangladesh/Türkiye. Only covers e-Apostilles (digitally-signed documents); paper apostilles have no separate e-Register |
 | Azerbaijan | Ministry of Justice | Number; Date (DD.MM.YYYY) | ❌ Not deep-linkable | ASP.NET Webforms, `__VIEWSTATE`/`__EVENTVALIDATION` |
-| Bangladesh | MFA | (Upload signed PDF — not field-based) | — | Upload-based signature checker, not applicable |
+| Bangladesh | MFA | (Upload signed PDF — not field-based) | — | Confirmed 2026-07: page titled "Verification of Digitally Signed PDF Documents"; file picker hard-restricted to `accept="pdf/*"` — a photo/scan literally cannot be selected. e-Apostille only |
 | Belgium | FPS Foreign Affairs | Reference number (format varies by type); Reference date | ❌ Not deep-linkable | **False positive from pass 1** — confirmed pure Angular SPA, zero native `<input>` elements |
 | Bolivia | Ministry of Foreign Affairs | Date; Apostille number; Security code | ❌ Not deep-linkable | **False positive from pass 1** — `method="get"` but inputs have no `name` attr; filled and submitted via real click, URL stayed identical |
 | Brazil | National Council of Justice | Code; CRC | ❌ Not deep-linkable | Angular Material fields, Cloudflare/reCAPTCHA widget; submitted, URL unchanged |
@@ -119,7 +133,7 @@ Everything else — including forms that looked like strong GET candidates in th
 | Slovenia | District Courts | Certificate ID; Issue date | ❌ Not deep-linkable | Fields now identified — the URL is the genuine public verifier despite the misleading "create.jsf" name (not a filing form). JSF app with a session-bound `javax.faces.ViewState` token plus an image CAPTCHA |
 | Spain | eRegister (44 authorities) | Verification Code; Apostille Number; Issue Date | ❌ Not deep-linkable | Text-based CAPTCHA required on every load; session-bound Spring Web Flow token |
 | Tajikistan | MFA/Justice | Apostille Number; Date (Y/M/D) | ❌ Not deep-linkable | Image CAPTCHA confirmed |
-| Türkiye | PTT e-Apostil | (File upload / hash check — not fields) | — | Upload-based, not applicable |
+| Türkiye | PTT e-Apostil | (File upload / hash check — not fields) | — | Confirmed 2026-07: computes and displays the uploaded file's Hash Value/Size/Type and compares it against the originally issued file — stricter than a signature check, a photo or re-saved copy won't match even if visually identical. File picker restricted to `accept="application/pdf"`. e-Apostille only |
 | Ukraine — Education | ENIC | Apostille number (item 8); Application number; Apostille date (item 6) | ✅ **Confirmed** | Plain Joomla GET form — see URL template above. One of 6 confirmed deep links out of 75 tested. |
 | Ukraine — Justice | Ministry of Justice | Apostille number; Issue date; Control code (newer only); OR upload e-document | ❌ Not deep-linkable | Angular form with a CAPTCHA field |
 | United Kingdom | FCDO | Apostille issue date; Apostille number | ❌ Not deep-linkable | Confirmed POST form with named fields on a separate `verifyapostille.service.gov.uk` domain |
@@ -157,7 +171,6 @@ No e-Register exists at all (contact-only, per [DEVELOPMENT_PLAN.md](DEVELOPMENT
 
 - Nicaragua — Ministry of Foreign Affairs
 - Mexico — Baja California Sur
-- Austria — Federal Ministry (reclassified — see corrections table above)
 - USA — Connecticut (e-Apostille pilot ended Sept 2025)
 - USA — Rhode Island (e-Apostille pilot ended Sept 2025)
 - USA — Utah (e-Apostille pilot ended Sept 2025)

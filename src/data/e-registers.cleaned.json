@@ -7,9 +7,9 @@
   "recordsCount": 64,
   "entriesCount": 97,
   "modeCounts": {
-    "online": 84,
-    "manual_contact": 6,
+    "online": 85,
     "qr_only": 6,
+    "manual_contact": 5,
     "hybrid": 1
   },
   "notes": "Rows with online or hybrid mode include a usable registerUrl. Rows marked source_link_missing or hybrid_link_missing need the official embedded HCCH Available Here URL before one-click redirects can be enabled.",
@@ -79,15 +79,15 @@
       "sourceRecordId": 5,
       "country": "Austria",
       "authority": "Federal Ministry for Europe, Integration and Foreign Affairs",
-      "registerUrl": "",
-      "verificationMode": "manual_contact",
-      "verificationLabel": "Contact authority to verify",
-      "eRegisterNumber": null,
-      "eRegisterMethod": null,
-      "eRegisterLabel": null,
+      "registerUrl": "https://signaturpruefung.egiz.gv.at/signature-verification/file-upload",
+      "verificationMode": "online",
+      "verificationLabel": "Official e-Register link available",
+      "eRegisterNumber": 5,
+      "eRegisterMethod": "https://signaturpruefung.egiz.gv.at/signature-verification/file-upload",
+      "eRegisterLabel": "Available Here",
       "eApostilleNumber": 3,
       "eApostilleDate": "June 2015",
-      "notes": "Corrected 2026-07: signaturpruefung.gv.at redirects to an RTR informational page with no working verification tool. No online e-Register currently exists; contact the Federal Ministry directly."
+      "notes": "Corrected 2026-07: the old signaturpruefung.gv.at URL redirects to an RTR informational hub with no direct tool, but RTR's actual signature-verification service is live at signaturpruefung.egiz.gv.at (upload the e-Apostille file to verify its digital signature/seal)."
     },
     {
       "id": "azerbaijan-ministry-of-justice",

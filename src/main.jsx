@@ -138,19 +138,6 @@ function VerificationHelper({ entry }) {
     )
   }
 
-  if (!config.deepLink) {
-    return (
-      <div className="verify-helper">
-        <h4>{t.helperTitle}</h4>
-        <p className="muted small-muted">{t.helperIntroSimple}</p>
-        <ul className="field-list">
-          {config.fields.map((field) => <li key={field}>{field}</li>)}
-        </ul>
-        {config.note && <small>{config.note}</small>}
-      </div>
-    )
-  }
-
   const onFieldChange = (field, value) => {
     setValues((prev) => ({ ...prev, [field]: value }))
     setCopied(false)
@@ -208,7 +195,7 @@ function VerificationHelper({ entry }) {
   return (
     <div className="verify-helper">
       <h4>{t.helperTitle}</h4>
-      <p className="muted small-muted">{t.helperIntroDeepLink}</p>
+      <p className="muted small-muted">{config.deepLink ? t.helperIntroDeepLink : t.helperIntroSimple}</p>
       {config.fields.map((field) => (
         <label key={field} className="field-row">
           <span>{field}</span>

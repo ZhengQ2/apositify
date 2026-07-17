@@ -15,7 +15,7 @@ export const messages = {
   sourceNote: 'Source data is derived from the HCCH e-APP implementation chart.',
   privacy: 'You are leaving this site for an official government or authority portal. Do not enter sensitive data unless you trust the destination.',
   helperTitle: 'What you’ll need',
-  helperIntroSimple: 'The official e-Register above will ask for:',
+  helperIntroSimple: 'Enter the values below, then copy them into the official e-Register:',
   helperIntroDeepLink: 'Enter what’s printed on your Apostille. Once every field is filled in, we’ll open the official verification result directly.',
   helperCopyIntro: 'Copy these values, then paste them into the official e-Register:',
   copyValues: 'Copy values',

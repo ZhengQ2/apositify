@@ -13,7 +13,10 @@
 export const verificationFields = {
   'andorra-ministry-of-foreign-affairs': {
     kind: 'fields',
-    fields: ['Apostille/Legalization Number', 'Date'],
+    fields: [
+      { name: 'apostilleNumber', label: 'Apostille or legalization number', placeholder: 'Exactly as printed' },
+      { name: 'apostilleDate', label: 'Date', placeholder: 'Exactly as printed' }
+    ],
     // Clean POST form with no CSRF/CAPTCHA. Auto-submitted test values returned a real
     // result page. Legacy IBM LANSA app requires several static routing params.
     deepLink: {
@@ -75,7 +78,9 @@ export const verificationFields = {
   },
   'bulgaria-ministry-of-foreign-affairs': {
     kind: 'fields',
-    fields: ['Apostille ID'],
+    fields: [
+      { name: 'apostilleId', label: 'Apostille ID', placeholder: 'Exactly as printed' }
+    ],
     // Clean POST form with no CSRF/CAPTCHA. Invalid test values bounced back to the blank
     // form rather than a distinct "not found" page, but the POST navigation is real.
     deepLink: {
@@ -91,7 +96,9 @@ export const verificationFields = {
   },
   'bulgaria-regional-administrations': {
     kind: 'fields',
-    fields: ['Apostille ID'],
+    fields: [
+      { name: 'apostilleId', label: 'Apostille ID', placeholder: 'Exactly as printed' }
+    ],
     // Clean POST form with no CSRF/CAPTCHA. Auto-submitted test values returned a clear
     // result page.
     deepLink: {
@@ -140,7 +147,10 @@ export const verificationFields = {
   },
   'costa-rica-ministry-of-foreign-affairs-and-worship': {
     kind: 'fields',
-    fields: ['Código de la apostilla', 'Fecha de la apostilla (as YYYY-MM-DD)'],
+    fields: [
+      { name: 'apostilleCode', label: 'Apostille code', placeholder: 'Exactly as printed' },
+      { name: 'apostilleDate', label: 'Apostille date', placeholder: 'YYYY-MM-DD', format: 'date-iso' }
+    ],
     // Plain POST form with no working CSRF/CAPTCHA. The page still references a retired
     // Google ReCaptcha v1 widget, but submissions proceed and return a real result page.
     deepLink: {
@@ -247,7 +257,10 @@ export const verificationFields = {
   },
   'moldova-republic-of-ministry-of-justice': {
     kind: 'fields',
-    fields: ['Apostille code', 'Security code'],
+    fields: [
+      { name: 'apostilleCode', label: 'Apostille code', placeholder: 'Exactly as printed', format: 'non-arij-apostille-code' },
+      { name: 'securityCode', label: 'Security code', placeholder: 'Exactly as printed' }
+    ],
     note: 'Apostille numbers with an "ARIJ" prefix use a separate MPass-gated system (eservicii.gov.md). This direct flow applies only to other apostille codes.',
     // The visible page lazy-loads this form via an iframe; it is a clean POST with only
     // the two named fields and no hidden CSRF/CAPTCHA.
@@ -327,7 +340,11 @@ export const verificationFields = {
   },
   'ukraine-ministry-of-education-and-science': {
     kind: 'fields',
-    fields: ['Apostille number (item 8)', 'Application number', 'Apostille date (item 6)'],
+    fields: [
+      { name: 'apostilleNumber', label: 'Apostille number (item 8)', placeholder: 'Exactly as printed' },
+      { name: 'applicationNumber', label: 'Application number', placeholder: 'Exactly as printed' },
+      { name: 'apostilleDate', label: 'Apostille date (item 6)', placeholder: 'DD.MM.YYYY', format: 'date-dotted' }
+    ],
     note: 'Covers apostilles from 18 January 2013 onward.',
     // Plain Joomla GET form. The resulting URL is a real, shareable result page rather
     // than an AJAX call.

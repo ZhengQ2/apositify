@@ -97,7 +97,14 @@ export const messages = {
   qrReportEmail: 'qr-specimens@apostifi.com',
 
   qrSectionHeading: 'QR code on this Apostille',
+  // Fallback guidance when in-app scanning is unavailable. This MUST branch on
+  // the QR's function: telling someone to "check the destination is an official
+  // address" is wrong advice for a QR that has no destination at all.
   qrInfoConfirmed: 'Apostilles from this authority are documented to carry a QR code. In-app scanning is not offered yet — scan it with your phone’s camera and check the destination is an official government address.',
+  qrInfoConfirmedFields: 'Apostilles from this authority carry a QR code, but it does not link anywhere — it stores the Apostille’s own details so they can be compared against the printed certificate. It may include personal details, so take care where you scan it.',
+  qrInfoConfirmedOfflineApp: 'Apostilles from this authority carry a QR code that is read by the official {app} app rather than a web page. Install it from the authority’s own published link and scan the code there.',
+  qrInfoConfirmedOfflineAppGeneric: 'Apostilles from this authority carry a QR code that is read by an official government app rather than a web page. Follow the authority’s published instructions.',
+  qrInfoConfirmedDocument: 'Apostilles from this authority carry a QR code. In-app scanning is not offered yet — scanning it with your phone’s camera retrieves a copy of the document from the authority’s service, not a status result. Check the address is an official government one before opening it.',
   qrInfoReported: 'A QR code on this authority’s Apostilles has been reported but not confirmed from an official source. Use the lookup route above.',
   qrInfoUnderlyingOnly: 'Any QR code you see may belong to the underlying document rather than to the Apostille itself. A QR on the source document does not verify the Apostille.'
 }

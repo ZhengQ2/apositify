@@ -180,7 +180,7 @@ function QrSection({ entry }) {
   const guidance = presences.has('underlying_only')
     ? t.qrInfoUnderlyingOnly
     : presences.has('confirmed')
-      ? t.qrInfoConfirmed
+      ? confirmedGuidance(records)
       : presences.has('public_specimen') || presences.has('reported')
         ? t.qrInfoReported
         : null
@@ -195,6 +195,31 @@ function QrSection({ entry }) {
       <small>{guidance}</small>
     </div>
   )
+}
+
+/**
+ * Guidance shown when in-app scanning is unavailable. It has to branch on the
+ * QR's function: "check the destination is an official government address" is
+ * actively wrong for Costa Rica, whose QR is local field data with no
+ * destination, and for Luxembourg, whose QR is read by a government app.
+ */
+function confirmedGuidance(records) {
+  const confirmed = records.filter((record) => record.presence === 'confirmed')
+  const functions = new Set(confirmed.map((record) => record.function))
+
+  // Only collapse to a single non-URL message when every confirmed record for
+  // this authority agrees; a mixed authority still needs the URL wording.
+  if (functions.size === 1) {
+    if (functions.has('embedded_fields')) return t.qrInfoConfirmedFields
+    if (functions.has('offline_app')) {
+      const appName = confirmed.find((record) => record.app?.name)?.app?.name
+      return appName
+        ? t.qrInfoConfirmedOfflineApp.replace('{app}', appName)
+        : t.qrInfoConfirmedOfflineAppGeneric
+    }
+    if (functions.has('document_url')) return t.qrInfoConfirmedDocument
+  }
+  return t.qrInfoConfirmed
 }
 
 function VerificationHelper({ entry }) {

@@ -6,7 +6,7 @@
 // reports how the production classifier would treat the payload. Runs entirely
 // locally; nothing is uploaded and nothing is written back to the repository.
 //
-// Requires Node >= 20 (jimp's file-type dependency), matching package.json.
+// Requires the Node version in package.json engines (^20.19.0 || >=22.12.0).
 //
 // Photographed specimens frequently fail to decode on the first pass, so this
 // retries with a few preprocessing variants before giving up — a failure here

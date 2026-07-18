@@ -171,10 +171,17 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     event.target.value = '' // allow re-picking the same file after a failed scan
     if (!file) return
     releaseCamera()
+    // Same stale-session guard as the camera path. Decoding a large image is
+    // slow, and the user can pick another file, start the camera, change
+    // authority, or close the dialog while it runs. Without this, the older
+    // decode still calls handlePayload(), which releases the newer camera scan
+    // and shows a destination read from the file the user already moved on from.
+    const session = sessionRef.current
     setResult(null)
     setDecodeIssue(null)
     setState(STATE.DECODING_FILE)
     const decoded = await decodeFromFile(file, ensureCanvas())
+    if (session !== sessionRef.current) return
     if (decoded.status === DECODE.OK) {
       handlePayload(decoded.text)
       return

@@ -40,6 +40,13 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
   const closeRef = useRef(null)
   const dialogRef = useRef(null)
 
+  // The decode canvas is created lazily and shared by both input routes. It must
+  // exist before the camera interval starts, not only on the file path.
+  const ensureCanvas = useCallback(() => {
+    if (!canvasRef.current) canvasRef.current = document.createElement('canvas')
+    return canvasRef.current
+  }, [])
+
   const releaseCamera = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -88,6 +95,10 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
   }, [authorityId, releaseCamera])
 
   const startCamera = useCallback(async () => {
+    // Restarting while a scan is live must release the previous stream and
+    // interval first, or the old camera track keeps running with nothing holding
+    // a reference that could stop it.
+    releaseCamera()
     setResult(null)
     setDecodeIssue(null)
     setState(STATE.REQUESTING)
@@ -98,6 +109,7 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
       return
     }
     streamRef.current = stream
+    ensureCanvas()
     if (videoRef.current) {
       videoRef.current.srcObject = stream
       await videoRef.current.play().catch(() => {})
@@ -110,7 +122,7 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
       else if (decoded.status === DECODE.MULTIPLE) setDecodeIssue(DECODE.MULTIPLE)
       else setDecodeIssue(null)
     }, SCAN_INTERVAL_MS)
-  }, [handlePayload])
+  }, [ensureCanvas, handlePayload, releaseCamera])
 
   const onFileChange = useCallback(async (event) => {
     const file = event.target.files?.[0]
@@ -120,15 +132,14 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
     setResult(null)
     setDecodeIssue(null)
     setState(STATE.DECODING_FILE)
-    if (!canvasRef.current) canvasRef.current = document.createElement('canvas')
-    const decoded = await decodeFromFile(file, canvasRef.current)
+    const decoded = await decodeFromFile(file, ensureCanvas())
     if (decoded.status === DECODE.OK) {
       handlePayload(decoded.text)
       return
     }
     setDecodeIssue(decoded.status)
     setState(STATE.NO_QR)
-  }, [handlePayload, releaseCamera])
+  }, [ensureCanvas, handlePayload, releaseCamera])
 
   const statusMessage = useMemo(() => {
     switch (state) {

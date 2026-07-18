@@ -133,17 +133,26 @@ function ResultPanel({ selected }) {
 }
 
 /**
- * Phase 3.4 entry point. The scanner button appears only for an authority whose
- * QR record passed the evidence gate (`enabled: true`) — the feature flag can
- * hide it but never bypasses that gate. Confirmed-but-not-yet-gated authorities
- * keep informational guidance instead, and `underlying_only` authorities are
- * excluded from the scanner entirely because their QR belongs to the source
- * document, not the Apostille.
+ * Phase 3.4 entry point.
+ *
+ * The scanner opens for two groups, which then get very different treatment
+ * from the classifier:
+ *
+ *   - Authorities with a decoded specimen, which can route against a verified
+ *     host allowlist (tier 1).
+ *   - Authorities whose QR presence is `confirmed` but whose format we have not
+ *     seen, which fall back to the government-namespace heuristic (tier 2) and
+ *     get explicitly unverified copy.
+ *
+ * `underlying_only` authorities are excluded outright: their QR belongs to the
+ * source document, not the Apostille. `reported` and `public_specimen` keep
+ * informational guidance only, since we have no basis to route at all.
  */
 function QrSection({ entry }) {
   const [open, setOpen] = useState(false)
   const records = qrRecordsFor(entry.id)
-  const scannable = qrScannerFlagEnabled && hasEnabledQrScanning(entry.id)
+  const confirmed = records.some((record) => record.presence === 'confirmed')
+  const scannable = qrScannerFlagEnabled && (hasEnabledQrScanning(entry.id) || confirmed)
 
   useEffect(() => setOpen(false), [entry.id])
 
@@ -159,6 +168,7 @@ function QrSection({ entry }) {
           <QrScannerDialog
             authorityId={entry.id}
             authorityName={entry.authority}
+            country={entry.country}
             onClose={() => setOpen(false)}
           />
         )}

@@ -2,32 +2,40 @@
 //
 // A decoded QR is untrusted input. A matching logo, a plausible page design, or
 // the mere presence of HTTPS does not make a destination official. Nothing here
-// fetches, follows, or renders a decoded destination; it only decides whether an
-// "open the official page" action may be offered, and rebuilds a canonical URL
-// from the authority's own stored base wherever a token mapping is documented.
+// fetches, follows, or renders a decoded destination.
+//
+// Routing is TIERED. The tier decides how strongly the UI may speak, not merely
+// whether a link appears:
+//
+//   verified    The host came from a decoded specimen of a real apostille for
+//               THIS authority. Full "open the official lookup" affordance.
+//   government  No specimen for this authority, but the host sits inside the
+//               party's government namespace. Weaker affordance, explicit
+//               "we have not verified this authority's QR format" warning, and
+//               never the word verification. See ./data/government-domains.js
+//               for why this tier is a heuristic and not evidence.
+//   none        Neither. No navigation offered at all.
 //
 // This module is pure and dependency-free so the adversarial suite in
 // scripts/test-qr-routing.mjs can exercise it directly under Node.
 
 import { enabledQrRecordsFor, qrRecordsFor } from './data/qr-codes.js'
+import { looksNonProduction, matchesGovernmentSuffix } from './data/government-domains.js'
 
-/** Outcome kinds. Only `official` may render a navigation action. */
 export const OUTCOME = {
-  OFFICIAL: 'official',
+  OFFICIAL: 'official',              // verified tier, navigation allowed
+  UNVERIFIED_GOVERNMENT: 'unverified_government', // government tier, cautious navigation
+  EMBEDDED_FIELDS: 'embedded_fields', // payload is the apostille's own field data
   OFFLINE_APP: 'offline_app',
   BLOCKED: 'blocked',
   UNSUPPORTED: 'unsupported',
   NOT_ENABLED: 'not_enabled'
 }
 
+export const TRUST = { VERIFIED: 'verified', GOVERNMENT: 'government', NONE: 'none' }
+
 const MAX_PAYLOAD_LENGTH = 4096
 
-/**
- * Hostnames are compared after the URL parser's IDN → ASCII (punycode)
- * normalisation, lowercased, with a trailing root dot removed. Never substring,
- * never endsWith without a dot boundary — `evil-e-verify.am` and
- * `e-verify.am.attacker.test` must both fail against `e-verify.am`.
- */
 export function normalizeHostname(hostname) {
   return String(hostname || '').toLowerCase().replace(/\.$/, '')
 }
@@ -41,15 +49,28 @@ export function hostnameMatches(actual, rule) {
   return false
 }
 
-/** Percent-encoding that does not decode is treated as hostile, not as a typo. */
 function hasWellFormedEncoding(url) {
   try {
     decodeURIComponent(url.pathname)
     decodeURIComponent(url.search)
+    decodeURIComponent(url.hash)
     return true
   } catch {
     return false
   }
+}
+
+/**
+ * Some authorities encode a bare host with no scheme (Bahrain:
+ * "www.mofa.gov.bh/legalization?id=..."). `new URL()` rejects that. Only
+ * authorities that documented the behaviour opt in, and only to https.
+ */
+function applySchemeNormalization(raw, records) {
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return { text: raw, normalized: false }
+  const rule = records.find((entry) => entry.normalizeSchemelessTo)
+  if (!rule) return { text: raw, normalized: false }
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}(?:[:/?#]|$)/i.test(raw)) return { text: raw, normalized: false }
+  return { text: `${rule.normalizeSchemelessTo}//${raw}`, normalized: true }
 }
 
 function parsePayloadUrl(text) {
@@ -60,8 +81,6 @@ function parsePayloadUrl(text) {
     return { error: 'not_a_url' }
   }
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return { error: 'unsupported_scheme' }
-  // Credentials in a URL are a classic host-confusion trick: the part a human
-  // reads as the host is actually the username.
   if (url.username || url.password) return { error: 'credentials_in_url' }
   if (!url.hostname) return { error: 'malformed_host' }
   if (!hasWellFormedEncoding(url)) return { error: 'malformed_encoding' }
@@ -69,33 +88,41 @@ function parsePayloadUrl(text) {
 }
 
 function matchRule(url, rule) {
-  if (url.protocol !== (rule.protocol || 'https:')) return 'protocol_mismatch'
+  const expectedProtocol = rule.protocol || 'https:'
+  if (url.protocol !== expectedProtocol) return 'protocol_mismatch'
+  // Plain HTTP is only ever reachable through an explicit, recorded risk
+  // acceptance for a specific legacy endpoint.
+  if (expectedProtocol === 'http:' && !rule.insecureAccepted) return 'insecure_not_accepted'
   if (!hostnameMatches(url.hostname, rule)) return 'host_not_allowlisted'
-  // An empty rule port means "the scheme default"; a payload that names an
-  // explicit non-default port is rejected rather than silently normalised.
   if (url.port !== (rule.port || '')) return 'unexpected_port'
   if (rule.pathnamePattern && !new RegExp(rule.pathnamePattern).test(url.pathname)) return 'path_mismatch'
 
-  // Query parameters are deny-by-default. This is what keeps open-redirect
-  // parameters (`?next=`, `?url=`, `?returnUrl=`) out without enumerating them.
   const allowedParams = rule.allowedSearchParams || []
   for (const key of url.searchParams.keys()) {
     if (!allowedParams.includes(key)) return 'unexpected_query_parameter'
   }
-  if (url.hash && !rule.allowFragment) return 'unexpected_fragment'
+
+  // Hash-router portals (China: consular.mfa.gov.cn/VERIFY/#/<token>) carry the
+  // record id in the fragment, so it cannot simply be rejected or dropped.
+  if (url.hash) {
+    if (!rule.allowFragment) return 'unexpected_fragment'
+    if (rule.fragmentPattern && !new RegExp(rule.fragmentPattern).test(url.hash)) return 'fragment_mismatch'
+  }
   return null
 }
 
 /**
- * Rebuild the destination from the authority's stored base where the rule
- * documents a token mapping, so we navigate to a URL we constructed rather than
- * one the QR handed us. Falls back to the validated payload URL.
+ * Rebuild from the authority's stored base where a token mapping is documented,
+ * so navigation targets a URL we constructed. Requires two specimens: one
+ * specimen cannot distinguish a stable path segment from a coincidence.
  */
-function buildDestination(url, rule) {
-  if (!rule.tokenPattern || !rule.canonicalUrlTemplate) {
+function buildDestination(url, rule, record) {
+  const canReconstruct = rule.tokenPattern && rule.canonicalUrlTemplate && record.specimenCount >= 2
+  if (!canReconstruct) {
     return { href: url.toString(), token: null, canonical: false }
   }
-  const match = new RegExp(rule.tokenPattern).exec(url.pathname + url.search)
+  const subject = rule.tokenSource === 'hash' ? url.hash : url.pathname + url.search
+  const match = new RegExp(rule.tokenPattern).exec(subject)
   const token = match?.[rule.tokenGroup ?? 1]
   if (!token) return null
   return {
@@ -108,25 +135,34 @@ function buildDestination(url, rule) {
 /**
  * Classify a decoded QR payload against the selected authority.
  *
- * Returns a plain result object; the caller decides what to render. The only
- * kind that may produce a navigation action is OUTCOME.OFFICIAL, and even then
- * the copy must describe what the destination *is* (status lookup, portal, or
- * document retrieval) rather than claiming this app verified anything.
+ * `country` enables the tier-2 government-domain fallback; omit it to disable
+ * tier 2 entirely.
  */
-export function classifyQrPayload(rawText, authorityId) {
+export function classifyQrPayload(rawText, authorityId, country = null) {
   const raw = typeof rawText === 'string' ? rawText.trim() : ''
-  if (!raw) return { kind: OUTCOME.UNSUPPORTED, reason: 'empty_payload', raw, authorityId }
+  if (!raw) return { kind: OUTCOME.UNSUPPORTED, trust: TRUST.NONE, reason: 'empty_payload', raw, authorityId }
   if (raw.length > MAX_PAYLOAD_LENGTH) {
-    return { kind: OUTCOME.UNSUPPORTED, reason: 'payload_too_large', raw: raw.slice(0, 256), authorityId }
+    return { kind: OUTCOME.UNSUPPORTED, trust: TRUST.NONE, reason: 'payload_too_large', raw: raw.slice(0, 256), authorityId }
   }
 
   const enabled = enabledQrRecordsFor(authorityId)
-  if (enabled.length === 0) {
-    // Covers unknown authorities, every not-yet-gated authority, and the
-    // presence tiers that are documented but deliberately not routable.
-    const known = qrRecordsFor(authorityId)
+  const known = qrRecordsFor(authorityId)
+  const confirmed = known.some((entry) => entry.presence === 'confirmed')
+
+  // Tier 2 is keyed on the ABSENCE OF VERIFIED HOSTS, not on enablement state.
+  // An authority can be enabled for a non-URL function, or enabled in a dev
+  // configuration, while still having no host we have ever seen -- and in every
+  // one of those cases the heuristic is the correct fallback rather than tier 1
+  // blocking against an empty allowlist.
+  const hasVerifiedHosts = enabled.some((entry) => (entry.allowedUrls || []).length > 0)
+  const nonUrlFunction = enabled.some((entry) => entry.function === 'offline_app' || entry.function === 'embedded_fields')
+
+  if (!hasVerifiedHosts && !nonUrlFunction) {
+    const tier2 = confirmed && country ? governmentTier(raw, country, authorityId) : null
+    if (tier2) return tier2
     return {
       kind: OUTCOME.NOT_ENABLED,
+      trust: TRUST.NONE,
       reason: known.length > 0 ? 'authority_not_enabled' : 'authority_unknown',
       presence: known[0]?.presence ?? null,
       raw,
@@ -134,17 +170,34 @@ export function classifyQrPayload(rawText, authorityId) {
     }
   }
 
-  // An offline-app authority's payload is a signed blob for a government app,
-  // not something we parse or open.
   const offlineApp = enabled.find((entry) => entry.function === 'offline_app')
   if (offlineApp) {
-    return { kind: OUTCOME.OFFLINE_APP, reason: 'offline_app', app: offlineApp.app || null, record: offlineApp, raw, authorityId }
+    return { kind: OUTCOME.OFFLINE_APP, trust: TRUST.NONE, reason: 'offline_app', app: offlineApp.app || null, raw, authorityId }
   }
 
-  const parsed = parsePayloadUrl(raw)
-  if (parsed.error) return { kind: OUTCOME.UNSUPPORTED, reason: parsed.error, raw, authorityId }
-  const { url } = parsed
+  // Costa Rica's QR is delimited plain text carrying the apostille's own fields
+  // -- including personal names. There is no destination, and the values must
+  // not be rendered wholesale.
+  const embedded = enabled.find((entry) => entry.function === 'embedded_fields')
+  if (embedded && !/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
+    return {
+      kind: OUTCOME.EMBEDDED_FIELDS,
+      trust: TRUST.NONE,
+      reason: 'embedded_fields',
+      fieldShape: embedded.fieldShape || null,
+      containsPersonalData: embedded.containsPersonalData !== false,
+      raw,
+      authorityId
+    }
+  }
 
+  const { text, normalized } = applySchemeNormalization(raw, enabled)
+  const parsed = parsePayloadUrl(text)
+  if (parsed.error) return { kind: OUTCOME.UNSUPPORTED, trust: TRUST.NONE, reason: parsed.error, raw, authorityId }
+  const { url } = parsed
+  const host = normalizeHostname(url.hostname)
+
+  // --- Tier 1: specimen-verified allowlist ---------------------------------
   let lastReason = 'host_not_allowlisted'
   for (const entry of enabled) {
     for (const rule of entry.allowedUrls || []) {
@@ -153,29 +206,69 @@ export function classifyQrPayload(rawText, authorityId) {
         lastReason = failure
         continue
       }
-      const destination = buildDestination(url, rule)
+      const destination = buildDestination(url, rule, entry)
       if (!destination) {
         lastReason = 'token_not_extractable'
         continue
       }
       if (entry.function === 'unknown') {
-        return { kind: OUTCOME.UNSUPPORTED, reason: 'undocumented_function', host: normalizeHostname(url.hostname), raw, authorityId }
+        return { kind: OUTCOME.UNSUPPORTED, trust: TRUST.NONE, reason: 'undocumented_function', host, raw, authorityId }
       }
       return {
         kind: OUTCOME.OFFICIAL,
+        trust: TRUST.VERIFIED,
         function: entry.function,
         url: destination.href,
-        host: normalizeHostname(url.hostname),
+        host,
         token: destination.token,
         canonical: destination.canonical,
-        record: entry,
+        schemeNormalized: normalized,
+        specimenCount: entry.specimenCount,
         raw,
         authorityId
       }
     }
   }
 
-  // The payload decoded cleanly but does not belong to the selected authority.
-  // Show the decoded host so the user can see the mismatch; never open it.
-  return { kind: OUTCOME.BLOCKED, reason: lastReason, host: normalizeHostname(url.hostname), raw, authorityId }
+  // Once an authority has a specimen-verified host, a non-matching payload is a
+  // mismatch -- never a tier-2 candidate. Falling back here would let a bad
+  // payload launder itself through the weaker heuristic.
+  return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: lastReason, host, raw, authorityId }
+}
+
+/**
+ * Tier 2. Narrows an unbounded internet to the party's government namespace.
+ * That is worth something; it is not evidence, and the caller must not label the
+ * result as verification. See ./data/government-domains.js.
+ */
+function governmentTier(raw, country, authorityId) {
+  const parsed = parsePayloadUrl(raw)
+  if (parsed.error) return null
+  const { url } = parsed
+  const host = normalizeHostname(url.hostname)
+  const suffix = matchesGovernmentSuffix(host, country)
+  if (!suffix) return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'not_a_government_host', host, raw, authorityId }
+  if (looksNonProduction(host)) {
+    return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'non_production_host', host, raw, authorityId }
+  }
+  if (url.protocol !== 'https:') {
+    return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'government_host_insecure', host, raw, authorityId }
+  }
+  if (url.port) {
+    return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'unexpected_port', host, raw, authorityId }
+  }
+  return {
+    kind: OUTCOME.UNVERIFIED_GOVERNMENT,
+    trust: TRUST.GOVERNMENT,
+    url: url.toString(),
+    host,
+    matchedSuffix: suffix,
+    raw,
+    authorityId
+  }
+}
+
+/** Outcomes worth inviting the user to report, so coverage can improve. */
+export function isReportable(result) {
+  return [OUTCOME.BLOCKED, OUTCOME.UNSUPPORTED, OUTCOME.NOT_ENABLED, OUTCOME.UNVERIFIED_GOVERNMENT].includes(result.kind)
 }

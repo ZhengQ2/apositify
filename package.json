@@ -14,5 +14,8 @@
     "react-dom": "latest",
     "vite": "latest"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "jimp": "^1.6.1"
+  }
 }

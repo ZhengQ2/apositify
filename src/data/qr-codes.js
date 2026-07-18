@@ -28,7 +28,7 @@ import { qrDevEnableConfirmed } from '../feature-flags.js'
 
 export const QR_PRESENCE = ['confirmed', 'public_specimen', 'reported', 'underlying_only', 'not_established']
 export const QR_EVIDENCE = ['hcch', 'authority', 'official_specimen', 'public_specimen']
-export const QR_FUNCTION = ['verification_url', 'portal_or_token', 'document_url', 'offline_app', 'unknown']
+export const QR_FUNCTION = ['verification_url', 'portal_or_token', 'document_url', 'offline_app', 'embedded_fields', 'unknown']
 
 const CHECKED_AT = '2026-07-17'
 
@@ -58,14 +58,31 @@ export const qrCodes = {
   // ---------------------------------------------------------------------------
   // Confirmed by the current HCCH implementation chart
   // ---------------------------------------------------------------------------
-  'bahrain-ministry-of-foreign-affairs': record('confirmed', 'HCCH states the e-Register uses QR codes to generate unique URLs, which is why no general lookup link is listed.', {
+  'bahrain-ministry-of-foreign-affairs': record('confirmed', 'HCCH states the e-Register uses QR codes to generate unique URLs. Specimen confirms, but the payload carries NO scheme -- a bare host string.', {
     evidence: 'hcch',
     function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: www.mofa.gov.bh/legalization?id=000000
+    normalizeSchemelessTo: 'https:',
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'www.mofa.gov.bh', port: '',
+      pathnamePattern: '^/legalization/?$', allowedSearchParams: ['id']
+    }],
     sourceUrl: HCCH_CHART
   }),
   'ecuador-ministry-of-foreign-affairs-and-human-mobility': record('confirmed', 'HCCH states the e-Apostille email includes a QR that opens the official verification link.', {
     evidence: 'hcch',
     function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://serviciosciudadanos.cancilleria.gob.ec/
+    //   ValidacionApostillaURL/DatosApostillaURL?validaDocumento=000000000000000
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'serviciosciudadanos.cancilleria.gob.ec', port: '',
+      pathnamePattern: '^/ValidacionApostillaURL/DatosApostillaURL$',
+      allowedSearchParams: ['validaDocumento']
+    }],
     sourceUrl: HCCH_CHART
   }),
   'el-salvador-ministry-of-foreign-affairs': record('confirmed', 'HCCH lists the e-Register as “Via QR code”. Payload shape still needs a specimen.', {
@@ -78,16 +95,36 @@ export const qrCodes = {
     sourceUrl: 'https://assets.hcch.net/docs/a3c419ec-9cef-45af-aaa9-498517c8734c.pdf',
     app: { name: 'GouvCheck', publisher: 'Government of Luxembourg' }
   }),
-  'pakistan-ministry-of-foreign-affairs': record('confirmed', 'HCCH lists both a conventional e-Register link and QR. Deep-link versus portal behaviour needs a specimen.', {
+  'pakistan-ministry-of-foreign-affairs': record('confirmed', 'Specimen confirms a QR deep link carrying the apostille number and issue date as query parameters.', {
     evidence: 'hcch',
+    function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://apostille.mofa.gov.pk/verify-attestation-by-qr
+    //   ?apostille_number=APO-XXXX-XXXX-XXXX&day=31&month=07&year=2025
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'apostille.mofa.gov.pk', port: '',
+      pathnamePattern: '^/verify-attestation-by-qr/?$',
+      allowedSearchParams: ['apostille_number', 'day', 'month', 'year']
+    }],
     sourceUrl: HCCH_CHART
   }),
   'panama-organo-judicial': record('confirmed', 'HCCH lists this authority’s e-Register as “Via QR Code”. Does not apply to Panama’s Ministry of Foreign Affairs.', {
     evidence: 'hcch',
     sourceUrl: HCCH_CHART
   }),
-  'russian-federation-ministry-of-justice': record('confirmed', 'HCCH lists the e-Register as “Via QR code”. Payload still needs a specimen.', {
+  'russian-federation-ministry-of-justice': record('confirmed', 'Specimen confirms a QR deep link carrying a UUID apostille id.', {
     evidence: 'hcch',
+    function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://minjust.gov.ru/ru/pages/apostil-ispf/
+    //   ?aposId=00000000-0000-0000-0000-000000000000
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'minjust.gov.ru', port: '',
+      pathnamePattern: '^/ru/pages/apostil-ispf/?$',
+      allowedSearchParams: ['aposId']
+    }],
     sourceUrl: HCCH_CHART
   }),
   'rwanda-ministry-of-foreign-affairs-and-international-cooperation': record('confirmed', 'HCCH lists the e-Register as available by link “or via QR code”.', {
@@ -101,12 +138,25 @@ export const qrCodes = {
   'armenia-ministry-of-justice': record('confirmed', 'HCCH-hosted specimen instructs verification by tracking number or QR.', {
     evidence: 'official_specimen',
     function: 'verification_url',
-    allowedUrls: [{ protocol: 'https:', hostname: 'e-verify.am', port: '', pathnamePattern: null }],
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: http://e-verify.am/?tnum=AP00-0000-0000-0000
+    // Plain HTTP and the record id rides in ?tnum=. Not a government domain.
+    allowedUrls: [{
+      protocol: 'http:', hostname: 'e-verify.am', port: '', pathnamePattern: '^/$',
+      allowedSearchParams: ['tnum'], insecureAccepted: true
+    }],
     sourceUrl: 'https://assets.hcch.net/docs/7148c8b9-6d72-41d3-9239-4c1991fda6d8.pdf'
   }),
   'bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh': record('confirmed', 'MFA verification instructions state each e-Apostille contains a QR and that scanning it verifies the authentication.', {
     evidence: 'authority',
     function: 'verification_url',
+    // Specimen 2026-07-18 decoded to
+    // https://apostille.training.mygov.bd/application-details/1795368240
+    // That is a TRAINING environment. Deliberately NOT allowlisted: a test
+    // system must never be presented as an official verification result.
+    // A production specimen is still required.
+    specimenCount: 0,
     sourceUrl: 'https://mofa-servicedirectory.apostille.mygov.bd/how-to-verify'
   }),
   'bolivia-ministry-of-foreign-affairs': record('confirmed', '2025 MFA publication states digital apostilles carry a unique QR verification code. Exact payload needs a specimen.', {
@@ -114,30 +164,75 @@ export const qrCodes = {
     function: 'verification_url',
     sourceUrl: 'https://cancilleria.gob.bo/mre/wp-content/uploads/2025/11/APOSTILLA-version-digital-2025.pdf'
   }),
-  'brazil-national-council-of-justice': record('confirmed', 'CNJ states the QR printed on the physical apostille is used to consult authenticity. Two official systems split by issue date (3 August 2020).', {
-    evidence: 'authority',
-    function: 'verification_url',
-    allowedUrls: [
-      { protocol: 'https:', hostname: 'apostil.cnj.jus.br', port: '', pathnamePattern: null },
-      { protocol: 'https:', hostname: 'apostila.cnj.jus.br', port: '', pathnamePattern: null }
-    ],
-    sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
-  }),
+  'brazil-national-council-of-justice': [
+    record('confirmed', 'Current CNJ system. Specimen host is apostil.org.br -- NOT the apostil.cnj.jus.br guessed from the CNJ validation page, and not a government domain at all.', {
+      scope: 'apostil-current',
+      evidence: 'authority',
+      function: 'verification_url',
+      specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+      // Specimen 2026-07-18: https://apostil.org.br/v?number=0000000-00&crc=00000000
+      allowedUrls: [{
+        protocol: 'https:', hostname: 'apostil.org.br', port: '',
+        pathnamePattern: '^/v/?$', allowedSearchParams: ['number', 'crc']
+      }],
+      sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
+    }),
+    record('confirmed', 'Legacy SEI Apostila, for apostilles issued before 3 August 2020. Specimen host is www.cnj.jus.br, not the apostila.cnj.jus.br subdomain previously recorded.', {
+      scope: 'sei-legacy',
+      evidence: 'authority',
+      function: 'verification_url',
+      specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+      // Specimen 2026-07-18: https://www.cnj.jus.br/seiapostila/controlador_externo.php
+      //   ?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111
+      allowedUrls: [{
+        protocol: 'https:', hostname: 'www.cnj.jus.br', port: '',
+        pathnamePattern: '^/seiapostila/controlador_externo\\.php$',
+        allowedSearchParams: ['acao', 'id_orgao_acesso_externo', 'cv', 'crc']
+      }],
+      sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
+    })
+  ],
   'bulgaria-national-center-for-information-and-documentation': record('confirmed', 'HCCH competent-authority information states this authority’s e-Apostilles have used a QR since June 2020. Does not extend to the other Bulgarian authorities.', {
     evidence: 'authority',
-    allowedUrls: [{ protocol: 'https:', hostname: 'apostille.bg', port: '', pathnamePattern: null }],
+    function: 'document_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18:
+    // https://apostille.nacid.bg/api/Public/ElectronicApostille/AAA0000A0AAA
+    // Host is apostille.nacid.bg, not the apostille.bg previously recorded, and
+    // the path is an /api/ endpoint returning the record rather than a page --
+    // so this is document retrieval, not a human-readable status result.
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'apostille.nacid.bg', port: '',
+      pathnamePattern: '^/api/Public/ElectronicApostille/[A-Z0-9]{8,20}$'
+    }],
     sourceUrl: 'https://www.hcch.net/en/instruments/conventions/authorities1/print1/?cid=41'
   }),
   'chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service': record('confirmed', 'The official service exposes QR-specific verification results under a /QR/ path.', {
     evidence: 'authority',
     function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://consulta.apostilla.gob.cl/QR/AAAAAAAAAAAAAAAAAAAAAA==
+    // Confirms the /QR/<base64> shape inferred from the live service.
     allowedUrls: [{ protocol: 'https:', hostname: 'consulta.apostilla.gob.cl', port: '', pathnamePattern: '^/QR/[A-Za-z0-9%+/=_-]+$' }],
     sourceUrl: 'https://consulta.apostilla.gob.cl/'
   }),
   'china-china-mainland-ministry-of-foreign-affairs': record('confirmed', 'Official e-Apostille sample instructs recipients to scan the QR on the last page. Mainland only — does not transfer to Hong Kong or Macao.', {
     evidence: 'official_specimen',
     function: 'verification_url',
-    allowedUrls: [{ protocol: 'https:', hostname: 'consular.mfa.gov.cn', port: '', pathnamePattern: null }],
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX
+    // Plain HTTP, and the record id is in the FRAGMENT (hash-router SPA), which
+    // is never sent to the server -- so it must be preserved, not stripped.
+    allowedUrls: [{
+      protocol: 'http:', hostname: 'consular.mfa.gov.cn', port: '',
+      pathnamePattern: '^/VERIFY/?$', allowFragment: true,
+      fragmentPattern: '^#/[A-Za-z0-9_-]{6,64}$', insecureAccepted: true
+    }],
     sourceUrl: 'https://cs.mfa.gov.cn/gyls/lsgz/fwxx/202506/P020250617541458190587.pdf'
   }),
   'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court': record('confirmed', 'Judiciary’s official mobile verification guide says to scan the QR on the Apostille Certificate; it prefills apostille number and reference code, so the user still completes a portal form.', {
@@ -148,15 +243,26 @@ export const qrCodes = {
   'colombia-ministry-of-foreign-affairs': record('confirmed', 'Official circular states the apostille can be verified with its QR.', {
     evidence: 'authority',
     function: 'verification_url',
-    allowedUrls: [
-      { protocol: 'https:', hostname: 'cancilleria.gov.co', port: '', pathnamePattern: null },
-      { protocol: 'https:', hostname: 'tramites.cancilleria.gov.co', port: '', pathnamePattern: null }
-    ],
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://tramites.cancilleria.gov.co/Ciudadano/
+    //   ConsultaApostilla/consulta.aspx?cod=A0AAAA00000000&fecha=4/27/2022
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'tramites.cancilleria.gov.co', port: '',
+      pathnamePattern: '^/Ciudadano/ConsultaApostilla/consulta\\.aspx$',
+      allowedSearchParams: ['cod', 'fecha']
+    }],
     sourceUrl: 'https://www.cancilleria.gov.co/normograma/compilacion/docs/circular_minrelaciones_0040_2015.htm'
   }),
-  'costa-rica-ministry-of-foreign-affairs-and-worship': record('confirmed', 'MFA states apostilles have carried a QR since 12 July 2019 and that it enables authenticity verification. Exact payload needs a specimen.', {
+  'costa-rica-ministry-of-foreign-affairs-and-worship': record('confirmed', 'CORRECTION: the QR is NOT a URL. The specimen decodes to delimited plain text carrying the apostille\u2019s own fields. The MFA statement that the QR "enables authenticity verification" was true; inferring a verification URL from it was not.', {
     evidence: 'authority',
-    function: 'verification_url',
+    function: 'embedded_fields',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18 shape (values withheld -- the payload carries the
+    // names of the signatory and the authenticating official):
+    fieldShape: 'issueDate//code//authenticatingOfficial//signatory//capacity',
+    containsPersonalData: true,
     sourceUrl: 'https://www.rree.go.cr/?cat=prensa&cont=593&id=4848&sec=servicios'
   }),
   'greece-ministry-of-digital-governance': record('confirmed', 'Official e-Apostille FAQ states the e-Apostille itself bears a QR and can be verified by scanning it.', {
@@ -167,13 +273,29 @@ export const qrCodes = {
   'guatemala-ministry-of-foreign-affairs': record('confirmed', 'Official presentation/specimen labels the QR and verification code as the means to validate authenticity. Host sits behind a Cloudflare bot challenge for non-browser requests.', {
     evidence: 'official_specimen',
     function: 'verification_url',
-    allowedUrls: [{ protocol: 'https:', hostname: 'apostilla.minex.gob.gt', port: '', pathnamePattern: null }],
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18:
+    // https://apostilla.minex.gob.gt/public/verificar/apostilla/0000000000/AAAAAA
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'apostilla.minex.gob.gt', port: '',
+      pathnamePattern: '^/public/verificar/apostilla/[0-9]{6,20}/[A-Za-z0-9]{4,16}$'
+    }],
     sourceUrl: 'https://www.minex.gob.gt/userfiles/apostilla.pdf'
   }),
   'japan-ministry-of-foreign-affairs': record('confirmed', 'Applies to apostilles issued from 1 June 2026. The QR (or printed URL) opens the authenticity-search site; the user must still enter certificate number, certification date, and access code.', {
     evidence: 'authority',
     function: 'portal_or_token',
-    allowedUrls: [{ protocol: 'https:', hostname: 'ezairyu.mofa.go.jp', port: '', pathnamePattern: null }],
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: https://www.ezairyu.mofa.go.jp/eregister/eregi/authcheck
+    // Host is www.ezairyu... (not the bare ezairyu... previously recorded), and
+    // the URL carries NO record id -- confirming portal_or_token: the user must
+    // still type certificate number, certification date, and access code.
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'www.ezairyu.mofa.go.jp', port: '',
+      pathnamePattern: '^/eregister/eregi/authcheck/?$'
+    }],
     sourceUrl: 'https://www.mofa.go.jp/mofaj/toko/page22_000552.html',
     appliesFrom: '2026-06-01'
   }),
@@ -187,7 +309,16 @@ export const qrCodes = {
       scope: 'legacy-physical-certificate',
       evidence: 'authority',
       function: 'document_url',
-      allowedUrls: [{ protocol: 'https:', hostname: 'dicoppu.segob.gob.mx', port: '', pathnamePattern: null }],
+      specimenCount: 1,
+      specimenTestedAt: '2026-07-18',
+      // Specimen 2026-07-18: http://consultasislac.segob.gob.mx/csislac/qr.do?a=1&b=000000
+      // Host is consultasislac.segob.gob.mx, not the dicoppu.segob.gob.mx named
+      // in the published QR documentation. Plain HTTP.
+      allowedUrls: [{
+        protocol: 'http:', hostname: 'consultasislac.segob.gob.mx', port: '',
+        pathnamePattern: '^/csislac/qr\\.do$', allowedSearchParams: ['a', 'b'],
+        insecureAccepted: true
+      }],
       sourceUrl: 'https://dicoppu.segob.gob.mx/work/models/DICOPPU/QR/index.html'
     }),
     record('confirmed', 'Current federal e-Apostille: HCCH notification states verification is by scanning the QR on the certificate. Exact redirect/payload still needs a current specimen. Does not extend to Jalisco, Mexico City, or Baja California Sur.', {
@@ -273,7 +404,21 @@ export const qrCodes = {
   'turkiye-supervisory-competent-authorities-ministry-of-justice-ministry-of-internal-affairs': notEstablished('QR references in official Turkish sources concern underlying e-government documents or foreign e-Apostilles.'),
   'united-kingdom-cayman-islands-passport-and-corporate-services-office': notEstablished('Separate e-Register from the FCDO. No apostille QR established.'),
   'united-kingdom-foreign-and-commonwealth-office': notEstablished('GOV.UK verification requires issue date and apostille number; neither the service guidance nor reviewed specimens establish a QR.'),
-  'panama-ministry-of-foreign-affairs': notEstablished('This authority has a conventional e-Register link. The HCCH “Via QR Code” entry belongs to Panama’s Judicial Branch only.'),
+  'panama-ministry-of-foreign-affairs': record('confirmed', 'CORRECTION: a specimen shows this authority DOES issue QR-bearing apostilles. The decoded host is sigob.mire.gob.pa (MIRE = Ministerio de Relaciones Exteriores), so the finding belongs here, not to the Judicial Branch row that HCCH flags as QR.', {
+    evidence: 'official_specimen',
+    function: 'verification_url',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: http://sigob.mire.gob.pa/reportes/MIA/PA/
+    //   autenticaciones/apostille.aspx?args=<opaque hex blob>
+    // Plain HTTP, and the record reference is one opaque ?args= blob.
+    allowedUrls: [{
+      protocol: 'http:', hostname: 'sigob.mire.gob.pa', port: '',
+      pathnamePattern: '^/reportes/MIA/PA/autenticaciones/apostille\\.aspx$',
+      allowedSearchParams: ['args'], insecureAccepted: true
+    }],
+    sourceUrl: HCCH_CHART
+  }),
   'bulgaria-ministry-of-foreign-affairs': notEstablished('The June 2020 QR statement covers the National Centre for Information and Documentation only.'),
   'bulgaria-ministry-of-justice': notEstablished('The June 2020 QR statement covers the National Centre for Information and Documentation only.'),
   'bulgaria-regional-administrations': notEstablished('The June 2020 QR statement covers the National Centre for Information and Documentation only.'),
@@ -321,4 +466,39 @@ export function enabledQrRecordsFor(authorityId) {
 /** True when the public "Scan QR" entry point may be shown for this authority. */
 export function hasEnabledQrScanning(authorityId) {
   return enabledQrRecordsFor(authorityId).length > 0
+}
+
+// --- Enablement gate --------------------------------------------------------
+//
+// `enabled` is DERIVED, never hand-written. Setting it by hand is how an
+// authority ends up routable without the evidence behind it, so the literal
+// value in each record above is overwritten here from the evidence itself.
+//
+// Specimen count controls how tightly we bind, not merely whether we route:
+//
+//   0 specimens  Not routable. An official statement that a QR exists does not
+//                tell us what it contains -- Costa Rica proved that, where the
+//                authority's own "enables verification" wording turned out to
+//                describe embedded text rather than a URL.
+//   1 specimen   The host is empirical fact, decoded from a real apostille, so
+//                we bind to host + path + declared query params. We do NOT
+//                reconstruct a canonical URL: one sample cannot distinguish a
+//                stable path segment from a coincidence.
+//   2 specimens  Canonical reconstruction unlocks (see buildDestination in
+//                ../qr-routing.js), so navigation targets a URL we built rather
+//                than one the QR handed us.
+
+function gateEnabled(record) {
+  if (record.presence !== 'confirmed') return false
+  if (record.function === 'unknown') return false
+  if (record.specimenCount < 1) return false
+  if (record.function === 'offline_app') return Boolean(record.app?.name)
+  if (record.function === 'embedded_fields') return Boolean(record.fieldShape)
+  return (record.allowedUrls || []).length > 0
+}
+
+for (const value of Object.values(qrCodes)) {
+  for (const entry of Array.isArray(value) ? value : [value]) {
+    entry.enabled = gateEnabled(entry)
+  }
 }

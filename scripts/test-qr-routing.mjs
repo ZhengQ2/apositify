@@ -1,12 +1,15 @@
 // Phase 3.6 — QR routing security tests.
 //
-// These use SYNTHETIC fixture authorities registered at test time. Synthetic
-// fixtures exist to exercise the decoder and the security boundary; per the
-// Phase 3 evidence gate they can never satisfy a real authority's enablement.
-// Every real authority stays disabled, which is asserted in validate-data.mjs.
+// Two fixture families:
+//
+//   Synthetic authorities registered at test time, which exercise the security
+//   boundary in isolation. They can never satisfy a real authority's gate.
+//
+//   Real specimens decoded 2026-07-18 from actual apostilles, which pin the
+//   behaviour the schema grew to accommodate. Personal values are withheld.
 
 import assert from 'node:assert/strict'
-import { OUTCOME, classifyQrPayload, hostnameMatches, normalizeHostname } from '../src/qr-routing.js'
+import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
 
 let passed = 0
@@ -178,11 +181,20 @@ check('a valid payload from an adjacent authority is blocked, not opened', () =>
   assert.ok(!result.url)
 })
 
-check('disabled real authorities never route, even on a documented host', () => {
-  // Brazil is confirmed with real allowlist hosts but has not passed the gate.
-  const result = classifyQrPayload('https://apostil.cnj.jus.br/pt/validation/ABC', 'brazil-national-council-of-justice')
+check('a confirmed authority with no specimen still never routes', () => {
+  // Greece is confirmed by its own e-Apostille FAQ but has no decoded specimen,
+  // so an official statement alone must not make it routable.
+  const result = classifyQrPayload('https://e-apostille.gov.gr/verify/ABC', 'greece-ministry-of-digital-governance')
   assert.equal(result.kind, OUTCOME.NOT_ENABLED)
   assert.equal(result.presence, 'confirmed')
+  assert.ok(!result.url)
+})
+
+check('a superseded host no longer routes after a specimen corrected it', () => {
+  // apostil.cnj.jus.br was inferred from the CNJ validation page and was wrong;
+  // the specimen showed apostil.org.br. The stale host must now be rejected.
+  const result = classifyQrPayload('https://apostil.cnj.jus.br/pt/validation/ABC', 'brazil-national-council-of-justice')
+  assert.equal(result.kind, OUTCOME.BLOCKED)
   assert.ok(!result.url)
 })
 
@@ -194,10 +206,125 @@ check('an unknown authority id is reported as unknown, not enabled', () => {
 
 check('no non-official outcome ever carries a URL to open', () => {
   const payloads = [GOOD, 'https://attacker.test/x', 'javascript:alert(1)', 'not a url']
-  for (const id of ['brazil-national-council-of-justice', 'singapore-singapore-academy-of-law', 'no-such-authority']) {
+  for (const id of ['greece-ministry-of-digital-governance', 'singapore-singapore-academy-of-law', 'no-such-authority']) {
     for (const payload of payloads) {
       assert.ok(!classifyQrPayload(payload, id).url, `${id} must not produce a URL`)
     }
+  }
+})
+
+
+
+// ---------------------------------------------------------------------------
+// Real-specimen regression fixtures (decoded 2026-07-18)
+//
+// Every payload below came off an actual apostille. They are the reason the
+// schema grew fragments, scheme normalisation, per-rule HTTP acceptance, and
+// the embedded_fields function -- so they must keep classifying correctly.
+// Personal values are withheld; only structural payloads appear here.
+// ---------------------------------------------------------------------------
+
+const realSpecimens = [
+  ['armenia-ministry-of-justice', 'http://e-verify.am/?tnum=AP00-0000-0000-0000', 'Armenia: plain HTTP + query token'],
+  ['bahrain-ministry-of-foreign-affairs', 'www.mofa.gov.bh/legalization?id=000000', 'Bahrain: scheme-less payload'],
+  ['brazil-national-council-of-justice', 'https://apostil.org.br/v?number=0000000-00&crc=00000000', 'Brazil current: non-government .org.br host'],
+  ['brazil-national-council-of-justice', 'https://www.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111', 'Brazil legacy: judiciary .jus.br host'],
+  ['bulgaria-national-center-for-information-and-documentation', 'https://apostille.nacid.bg/api/Public/ElectronicApostille/AAA0000A0AAA', 'Bulgaria: API document retrieval'],
+  ['chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service', 'https://consulta.apostilla.gob.cl/QR/AAAAAAAAAAAAAAAAAAAAAA==', 'Chile: base64 path token'],
+  ['china-china-mainland-ministry-of-foreign-affairs', 'http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX', 'China: HTTP + fragment-carried token'],
+  ['colombia-ministry-of-foreign-affairs', 'https://tramites.cancilleria.gov.co/Ciudadano/ConsultaApostilla/consulta.aspx?cod=A0AAAA00000000&fecha=4/27/2022', 'Colombia: two query params'],
+  ['ecuador-ministry-of-foreign-affairs-and-human-mobility', 'https://serviciosciudadanos.cancilleria.gob.ec/ValidacionApostillaURL/DatosApostillaURL?validaDocumento=000000000000000', 'Ecuador'],
+  ['guatemala-ministry-of-foreign-affairs', 'https://apostilla.minex.gob.gt/public/verificar/apostilla/0000000000/AAAAAA', 'Guatemala: two path segments'],
+  ['japan-ministry-of-foreign-affairs', 'https://www.ezairyu.mofa.go.jp/eregister/eregi/authcheck', 'Japan: portal with no token'],
+  ['mexico-ministry-of-interior', 'http://consultasislac.segob.gob.mx/csislac/qr.do?a=1&b=000000', 'Mexico legacy: HTTP document retrieval'],
+  ['pakistan-ministry-of-foreign-affairs', 'https://apostille.mofa.gov.pk/verify-attestation-by-qr?apostille_number=APO-XXXX-XXXX-XXXX&day=31&month=07&year=2025', 'Pakistan: four query params'],
+  ['panama-ministry-of-foreign-affairs', 'http://sigob.mire.gob.pa/reportes/MIA/PA/autenticaciones/apostille.aspx?args=8A818DBB929408D4', 'Panama MFA: opaque args blob'],
+  ['russian-federation-ministry-of-justice', 'https://minjust.gov.ru/ru/pages/apostil-ispf/?aposId=00000000-0000-0000-0000-000000000000', 'Russia: UUID query token']
+]
+
+for (const [id, payload, label] of realSpecimens) {
+  check(`real specimen routes: ${label}`, () => {
+    const result = classifyQrPayload(payload, id)
+    assert.equal(result.kind, OUTCOME.OFFICIAL, `${label}: expected OFFICIAL, got ${result.kind} (${result.reason})`)
+    assert.equal(result.trust, TRUST.VERIFIED, `${label}: must be specimen-verified trust`)
+    assert.ok(result.url, `${label}: should produce a destination`)
+    // One specimen must never unlock canonical reconstruction.
+    assert.equal(result.canonical, false, `${label}: one specimen cannot justify canonical rebuild`)
+  })
+}
+
+check('Costa Rica payload is embedded field data, not a destination', () => {
+  const result = classifyQrPayload(
+    '12/07/2019//NCDXATKNWGC//Official Name//Signatory Name//Certificador de Registro',
+    'costa-rica-ministry-of-foreign-affairs-and-worship'
+  )
+  assert.equal(result.kind, OUTCOME.EMBEDDED_FIELDS)
+  assert.ok(!result.url, 'embedded field data has no destination to open')
+  assert.equal(result.containsPersonalData, true, 'payload carries names and must be flagged')
+})
+
+check('Bangladesh training host stays unroutable', () => {
+  const result = classifyQrPayload('https://apostille.training.mygov.bd/application-details/1795368240',
+    'bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh')
+  assert.equal(result.kind, OUTCOME.NOT_ENABLED)
+  assert.ok(!result.url)
+})
+
+// --- Tier 2: government-domain fallback ------------------------------------
+
+check('tier 2 offers cautious routing for an unmapped authority on a gov host', () => {
+  const result = classifyQrPayload('https://apostille.gov.rw/verify/ABC123', 'rwanda-ministry-of-foreign-affairs-and-international-cooperation', 'Rwanda')
+  assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT)
+  assert.equal(result.trust, TRUST.GOVERNMENT)
+  assert.equal(result.matchedSuffix, 'gov.rw')
+})
+
+check('tier 2 refuses a look-alike government domain', () => {
+  for (const host of ['https://gov.rw.attacker.test/x', 'https://notgov.rw/x', 'https://evil-gov.rw/x']) {
+    const result = classifyQrPayload(host, 'rwanda-ministry-of-foreign-affairs-and-international-cooperation', 'Rwanda')
+    assert.equal(result.kind, OUTCOME.BLOCKED, `${host} must not match gov.rw`)
+    assert.ok(!result.url)
+  }
+})
+
+check('tier 2 refuses non-production hosts inside the government namespace', () => {
+  const result = classifyQrPayload('https://apostille.training.gov.rw/x', 'rwanda-ministry-of-foreign-affairs-and-international-cooperation', 'Rwanda')
+  assert.equal(result.kind, OUTCOME.BLOCKED)
+  assert.equal(result.reason, 'non_production_host')
+})
+
+check('tier 2 requires HTTPS', () => {
+  const result = classifyQrPayload('http://apostille.gov.rw/x', 'rwanda-ministry-of-foreign-affairs-and-international-cooperation', 'Rwanda')
+  assert.equal(result.kind, OUTCOME.BLOCKED)
+  assert.equal(result.reason, 'government_host_insecure')
+})
+
+check('tier 2 never overrides a specimen-verified authority', () => {
+  // Brazil has verified hosts, so a different .gov.br host is a mismatch and
+  // must NOT fall through to the government-domain heuristic.
+  const result = classifyQrPayload('https://something-else.gov.br/verify/X', 'brazil-national-council-of-justice', 'Brazil')
+  assert.equal(result.kind, OUTCOME.BLOCKED)
+  assert.notEqual(result.trust, TRUST.GOVERNMENT)
+})
+
+check('tier 2 is off when no country is supplied', () => {
+  const result = classifyQrPayload('https://apostille.gov.rw/verify/ABC123', 'rwanda-ministry-of-foreign-affairs-and-international-cooperation')
+  assert.notEqual(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT, 'tier 2 must not engage without a country')
+  assert.ok(!result.url, 'no destination may be offered')
+})
+
+check('adversarial payloads stay blocked for every real enabled authority', () => {
+  const hostile = [
+    'javascript:alert(1)',
+    'https://apostil.org.br@attacker.test/v',
+    'https://apostil.org.br.attacker.test/v?number=1&crc=2',
+    'https://apostil.org.br:8443/v?number=1&crc=2',
+    'https://apostil.org.br/v?number=1&crc=2&next=https://attacker.test'
+  ]
+  for (const payload of hostile) {
+    const result = classifyQrPayload(payload, 'brazil-national-council-of-justice', 'Brazil')
+    assert.notEqual(result.kind, OUTCOME.OFFICIAL, `${payload} must not route`)
+    assert.ok(!result.url, `${payload} must not produce a URL`)
   }
 })
 

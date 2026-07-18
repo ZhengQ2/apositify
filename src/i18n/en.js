@@ -70,6 +70,28 @@ export const messages = {
   qrUnsupportedTitle: 'Code content not recognised',
   qrUnsupportedBody: 'This code does not contain a documented official address. Here is the raw content:',
 
+  // Tier 2 — government namespace, no specimen. The copy must make the weaker
+  // basis explicit and must not use the word verify.
+  qrGovTitle: 'Government address — format not confirmed',
+  qrGovBody: 'This code points to an address inside {country}\u2019s government domain, but we have not confirmed this authority\u2019s QR format against a real Apostille. Check the address below looks right before continuing.',
+  qrGovOpen: 'Continue to this address',
+  qrGovCaution: 'We cannot tell you whether this page belongs to the issuing authority or what it will show.',
+
+  qrFieldsTitle: 'Details stored in the code',
+  qrFieldsBody: 'This authority\u2019s QR does not link anywhere. It stores the Apostille\u2019s own details so they can be compared against the printed certificate.',
+  qrFieldsShape: 'Order of the stored values:',
+  qrFieldsPersonal: 'This code contains personal details, so we are not displaying its contents. Compare it against your Apostille using a QR reader you control.',
+  qrFieldsReveal: 'Show contents anyway',
+
+  qrReportPrompt: 'Was this the wrong result?',
+  qrReportBody: 'If this Apostille came from a legitimate authority, sharing what the code contained helps us support it. Nothing is sent unless you choose to.',
+  qrReportCta: 'Share this code with us',
+  qrReportPreviewLabel: 'This is exactly what would be sent:',
+  qrReportWarn: 'Check this for personal details before sharing. Some authorities encode names and document numbers in the QR itself.',
+  qrReportConfirm: 'Send',
+  qrReportCancel: 'Cancel',
+  qrReportDone: 'Thank you — that helps us add support for this authority.',
+
   qrInfoConfirmed: 'Apostilles from this authority are documented to carry a QR code. In-app scanning is not offered yet — scan it with your phone’s camera and check the destination is an official government address.',
   qrInfoReported: 'A QR code on this authority’s Apostilles has been reported but not confirmed from an official source. Use the lookup route above.',
   qrInfoUnderlyingOnly: 'Any QR code you see may belong to the underlying document rather than to the Apostille itself. A QR on the source document does not verify the Apostille.'

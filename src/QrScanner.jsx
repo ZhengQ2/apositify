@@ -10,9 +10,9 @@
 // destination that matched that authority's complete URL rule.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AlertTriangle, Camera, ExternalLink, FileImage, QrCode, ShieldAlert, Smartphone, X } from 'lucide-react'
+import { AlertTriangle, Camera, ExternalLink, FileImage, Landmark, QrCode, Send, ShieldAlert, Smartphone, X } from 'lucide-react'
 import { CAMERA_ERROR, DECODE, decodeFromFile, decodeFromVideo, requestCameraStream, stopStream } from './qr-decoder'
-import { OUTCOME, classifyQrPayload } from './qr-routing'
+import { OUTCOME, classifyQrPayload, isReportable } from './qr-routing'
 import { messages as t } from './i18n/en'
 
 const STATE = {
@@ -27,7 +27,7 @@ const STATE = {
 
 const SCAN_INTERVAL_MS = 250
 
-export function QrScannerDialog({ authorityId, authorityName, onClose }) {
+export function QrScannerDialog({ authorityId, authorityName, country, onClose }) {
   const [state, setState] = useState(STATE.IDLE)
   const [result, setResult] = useState(null)
   const [decodeIssue, setDecodeIssue] = useState(null)
@@ -89,10 +89,10 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
 
   const handlePayload = useCallback((text) => {
     releaseCamera()
-    setResult(classifyQrPayload(text, authorityId))
+    setResult(classifyQrPayload(text, authorityId, country))
     setDecodeIssue(null)
     setState(STATE.DECODED)
-  }, [authorityId, releaseCamera])
+  }, [authorityId, country, releaseCamera])
 
   const startCamera = useCallback(async () => {
     // Restarting while a scan is live must release the previous stream and
@@ -187,9 +187,41 @@ export function QrScannerDialog({ authorityId, authorityName, onClose }) {
           </label>
         </div>
 
-        {result && <QrResult result={result} />}
+        {result && <QrResult result={result} country={country} />}
 
         <small>{t.qrPrivacyNote}</small>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Payload is the apostille's own field data. It may contain names, so the values
+ * stay hidden behind an explicit reveal and only the field ORDER is shown by
+ * default.
+ */
+function EmbeddedFieldsResult({ result }) {
+  const [revealed, setRevealed] = useState(false)
+  return (
+    <div className="status neutral qr-result">
+      <QrCode aria-hidden="true" />
+      <div>
+        <strong>{t.qrFieldsTitle}</strong>
+        <p>{t.qrFieldsBody}</p>
+        {result.fieldShape && (
+          <p className="qr-host">{t.qrFieldsShape} <code>{result.fieldShape}</code></p>
+        )}
+        {result.containsPersonalData && !revealed ? (
+          <>
+            <small>{t.qrFieldsPersonal}</small>
+            <button type="button" className="button secondary" onClick={() => setRevealed(true)}>
+              {t.qrFieldsReveal}
+            </button>
+          </>
+        ) : (
+          <pre className="qr-raw">{result.raw}</pre>
+        )}
+        <small>{t.qrNotAVerdict}</small>
       </div>
     </div>
   )
@@ -206,7 +238,51 @@ function cameraErrorMessage(error) {
  * are deliberately absent from every branch: opening an official page is not the
  * same as this app having verified an apostille.
  */
-function QrResult({ result }) {
+function QrResult({ result, country }) {
+  return (
+    <>
+      <QrResultBody result={result} country={country} />
+      {isReportable(result) && <ReportPanel result={result} />}
+    </>
+  )
+}
+
+/**
+ * Opt-in reporting. The payload is shown verbatim before anything is sent,
+ * because a QR can carry personal data -- Costa Rica's encodes the signatory's
+ * and authenticating official's names. The user sees exactly what would leave
+ * the device and must press Send; nothing is transmitted otherwise.
+ */
+function ReportPanel({ result }) {
+  const [open, setOpen] = useState(false)
+  const [sent, setSent] = useState(false)
+
+  if (sent) return <p className="qr-report-done" role="status">{t.qrReportDone}</p>
+
+  return (
+    <div className="qr-report">
+      <strong>{t.qrReportPrompt}</strong>
+      <p className="small-muted">{t.qrReportBody}</p>
+      {!open ? (
+        <button type="button" className="button secondary" onClick={() => setOpen(true)}>
+          <Send size={16} aria-hidden="true" /> {t.qrReportCta}
+        </button>
+      ) : (
+        <div className="qr-report-preview">
+          <small>{t.qrReportPreviewLabel}</small>
+          <pre className="qr-raw">{JSON.stringify({ authority: result.authorityId, outcome: result.kind, payload: result.raw }, null, 2)}</pre>
+          <small className="qr-report-warn"><AlertTriangle size={14} aria-hidden="true" /> {t.qrReportWarn}</small>
+          <div className="qr-actions">
+            <button type="button" className="button" onClick={() => setSent(true)}>{t.qrReportConfirm}</button>
+            <button type="button" className="button secondary" onClick={() => setOpen(false)}>{t.qrReportCancel}</button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function QrResultBody({ result, country }) {
   if (result.kind === OUTCOME.OFFICIAL) {
     const copy = {
       verification_url: { title: t.qrFnVerificationTitle, body: t.qrFnVerificationBody, action: t.qrOpenVerification },
@@ -242,6 +318,31 @@ function QrResult({ result }) {
         </div>
       </div>
     )
+  }
+
+  // Tier 2. Deliberately a different visual tone from OFFICIAL, with an action
+  // labelled "continue to this address" rather than anything resembling
+  // verification, because the only thing established is the namespace.
+  if (result.kind === OUTCOME.UNVERIFIED_GOVERNMENT) {
+    return (
+      <div className="status warning qr-result">
+        <Landmark aria-hidden="true" />
+        <div>
+          <strong>{t.qrGovTitle}</strong>
+          <p>{t.qrGovBody.replace('{country}', country || '')}</p>
+          <p className="qr-host">{t.qrDecodedHost} <code>{result.host}</code></p>
+          <a className="button secondary" href={result.url} target="_blank" rel="noreferrer noopener">
+            <ExternalLink size={16} aria-hidden="true" /> {t.qrGovOpen}
+          </a>
+          <small>{t.qrGovCaution}</small>
+          <small>{t.qrNotAVerdict}</small>
+        </div>
+      </div>
+    )
+  }
+
+  if (result.kind === OUTCOME.EMBEDDED_FIELDS) {
+    return <EmbeddedFieldsResult result={result} />
   }
 
   if (result.kind === OUTCOME.BLOCKED) {

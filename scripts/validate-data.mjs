@@ -3,6 +3,7 @@ import { eRegisters, sourceUrl } from '../src/data/e-registers.js'
 import { verificationFields } from '../src/data/verification-fields.js'
 import { validateVerificationField } from '../src/verification-validation.js'
 import { QR_EVIDENCE, QR_FUNCTION, QR_PRESENCE, hasEnabledQrScanning, qrCodes, qrRecordsFor } from '../src/data/qr-codes.js'
+import { governmentSuffixes, looksNonProduction } from '../src/data/government-domains.js'
 
 assert.equal(sourceUrl, 'https://assets.hcch.net/docs/e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf')
 assert.ok(eRegisters.length > 0, 'dataset must not be empty')
@@ -106,26 +107,52 @@ for (const entry of eRegisters) {
     }
 
     for (const rule of record.allowedUrls) {
-      assert.equal(rule.protocol, 'https:', `${entry.id} allowedUrls must be HTTPS unless a legacy endpoint is separately risk-accepted`)
+      assert.ok(rule.protocol === 'https:' || rule.protocol === 'http:', `${entry.id} allowedUrls protocol must be http(s)`)
       assert.ok(rule.hostname && !rule.hostname.includes('/'), `${entry.id} allowedUrls.hostname must be a bare hostname, not a path`)
       assert.equal(rule.hostname, rule.hostname.toLowerCase(), `${entry.id} allowedUrls.hostname must be lowercase ASCII`)
       if (rule.pathnamePattern) assert.doesNotThrow(() => new RegExp(rule.pathnamePattern), `${entry.id} has an invalid pathnamePattern`)
     }
 
-    // The production gate. Enabling an authority requires a known function, two
-    // current independent specimens, a cited evidence source, and the routing
-    // metadata that function needs.
+    // The production gate. `enabled` is derived in qr-codes.js; these assertions
+    // verify the derivation stayed honest rather than re-deriving it.
     if (record.enabled) {
       assert.notEqual(record.function, 'unknown', `${entry.id} cannot be enabled with an undocumented QR function`)
-      assert.ok(record.specimenCount >= 2, `${entry.id} needs two current independent specimens before enabling`)
+      assert.ok(record.specimenCount >= 1, `${entry.id} needs a decoded specimen before enabling`)
       assert.ok(record.specimenTestedAt, `${entry.id} needs a specimenTestedAt date before enabling`)
       assert.ok(record.evidence, `${entry.id} needs an evidence source before enabling`)
       assert.equal(record.presence, 'confirmed', `${entry.id} may only be enabled when presence is confirmed`)
       if (record.function === 'offline_app') {
         assert.ok(record.app?.name, `${entry.id} offline_app records need the government app name`)
+      } else if (record.function === 'embedded_fields') {
+        assert.ok(record.fieldShape, `${entry.id} embedded_fields records need a documented fieldShape`)
+        assert.equal(record.allowedUrls.length, 0, `${entry.id} embedded_fields payloads have no destination`)
       } else {
         assert.ok(record.allowedUrls.length > 0, `${entry.id} needs at least one allowedUrls rule before enabling`)
+        // Every enabled rule must bind the path. A host-only rule would accept
+        // any page on that host, including user-content and open-redirect paths.
+        for (const rule of record.allowedUrls) {
+          assert.ok(rule.pathnamePattern, `${entry.id} enabled rules must constrain the path, not just the host`)
+        }
       }
+      // Canonical reconstruction requires two specimens: one cannot tell a
+      // stable path segment from a coincidence.
+      for (const rule of record.allowedUrls) {
+        if (rule.canonicalUrlTemplate) {
+          assert.ok(record.specimenCount >= 2, `${entry.id} canonical reconstruction needs two specimens`)
+        }
+      }
+    }
+
+    // Plain HTTP is only reachable through an explicit, per-rule risk acceptance.
+    for (const rule of record.allowedUrls) {
+      if (rule.protocol === 'http:') {
+        assert.ok(rule.insecureAccepted, `${entry.id} http:// rules need an explicit insecureAccepted risk acceptance`)
+      }
+    }
+
+    // A non-production host must never be allowlisted, at any tier.
+    for (const rule of record.allowedUrls) {
+      assert.ok(!looksNonProduction(rule.hostname), `${entry.id} allowlists a non-production host: ${rule.hostname}`)
     }
 
     presenceCounts[record.presence] += 1
@@ -140,12 +167,27 @@ const confirmedParties = new Set(confirmedAuthorities.map((entry) => entry.count
 // Mainland MFA and Hong Kong Judiciary are separately confirmed while Macao is
 // not — exactly the kind of country-level inheritance the registry must prevent.
 assert.equal(confirmedParties.size, 23, 'research documents 23 parties with a confirmed apostille QR')
-assert.equal(confirmedAuthorities.length, 24, 'those 23 parties resolve to 24 competent authorities (China contributes two)')
-assert.equal(
-  eRegisters.filter((entry) => hasEnabledQrScanning(entry.id)).length,
-  0,
-  'no authority may ship enabled until it has two current specimens and a tested destination (Phase 3C)'
+// 25 authorities: China contributes two (Mainland + Hong Kong), and Panama now
+// contributes two -- a specimen showed the MFA also issues QR-bearing
+// apostilles, where HCCH only flags the Judicial Branch.
+assert.equal(confirmedAuthorities.length, 25, 'those 23 parties resolve to 25 competent authorities')
+const enabledAuthorities = eRegisters.filter((entry) => hasEnabledQrScanning(entry.id))
+assert.equal(enabledAuthorities.length, 15, '15 authorities have a decoded specimen and are routable')
+
+// Bangladesh's only specimen decoded to a training host, so it must stay off.
+assert.ok(
+  !hasEnabledQrScanning('bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh'),
+  'Bangladesh must stay disabled: its only specimen is from a training environment'
 )
+
+// Government suffixes are a tier-2 heuristic and must never be treated as hosts.
+for (const [country, suffixes] of Object.entries(governmentSuffixes)) {
+  assert.ok(Array.isArray(suffixes) && suffixes.length > 0, `${country} needs at least one suffix`)
+  for (const suffix of suffixes) {
+    assert.equal(suffix, suffix.toLowerCase(), `${country} suffix must be lowercase`)
+    assert.ok(!suffix.startsWith('.') && !suffix.includes('/'), `${country} suffix must be a bare namespace`)
+  }
+}
 
 assert.equal(validateVerificationField({ format: 'date-iso' }, '2026-02-28'), '')
 assert.notEqual(validateVerificationField({ format: 'date-iso' }, '2026-02-30'), '')

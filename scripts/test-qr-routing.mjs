@@ -240,6 +240,7 @@ const realSpecimens = [
   ['japan-ministry-of-foreign-affairs', 'https://www.ezairyu.mofa.go.jp/eregister/eregi/authcheck', 'Japan: portal with no token'],
   ['mexico-ministry-of-interior', 'http://consultasislac.segob.gob.mx/csislac/qr.do?a=1&b=000000', 'Mexico legacy: HTTP document retrieval'],
   ['pakistan-ministry-of-foreign-affairs', 'https://apostille.mofa.gov.pk/verify-attestation-by-qr?apostille_number=APO-XXXX-XXXX-XXXX&day=31&month=07&year=2025', 'Pakistan: four query params'],
+  ['philippines-department-of-foreign-affairs', 'e-registry.apostille.gov.ph', 'Philippines: scheme-less portal with no document reference'],
   ['panama-ministry-of-foreign-affairs', 'http://sigob.mire.gob.pa/reportes/MIA/PA/autenticaciones/apostille.aspx?args=8A818DBB929408D4', 'Panama MFA: opaque args blob'],
   ['russian-federation-ministry-of-justice', 'https://minjust.gov.ru/ru/pages/apostil-ispf/?aposId=00000000-0000-0000-0000-000000000000', 'Russia: UUID query token']
 ]
@@ -254,6 +255,14 @@ for (const [id, payload, label] of realSpecimens) {
     assert.equal(result.canonical, false, `${label}: one specimen cannot justify canonical rebuild`)
   })
 }
+
+check('Philippines scheme-less QR stays a manual-entry portal flow', () => {
+  const result = classifyQrPayload('e-registry.apostille.gov.ph', 'philippines-department-of-foreign-affairs')
+  assert.equal(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.function, 'portal_or_token')
+  assert.equal(result.schemeNormalized, true)
+  assert.equal(result.url, 'https://e-registry.apostille.gov.ph/')
+})
 
 check('Costa Rica payload is embedded field data, not a destination', () => {
   const result = classifyQrPayload(

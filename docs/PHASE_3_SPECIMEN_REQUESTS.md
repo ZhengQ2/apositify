@@ -1,6 +1,6 @@
 # Phase 3C — Specimen status and outstanding requests
 
-Generated from `src/data/qr-codes.js` on 2026-07-18, after decoding 17 specimens.
+Generated from `src/data/qr-codes.js` on 2026-07-18, after decoding 18 specimens.
 Regenerate rather than hand-editing: an earlier hand-written version drifted from
 the registry within a day, listing five hosts that the decodes had already
 disproved.
@@ -30,7 +30,7 @@ canonical URL reconstruction — rebuilding the destination from our own stored
 base rather than opening what the QR supplied — stays locked until a second
 independent issuance confirms which parts vary.
 
-## Decoded — one specimen held (17)
+## Decoded — one specimen held (18)
 
 These route today. A **second specimen from an independent issuance** unlocks
 canonical URL reconstruction, which is the remaining tightening step.
@@ -53,13 +53,14 @@ canonical URL reconstruction, which is the remaining tightening step.
 | Mexico (legacy-physical-certificate) — Ministry of Interior | `document_url` | `consultasislac.segob.gob.mx` |
 | Pakistan — Ministry of Foreign Affairs | `verification_url` | `apostille.mofa.gov.pk` |
 | Panama — Ministry of Foreign Affairs | `verification_url` | `sigob.mire.gob.pa` |
+| Philippines — Department of Foreign Affairs | `portal_or_token` | `e-registry.apostille.gov.ph` |
 | Russian Federation — Ministry of Justice | `verification_url` | `minjust.gov.ru` |
 
 Four are HTTP-only and carry an explicit `insecureAccepted` risk acceptance:
 Armenia, China (Mainland), Mexico, Panama. Testing whether HTTPS works on those
 same hosts would let us drop the exceptions.
 
-## Still needed — no decoded specimen (10)
+## Still needed — no decoded specimen (9)
 
 Confirmed by HCCH or the authority, but the payload has never been seen. These
 fall back to the tier-2 government-namespace heuristic and get explicitly
@@ -74,9 +75,8 @@ unverified copy.
 | Kazakhstan — Relevant authorities of several Ministries an | `verification_url` | — |
 | Luxembourg — Ministry of Foreign Affairs | `offline_app` | — |
 | Mexico (federal-e-apostille) — Ministry of Interior | `verification_url` | — |
-| Panama — Órgano Judicial | `unknown` | — |
-| Philippines — Department of Foreign Affairs | `verification_url` | — |
-| Rwanda — Ministry of Foreign Affairs and International | `unknown` | — |
+| Panama — Órgano Judicial | `verification_url` | — |
+| Rwanda — Ministry of Foreign Affairs and International | `document_url` | — |
 
 ## Excluded, deliberately
 

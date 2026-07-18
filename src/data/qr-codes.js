@@ -118,9 +118,10 @@ export const qrCodes = {
     }],
     sourceUrl: HCCH_CHART
   }),
-  'panama-organo-judicial': record('confirmed', 'HCCH lists this authority’s e-Register as “Via QR Code”. Does not apply to Panama’s Ministry of Foreign Affairs.', {
+  'panama-organo-judicial': record('confirmed', 'An authority-hosted HCCH notification states that this authority’s e-Register is available through the QR on e-Apostilles issued since April 2023. Does not apply to Panama’s Ministry of Foreign Affairs. Exact payload still needs a specimen.', {
     evidence: 'hcch',
-    sourceUrl: HCCH_CHART
+    function: 'verification_url',
+    sourceUrl: 'https://www.organojudicial.gob.pa/uploads/blogs.dir/26/2024/10/913/e-app-notification-panama-no-7-of-2024.pdf'
   }),
   'russian-federation-ministry-of-justice': record('confirmed', 'Specimen confirms a QR deep link carrying a UUID apostille id.', {
     evidence: 'hcch',
@@ -137,9 +138,10 @@ export const qrCodes = {
     }],
     sourceUrl: HCCH_CHART
   }),
-  'rwanda-ministry-of-foreign-affairs-and-international-cooperation': record('confirmed', 'HCCH lists the e-Register as available by link “or via QR code”.', {
-    evidence: 'hcch',
-    sourceUrl: HCCH_CHART
+  'rwanda-ministry-of-foreign-affairs-and-international-cooperation': record('confirmed', 'Official Irembo guidance states that the apostille certificate QR links to the legalized document. Exact payload still needs a specimen.', {
+    evidence: 'authority',
+    function: 'document_url',
+    sourceUrl: 'https://support.irembo.gov.rw/en/support/solutions/articles/47001262102-legalization-of-public-documents-from-rwanda-to-be-used-abroad-apostille'
   }),
 
   // ---------------------------------------------------------------------------
@@ -373,10 +375,20 @@ export const qrCodes = {
       sourceUrl: 'https://assets.hcch.net/docs/0ec80097-944c-49e6-a379-16f40a8e629c.pdf'
     })
   ],
-  'philippines-department-of-foreign-affairs': record('confirmed', 'DFA guidance states the QR provides quick access to the verification link. Allowlist the current host only after decoding a current specimen.', {
+  'philippines-department-of-foreign-affairs': record('confirmed', 'DFA guidance states the QR provides quick access to the verification link. A redacted 2024 specimen confirms that the QR is only the scheme-less eRegistry hostname; the user must still enter the serial code, serial number, and keycode.', {
     evidence: 'authority',
-    function: 'verification_url',
-    sourceUrl: 'https://bernepe.dfa.gov.ph/134-notarial-services/apostille-certificates'
+    function: 'portal_or_token',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18: e-registry.apostille.gov.ph
+    // The QR carries no scheme, path, or document reference. The official
+    // eRegistry is a form where the user enters the printed serial fields.
+    normalizeSchemelessTo: 'https:',
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'e-registry.apostille.gov.ph', port: '',
+      pathnamePattern: '^/$', documentRef: 'none'
+    }],
+    sourceUrl: 'https://www.apostille.gov.ph/faqs/'
   }),
 
   // ---------------------------------------------------------------------------

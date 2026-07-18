@@ -74,9 +74,9 @@ An official PDF URL is not “proof of nothing,” as the old version stated. If
 | El Salvador — MFA | HCCH lists the e-Register as “Via QR code” | QR confirmed; payload needs a specimen |
 | Luxembourg — MFA | HCCH lists the e-Register as “Via QR code”; Luxembourg's 2026 HCCH presentation says the apostille uses the GouvCheck app | `offline_app` confirmed |
 | Pakistan — MFA | HCCH lists both a conventional e-Register link and QR | QR confirmed; deep-link versus portal behavior needs a specimen |
-| Panama — Judicial Branch | HCCH lists this authority's e-Register as “Via QR Code” | QR confirmed; payload needs a specimen |
+| Panama — Judicial Branch | An [authority-hosted HCCH notification](https://www.organojudicial.gob.pa/uploads/blogs.dir/26/2024/10/913/e-app-notification-panama-no-7-of-2024.pdf) says its e-Register is available through the QR on e-Apostilles issued since April 2023 | `verification_url` confirmed; payload needs a specimen |
 | Russian Federation — Ministry of Justice | HCCH lists the e-Register as “Via QR code” | QR confirmed; payload needs a specimen |
-| Rwanda — MFA and International Cooperation | HCCH lists the e-Register as available by link “or via QR code” | QR confirmed; payload needs a specimen |
+| Rwanda — MFA and International Cooperation | Official [Irembo guidance](https://support.irembo.gov.rw/en/support/solutions/articles/47001262102-legalization-of-public-documents-from-rwanda-to-be-used-abroad-apostille) says the apostille certificate QR links to the legalized document | `document_url` confirmed; payload needs a specimen |
 
 Luxembourg is not merely “likely.” The [official HCCH presentation](https://assets.hcch.net/docs/a3c419ec-9cef-45af-aaa9-498517c8734c.pdf) states that GouvCheck verifies the authenticity of the apostille through the QR and requires installation of the free app.
 
@@ -92,7 +92,7 @@ Luxembourg is not merely “likely.” The [official HCCH presentation](https://
 | Colombia — MFA | An [official circular](https://www.cancilleria.gov.co/normograma/compilacion/docs/circular_minrelaciones_0040_2015.htm) says the apostille can be verified with its QR | `cancilleria.gov.co`, `tramites.cancilleria.gov.co` |
 | Guatemala — MFA | An [official presentation/specimen](https://www.minex.gob.gt/userfiles/apostilla.pdf) labels the QR and verification code as the means to validate authenticity | `apostilla.minex.gob.gt` |
 | Japan — MFA, apostilles issued from 1 June 2026 | The [MFA FAQ](https://www.mofa.go.jp/mofaj/toko/page22_000552.html) says the QR or printed URL opens the authenticity-search site; the user must then enter certificate number, certification date, and access code | `portal_or_token`; `ezairyu.mofa.go.jp` |
-| Philippines — DFA | [DFA guidance](https://bernepe.dfa.gov.ph/134-notarial-services/apostille-certificates) says the QR provides quick access to the verification link | `verification_url`; allowlist the current host only after decoding a current specimen |
+| Philippines — DFA | The [DFA FAQ](https://www.apostille.gov.ph/faqs/) says scanning the QR opens the verification service and that the e-Registry requires the serial code, serial number, and keycode | `portal_or_token`; specimen host `e-registry.apostille.gov.ph` |
 
 Additional official confirmations found during the specimen audit:
 
@@ -106,6 +106,8 @@ Additional official confirmations found during the specimen audit:
 | Mexico — federal Ministry of the Interior | The legacy federal [QR documentation](https://dicoppu.segob.gob.mx/work/models/DICOPPU/QR/index.html) says scanning downloads the apostille/legalisation PDF for authenticity checking. A later [HCCH notification](https://assets.hcch.net/docs/0ec80097-944c-49e6-a379-16f40a8e629c.pdf) says federal e-Apostilles are verified by scanning the QR on the certificate | legacy flow is `document_url`; current e-Apostille QR is confirmed but its exact redirect/payload still needs a current specimen |
 
 China's confirmation is also authority-specific. The Mainland MFA specimen cited above covers Mainland China. Hong Kong's Judiciary separately publishes an [official mobile verification guide](https://www.judiciary.hk/doc/en/court_services_facilities/hc/eAPOS_Help_Apostille_Verification_mobile.pdf) that says to scan the QR displayed on the Apostille Certificate; the QR prefills the apostille number and reference code. Macao remains unverified.
+
+For the Philippines, a redacted [2024 public specimen](https://www.filedocsphil.com/dfa-apostille-vs-philippine-e-apostille/) decoded to the bare hostname `e-registry.apostille.gov.ph`, with no scheme, path, or document reference. The official e-Registry is therefore treated as a portal where the user must enter the three printed fields, not as a one-tap status result.
 
 ### QR shown by a public, non-issuer specimen
 
@@ -223,6 +225,8 @@ Selected primary sources used for this correction (country-specific sources are 
 - [HCCH — Implementation Chart of the e-APP (current 64-party baseline)](https://assets.hcch.net/docs/e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf)
 - [HCCH — operational e-Registers web list (currently lagging at 61 entries)](https://www.hcch.net/en/instruments/conventions/specialised-sections/operational-e-registers)
 - [HCCH — Luxembourg e-APP presentation](https://assets.hcch.net/docs/a3c419ec-9cef-45af-aaa9-498517c8734c.pdf)
+- [Panama Judicial Branch — authority-hosted HCCH e-APP notification](https://www.organojudicial.gob.pa/uploads/blogs.dir/26/2024/10/913/e-app-notification-panama-no-7-of-2024.pdf)
+- [Rwanda Irembo — apostille application and certificate guidance](https://support.irembo.gov.rw/en/support/solutions/articles/47001262102-legalization-of-public-documents-from-rwanda-to-be-used-abroad-apostille)
 - [Japan MFA — apostille verification FAQ](https://www.mofa.go.jp/mofaj/toko/page22_000552.html)
 - [HCCH — Armenia e-Apostille specimen](https://assets.hcch.net/docs/7148c8b9-6d72-41d3-9239-4c1991fda6d8.pdf)
 - [Brazil CNJ — apostille FAQ](https://www.cnj.jus.br/perguntas-frequentes-5/)

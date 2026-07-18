@@ -209,7 +209,7 @@ assert.equal(confirmedParties.size, 23, 'research documents 23 parties with a co
 // apostilles, where HCCH only flags the Judicial Branch.
 assert.equal(confirmedAuthorities.length, 25, 'those 23 parties resolve to 25 competent authorities')
 const enabledAuthorities = eRegisters.filter((entry) => hasEnabledQrScanning(entry.id))
-assert.equal(enabledAuthorities.length, 16, '16 authorities have a decoded specimen and are routable (Hong Kong added 2026-07-18)')
+assert.equal(enabledAuthorities.length, 17, '17 authorities have a decoded specimen and are routable (Philippines added 2026-07-18)')
 
 // Bangladesh's only specimen decoded to a training host, so it must stay off.
 assert.ok(

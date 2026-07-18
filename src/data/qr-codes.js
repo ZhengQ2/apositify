@@ -24,6 +24,8 @@
 // A value may be a single record or an array of generation-scoped records (used
 // where an authority changed its QR flow — e.g. Mexico's legacy vs e-Apostille QR).
 
+import { qrDevEnableConfirmed } from '../feature-flags.js'
+
 export const QR_PRESENCE = ['confirmed', 'public_specimen', 'reported', 'underlying_only', 'not_established']
 export const QR_EVIDENCE = ['hcch', 'authority', 'official_specimen', 'public_specimen']
 export const QR_FUNCTION = ['verification_url', 'portal_or_token', 'document_url', 'offline_app', 'unknown']
@@ -309,7 +311,11 @@ export function qrRecordsFor(authorityId) {
 
 /** Records an enabled scanner may route against. Empty unless the evidence gate passed. */
 export function enabledQrRecordsFor(authorityId) {
-  return qrRecordsFor(authorityId).filter((entry) => entry.enabled)
+  const records = qrRecordsFor(authorityId)
+  // Dev-only bypass of the *enablement* gate — never of the URL allowlist.
+  // See qrDevEnableConfirmed in ../feature-flags.js.
+  if (qrDevEnableConfirmed) return records.filter((entry) => entry.presence === 'confirmed')
+  return records.filter((entry) => entry.enabled)
 }
 
 /** True when the public "Scan QR" entry point may be shown for this authority. */

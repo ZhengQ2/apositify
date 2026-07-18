@@ -256,9 +256,26 @@ export const qrCodes = {
     }],
     sourceUrl: 'https://cs.mfa.gov.cn/gyls/lsgz/fwxx/202506/P020250617541458190587.pdf'
   }),
-  'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court': record('confirmed', 'Judiciary’s official mobile verification guide says to scan the QR on the Apostille Certificate; it prefills apostille number and reference code, so the user still completes a portal form.', {
+  'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court': record('confirmed', 'Specimen confirms the Judiciary guide: the QR opens the e-services portal with the apostille number and reference code prefilled, and the user completes the form there. The host is judiciary.hk — a Hong Kong domain, NOT a mainland gov.cn one, so the Mainland MFA record does not apply here in either direction.', {
     evidence: 'authority',
     function: 'portal_or_token',
+    specimenCount: 1,
+    specimenTestedAt: '2026-07-18',
+    // Specimen 2026-07-18, values synthetic:
+    //   https://www.e-services.judiciary.hk/judservice-web/
+    //     ?apc=<b64>&afc=<b64>&aToken=<b64>
+    // The base64 is obfuscation, not encryption. Decoded from the specimen:
+    //   apc    (UTF-16LE) service code, e.g. "NCRAEAPOS"
+    //   afc    (UTF-16LE) application code, e.g. "NCRAEAPOS-APP-nnnn"
+    //   aToken (ASCII)    "<apostilleNumber>;<year>;<checkCode>"
+    // aToken therefore carries the document reference and must be present.
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'www.e-services.judiciary.hk', port: '',
+      pathnamePattern: '^/judservice-web/?$',
+      allowedSearchParams: ['apc', 'afc', 'aToken'],
+      requiredSearchParams: ['aToken'],
+      documentRef: 'query'
+    }],
     sourceUrl: 'https://www.judiciary.hk/doc/en/court_services_facilities/hc/eAPOS_Help_Apostille_Verification_mobile.pdf'
   }),
   'colombia-ministry-of-foreign-affairs': record('confirmed', 'Official circular states the apostille can be verified with its QR.', {

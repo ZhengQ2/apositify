@@ -37,7 +37,12 @@ export const governmentSuffixes = {
   Brazil: ['gov.br', 'jus.br'],
   Bulgaria: ['government.bg', 'egov.bg'],
   Chile: ['gob.cl'],
-  China: ['gov.cn'],
+  // China's entry covers the Mainland only. Hong Kong's Judiciary sits on
+  // judiciary.hk, so a gov.cn-only rule would reject a genuine Hong Kong
+  // apostille QR outright -- the same country-level inheritance error the
+  // registry avoids elsewhere. Both are listed because the dataset keys tier 2
+  // by party, and Hong Kong SAR is an authority within the China party.
+  China: ['gov.cn', 'gov.hk', 'judiciary.hk'],
   Colombia: ['gov.co'],
   'Costa Rica': ['go.cr'],
   Ecuador: ['gob.ec'],

@@ -11,7 +11,7 @@
 import assert from 'node:assert/strict'
 import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
-import { governmentSuffixes } from '../src/data/government-domains.js'
+import { governmentSuffixes, matchesGovernmentSuffix } from '../src/data/government-domains.js'
 
 let passed = 0
 function check(name, fn) {
@@ -408,6 +408,46 @@ check('every enabled URL rule declares where the document reference lives', () =
       }
     }
   }
+})
+
+// --- Hong Kong: judiciary.hk, not gov.cn ------------------------------------
+
+const HK = 'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court'
+
+check('Hong Kong specimen routes as a portal', () => {
+  const result = classifyQrPayload(
+    'https://www.e-services.judiciary.hk/judservice-web/?apc=AAAA&afc=BBBB&aToken=CCCC',
+    HK
+  )
+  assert.equal(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.function, 'portal_or_token')
+  assert.equal(result.host, 'www.e-services.judiciary.hk')
+})
+
+check('Hong Kong without aToken carries no reference', () => {
+  const result = classifyQrPayload('https://www.e-services.judiciary.hk/judservice-web/?apc=AAAA', HK)
+  assert.notEqual(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.reason, 'missing_required_query_parameter')
+})
+
+check('Hong Kong and Mainland China do not inherit each other', () => {
+  const MAINLAND = 'china-china-mainland-ministry-of-foreign-affairs'
+  // A Hong Kong payload must not route as Mainland...
+  const hkAsMainland = classifyQrPayload(
+    'https://www.e-services.judiciary.hk/judservice-web/?aToken=CCCC', MAINLAND)
+  assert.notEqual(hkAsMainland.kind, OUTCOME.OFFICIAL)
+  // ...nor a Mainland payload as Hong Kong.
+  const mainlandAsHk = classifyQrPayload('http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX', HK)
+  assert.notEqual(mainlandAsHk.kind, OUTCOME.OFFICIAL)
+})
+
+check('tier 2 for the China party accepts Hong Kong domains, not only gov.cn', () => {
+  // Macao is confirmed-but-unmapped and shares the China party entry. A
+  // gov.cn-only suffix list would reject a genuine Hong Kong government host.
+  assert.equal(matchesGovernmentSuffix('anything.judiciary.hk', 'China'), 'judiciary.hk')
+  assert.equal(matchesGovernmentSuffix('anything.gov.hk', 'China'), 'gov.hk')
+  assert.equal(matchesGovernmentSuffix('anything.gov.cn', 'China'), 'gov.cn')
+  assert.equal(matchesGovernmentSuffix('notjudiciary.hk', 'China'), null)
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

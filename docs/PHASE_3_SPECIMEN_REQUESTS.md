@@ -15,8 +15,12 @@ Rica's encodes the signatory's and authenticating official's names.
 2. **Do not commit specimens.** No apostille image belongs in git history. Keep
    them under `specimens/` (gitignored) or outside the repo, and never in
    `public/`, which is copied into the production build.
-3. **Decoded values stay out of the repo too** where they are personal. The
-   registry records Costa Rica's field *order*, never its values.
+3. **Decoded values stay out of the repo too.** Not only names: an apostille
+   number plus check code is a working lookup credential on a live government
+   verifier, and those verifiers return the underlying record. Record the payload
+   SHAPE and substitute synthetic values of the same form. The registry records
+   Costa Rica's field *order* and never its values, and every example payload in
+   `qr-codes.js` and the test suite uses synthetic identifiers.
 
 ## What a second specimen buys
 
@@ -26,7 +30,7 @@ canonical URL reconstruction — rebuilding the destination from our own stored
 base rather than opening what the QR supplied — stays locked until a second
 independent issuance confirms which parts vary.
 
-## Decoded — one specimen held (16)
+## Decoded — one specimen held (17)
 
 These route today. A **second specimen from an independent issuance** unlocks
 canonical URL reconstruction, which is the remaining tightening step.
@@ -40,6 +44,7 @@ canonical URL reconstruction, which is the remaining tightening step.
 | Bulgaria — National Center for Information and Documenta | `document_url` | `apostille.nacid.bg` |
 | Chile — Relevant authorities of the Ministries of Jus | `verification_url` | `consulta.apostilla.gob.cl` |
 | China — China (Mainland): Ministry of Foreign Affairs | `verification_url` | `consular.mfa.gov.cn` |
+| China — Hong Kong SAR: The Registrar, the Senior Depu | `portal_or_token` | `www.e-services.judiciary.hk` |
 | Colombia — Ministry of Foreign Affairs | `verification_url` | `tramites.cancilleria.gov.co` |
 | Costa Rica — Ministry of Foreign Affairs and Worship | `embedded_fields` | — |
 | Ecuador — Ministry of Foreign Affairs and Human Mobilit | `verification_url` | `serviciosciudadanos.cancilleria.gob.ec` |
@@ -50,10 +55,11 @@ canonical URL reconstruction, which is the remaining tightening step.
 | Panama — Ministry of Foreign Affairs | `verification_url` | `sigob.mire.gob.pa` |
 | Russian Federation — Ministry of Justice | `verification_url` | `minjust.gov.ru` |
 
-Four of these are HTTP-only and carry an explicit `insecureAccepted` risk
-acceptance: Armenia, China, Mexico, Panama. Testing whether HTTPS works on the same hosts would let us drop those.
+Four are HTTP-only and carry an explicit `insecureAccepted` risk acceptance:
+Armenia, China (Mainland), Mexico, Panama. Testing whether HTTPS works on those
+same hosts would let us drop the exceptions.
 
-## Still needed — no decoded specimen (11)
+## Still needed — no decoded specimen (10)
 
 Confirmed by HCCH or the authority, but the payload has never been seen. These
 fall back to the tier-2 government-namespace heuristic and get explicitly
@@ -63,7 +69,6 @@ unverified copy.
 |---|---|---|
 | Bangladesh — Ministry of Foreign Affairs of the Government | `verification_url` | — |
 | Bolivia — Ministry of Foreign Affairs | `verification_url` | — |
-| China — Hong Kong SAR: The Registrar, the Senior Depu | `portal_or_token` | — |
 | El Salvador — Ministry of Foreign Affairs | `unknown` | — |
 | Greece — Ministry of Digital Governance | `verification_url` | — |
 | Kazakhstan — Relevant authorities of several Ministries an | `verification_url` | — |

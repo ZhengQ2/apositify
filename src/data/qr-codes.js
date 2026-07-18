@@ -16,10 +16,16 @@
 //   underlying_only  A QR was found on the underlying document, not the apostille.
 //   not_established  The review did not establish a QR. This is NOT proof of absence.
 //
-// `enabled: true` is the production gate and requires TWO current, redacted
-// specimens from independent issuances plus a tested destination. No authority
-// passes that gate yet, so every record below is `enabled: false` and the public
-// scanner entry point stays hidden. Enable one authority per pull request.
+// `enabled` is DERIVED at the bottom of this file by gateEnabled(), never
+// hand-written. The gate requires a DECODED SPECIMEN -- an official statement
+// that a QR exists is not enough, as Costa Rica proved when its "enables
+// verification" wording turned out to describe embedded text and not a URL.
+//
+// This is a deliberate relaxation of the two-specimen bar in DEVELOPMENT_PLAN.md.
+// A decoded host is empirical fact; a path template from a single sample is not.
+// So one specimen binds host + path + declared params, while canonical URL
+// reconstruction still requires two. Raise gateEnabled()'s threshold to 2 to
+// restore the original bar.
 //
 // A value may be a single record or an array of generation-scoped records (used
 // where an authority changed its QR flow — e.g. Mexico's legacy vs e-Apostille QR).

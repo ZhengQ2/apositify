@@ -11,6 +11,7 @@
 import assert from 'node:assert/strict'
 import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
+import { governmentSuffixes } from '../src/data/government-domains.js'
 
 let passed = 0
 function check(name, fn) {
@@ -326,6 +327,29 @@ check('adversarial payloads stay blocked for every real enabled authority', () =
     assert.notEqual(result.kind, OUTCOME.OFFICIAL, `${payload} must not route`)
     assert.ok(!result.url, `${payload} must not produce a URL`)
   }
+})
+
+check('no government suffix is a bare ccTLD', () => {
+  for (const [country, suffixes] of Object.entries(governmentSuffixes)) {
+    for (const suffix of suffixes) {
+      assert.ok(suffix.includes('.') || suffix === 'gov', `${country}: '${suffix}' is a bare TLD`)
+    }
+  }
+})
+
+check('tier 2 does not accept an arbitrary host in the country ccTLD', () => {
+  // Greece previously listed the bare 'gr' suffix, which made every .gr host a
+  // government namespace.
+  const result = classifyQrPayload('https://not-the-government.gr/verify/X', 'greece-ministry-of-digital-governance', 'Greece')
+  assert.equal(result.kind, OUTCOME.BLOCKED)
+  assert.equal(result.reason, 'not_a_government_host')
+  assert.ok(!result.url)
+})
+
+check('tier 2 still accepts the real government namespace', () => {
+  const result = classifyQrPayload('https://e-apostille.gov.gr/verify/X', 'greece-ministry-of-digital-governance', 'Greece')
+  assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT)
+  assert.equal(result.matchedSuffix, 'gov.gr')
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

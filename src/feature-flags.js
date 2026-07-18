@@ -2,9 +2,17 @@
 // exercised in development and staging without appearing in production until an
 // authority actually passes the evidence gate.
 //
-// Set VITE_QR_SCANNER=on to surface the scanner entry point. Even with the flag
-// on, the entry point only renders for authorities whose qrCode record has
-// `enabled: true` — the flag never bypasses the evidence gate.
+// Set VITE_QR_SCANNER=on to surface the scanner entry point. It renders for two
+// groups, which the classifier then treats very differently:
+//
+//   - Authorities with a decoded specimen, which route against a verified host
+//     allowlist (tier 1).
+//   - Authorities whose QR presence is `confirmed` but whose format we have not
+//     seen, which fall back to the government-namespace heuristic (tier 2) and
+//     get explicitly unverified copy and a weaker action.
+//
+// Opening the scanner is therefore not the same as passing the evidence gate;
+// the gate governs which TIER a payload can reach, not whether the dialog opens.
 
 const env = typeof import.meta !== 'undefined' ? import.meta.env : undefined
 

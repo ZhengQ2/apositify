@@ -59,11 +59,48 @@ function drawToImageData(source, sourceWidth, sourceHeight, canvas) {
   return context.getImageData(0, 0, width, height)
 }
 
+/**
+ * jsQR reports at most one symbol per pass, so a naive fallback would silently
+ * accept an ambiguous frame that the native detector correctly refuses. To keep
+ * both paths equivalent, decode once, blank out the region the symbol occupied,
+ * and decode again: a second hit means more than one code is in frame.
+ */
 function decodeImageData(imageData) {
   if (!imageData) return { status: DECODE.UNREADABLE }
-  const result = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' })
-  if (!result?.data) return { status: DECODE.NONE }
-  return { status: DECODE.OK, text: result.data }
+  const { data, width, height } = imageData
+  const first = jsQR(data, width, height, { inversionAttempts: 'attemptBoth' })
+  if (!first?.data) return { status: DECODE.NONE }
+
+  const masked = new Uint8ClampedArray(data)
+  maskRegion(masked, width, height, first.location)
+  const second = jsQR(masked, width, height, { inversionAttempts: 'attemptBoth' })
+  if (second?.data && second.data !== first.data) return { status: DECODE.MULTIPLE }
+
+  return { status: DECODE.OK, text: first.data }
+}
+
+/** Paint the bounding box of a decoded symbol white so a re-scan skips it. */
+function maskRegion(pixels, width, height, location) {
+  if (!location) return
+  const corners = [
+    location.topLeftCorner, location.topRightCorner,
+    location.bottomLeftCorner, location.bottomRightCorner
+  ].filter(Boolean)
+  if (corners.length === 0) return
+
+  const pad = 4
+  const minX = Math.max(0, Math.floor(Math.min(...corners.map((c) => c.x)) - pad))
+  const maxX = Math.min(width - 1, Math.ceil(Math.max(...corners.map((c) => c.x)) + pad))
+  const minY = Math.max(0, Math.floor(Math.min(...corners.map((c) => c.y)) - pad))
+  const maxY = Math.min(height - 1, Math.ceil(Math.max(...corners.map((c) => c.y)) + pad))
+
+  for (let y = minY; y <= maxY; y += 1) {
+    for (let x = minX; x <= maxX; x += 1) {
+      const i = (y * width + x) * 4
+      pixels[i] = pixels[i + 1] = pixels[i + 2] = 255
+      pixels[i + 3] = 255
+    }
+  }
 }
 
 async function decodeWithNative(source) {

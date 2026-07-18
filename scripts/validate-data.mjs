@@ -113,8 +113,11 @@ for (const entry of eRegisters) {
       if (rule.pathnamePattern) assert.doesNotThrow(() => new RegExp(rule.pathnamePattern), `${entry.id} has an invalid pathnamePattern`)
     }
 
-    // The production gate. `enabled` is derived in qr-codes.js; these assertions
-    // verify the derivation stayed honest rather than re-deriving it.
+    // The production gate. `enabled` is derived by gateEnabled() in qr-codes.js;
+    // these assertions verify the derivation stayed honest rather than
+    // re-deriving it. The bar is ONE decoded specimen (see that file's header for
+    // why this differs from DEVELOPMENT_PLAN.md); canonical URL reconstruction
+    // still requires two, asserted below.
     if (record.enabled) {
       assert.notEqual(record.function, 'unknown', `${entry.id} cannot be enabled with an undocumented QR function`)
       assert.ok(record.specimenCount >= 1, `${entry.id} needs a decoded specimen before enabling`)
@@ -186,6 +189,13 @@ for (const [country, suffixes] of Object.entries(governmentSuffixes)) {
   for (const suffix of suffixes) {
     assert.equal(suffix, suffix.toLowerCase(), `${country} suffix must be lowercase`)
     assert.ok(!suffix.startsWith('.') && !suffix.includes('/'), `${country} suffix must be a bare namespace`)
+    // A bare ccTLD would turn tier 2 from "inside this government's domain"
+    // into "anywhere in this country". Only '.gov' (the US) is a whole TLD
+    // reserved for government use.
+    assert.ok(
+      suffix.includes('.') || suffix === 'gov',
+      `${country}: '${suffix}' is a bare TLD, not a government namespace`
+    )
   }
 }
 

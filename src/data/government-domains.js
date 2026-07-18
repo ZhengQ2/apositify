@@ -24,6 +24,10 @@
 //
 // Suffixes are registrable government namespaces, matched on a dot boundary.
 // Add a party only when its government namespace is actually known.
+//
+// Never add a bare ccTLD ('gr', 'am', 'bg'). A country-code TLD is not a
+// government namespace, and adding one silently converts tier 2 from "inside
+// this government's domain" into "anywhere in this country".
 
 export const governmentSuffixes = {
   Armenia: ['gov.am'],
@@ -38,7 +42,9 @@ export const governmentSuffixes = {
   'Costa Rica': ['go.cr'],
   Ecuador: ['gob.ec'],
   'El Salvador': ['gob.sv'],
-  Greece: ['gov.gr', 'gr'],
+  // NOT the bare 'gr' ccTLD: that would make every .gr host a government
+  // namespace and hand a continue-link to any Greek domain.
+  Greece: ['gov.gr'],
   Guatemala: ['gob.gt'],
   Japan: ['go.jp'],
   Kazakhstan: ['gov.kz'],

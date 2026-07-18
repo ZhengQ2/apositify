@@ -10,7 +10,7 @@
 // destination that matched that authority's complete URL rule.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AlertTriangle, Camera, ExternalLink, FileImage, Landmark, QrCode, Send, ShieldAlert, Smartphone, X } from 'lucide-react'
+import { AlertTriangle, Camera, ClipboardCopy, ExternalLink, FileImage, Landmark, QrCode, ShieldAlert, Smartphone, X } from 'lucide-react'
 import { CAMERA_ERROR, DECODE, decodeFromFile, decodeFromVideo, requestCameraStream, stopStream } from './qr-decoder'
 import { OUTCOME, classifyQrPayload, isReportable } from './qr-routing'
 import { messages as t } from './i18n/en'
@@ -47,7 +47,13 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     return canvasRef.current
   }, [])
 
+  // Bumped on every release. A getUserMedia() promise that resolves after the
+  // dialog closed compares its captured value against this and, if stale, stops
+  // the stream it was handed instead of installing it.
+  const sessionRef = useRef(0)
+
   const releaseCamera = useCallback(() => {
+    sessionRef.current += 1
     if (timerRef.current) {
       clearInterval(timerRef.current)
       timerRef.current = null
@@ -99,10 +105,17 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     // interval first, or the old camera track keeps running with nothing holding
     // a reference that could stop it.
     releaseCamera()
+    const session = sessionRef.current
     setResult(null)
     setDecodeIssue(null)
     setState(STATE.REQUESTING)
     const { stream, error } = await requestCameraStream()
+    // The permission prompt can outlive the dialog. If anything released the
+    // camera while we were waiting, this stream belongs to a dead session.
+    if (session !== sessionRef.current) {
+      stopStream(stream)
+      return
+    }
     if (error) {
       setCameraError(error)
       setState(STATE.CAMERA_ERROR)
@@ -118,6 +131,7 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     timerRef.current = setInterval(async () => {
       if (!videoRef.current || !canvasRef.current) return
       const decoded = await decodeFromVideo(videoRef.current, canvasRef.current)
+      if (session !== sessionRef.current) return
       if (decoded.status === DECODE.OK) handlePayload(decoded.text)
       else if (decoded.status === DECODE.MULTIPLE) setDecodeIssue(DECODE.MULTIPLE)
       else setDecodeIssue(null)
@@ -248,16 +262,43 @@ function QrResult({ result, country }) {
 }
 
 /**
- * Opt-in reporting. The payload is shown verbatim before anything is sent,
- * because a QR can carry personal data -- Costa Rica's encodes the signatory's
- * and authenticating official's names. The user sees exactly what would leave
- * the device and must press Send; nothing is transmitted otherwise.
+ * Reporting is copy-to-clipboard, not submission: there is no backend to receive
+ * a report, and a button labelled "Send" that transmits nothing would tell the
+ * user they had reported when they had not.
+ *
+ * The payload is shown verbatim first, because a QR can carry personal data --
+ * Costa Rica's encodes the signatory's and authenticating official's names. The
+ * user sees exactly what they are about to copy before anything reaches the
+ * clipboard, and nothing ever leaves the device on its own.
  */
 function ReportPanel({ result }) {
   const [open, setOpen] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  if (sent) return <p className="qr-report-done" role="status">{t.qrReportDone}</p>
+  const payload = JSON.stringify(
+    { authority: result.authorityId, outcome: result.kind, payload: result.raw },
+    null,
+    2
+  )
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(payload)
+      setCopied(true)
+    } catch {
+      // Clipboard can be blocked by permissions policy; the text is on screen
+      // and selectable either way, so surface the follow-up instructions.
+      setCopied(true)
+    }
+  }
+
+  if (copied) {
+    return (
+      <p className="qr-report-done" role="status">
+        {t.qrReportDone.replace('{email}', t.qrReportEmail)}
+      </p>
+    )
+  }
 
   return (
     <div className="qr-report">
@@ -265,15 +306,15 @@ function ReportPanel({ result }) {
       <p className="small-muted">{t.qrReportBody}</p>
       {!open ? (
         <button type="button" className="button secondary" onClick={() => setOpen(true)}>
-          <Send size={16} aria-hidden="true" /> {t.qrReportCta}
+          <ClipboardCopy size={16} aria-hidden="true" /> {t.qrReportCta}
         </button>
       ) : (
         <div className="qr-report-preview">
           <small>{t.qrReportPreviewLabel}</small>
-          <pre className="qr-raw">{JSON.stringify({ authority: result.authorityId, outcome: result.kind, payload: result.raw }, null, 2)}</pre>
+          <pre className="qr-raw">{payload}</pre>
           <small className="qr-report-warn"><AlertTriangle size={14} aria-hidden="true" /> {t.qrReportWarn}</small>
           <div className="qr-actions">
-            <button type="button" className="button" onClick={() => setSent(true)}>{t.qrReportConfirm}</button>
+            <button type="button" className="button" onClick={onCopy}>{t.qrReportConfirm}</button>
             <button type="button" className="button secondary" onClick={() => setOpen(false)}>{t.qrReportCancel}</button>
           </div>
         </div>

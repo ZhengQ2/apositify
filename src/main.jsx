@@ -190,7 +190,7 @@ function QrSection({ entry }) {
     <div className="verify-helper">
       <div className="verify-helper-heading">
         <QrCode size={16} aria-hidden="true" />
-        <span>QR code on this Apostille</span>
+        <span>{t.qrSectionHeading}</span>
       </div>
       <small>{guidance}</small>
     </div>

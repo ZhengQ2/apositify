@@ -83,15 +83,19 @@ export const messages = {
   qrFieldsPersonal: 'This code contains personal details, so we are not displaying its contents. Compare it against your Apostille using a QR reader you control.',
   qrFieldsReveal: 'Show contents anyway',
 
+  // There is no reporting endpoint, so this copies to the clipboard and lets the
+  // user send it themselves. The copy must not imply anything was transmitted.
   qrReportPrompt: 'Was this the wrong result?',
-  qrReportBody: 'If this Apostille came from a legitimate authority, sharing what the code contained helps us support it. Nothing is sent unless you choose to.',
-  qrReportCta: 'Share this code with us',
-  qrReportPreviewLabel: 'This is exactly what would be sent:',
-  qrReportWarn: 'Check this for personal details before sharing. Some authorities encode names and document numbers in the QR itself.',
-  qrReportConfirm: 'Send',
+  qrReportBody: 'We may not support this authority\u2019s QR format yet. You can copy what the code contained and send it to us — nothing leaves your device on its own.',
+  qrReportCta: 'Show what you can copy',
+  qrReportPreviewLabel: 'Copy this and email it to us:',
+  qrReportWarn: 'Check this for personal details first. Some authorities encode names and document numbers in the QR itself.',
+  qrReportConfirm: 'Copy to clipboard',
   qrReportCancel: 'Cancel',
-  qrReportDone: 'Thank you — that helps us add support for this authority.',
+  qrReportDone: 'Copied. Email it to {email} and we\u2019ll look at adding support.',
+  qrReportEmail: 'qr-specimens@apostifi.com',
 
+  qrSectionHeading: 'QR code on this Apostille',
   qrInfoConfirmed: 'Apostilles from this authority are documented to carry a QR code. In-app scanning is not offered yet — scan it with your phone’s camera and check the destination is an official government address.',
   qrInfoReported: 'A QR code on this authority’s Apostilles has been reported but not confirmed from an official source. Use the lookup route above.',
   qrInfoUnderlyingOnly: 'Any QR code you see may belong to the underlying document rather than to the Apostille itself. A QR on the source document does not verify the Apostille.'

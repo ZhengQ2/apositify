@@ -1,116 +1,84 @@
-# Phase 3C — Specimen acquisition request list
+# Phase 3C — Specimen status and outstanding requests
 
-Derived from `src/data/qr-codes.js` on 2026-07-18. This is the **request** list —
-what to obtain and why. The decoded results go in the private fixture manifest
-(§3.5), **not** in this repository.
+Generated from `src/data/qr-codes.js` on 2026-07-18, after decoding 17 specimens.
+Regenerate rather than hand-editing: an earlier hand-written version drifted from
+the registry within a day, listing five hosts that the decodes had already
+disproved.
 
-## Before you send anything
+## Handling rules
 
-Apostilles carry personal data: names, dates of birth, document numbers, and the
-underlying document's subject matter. Please:
+Apostilles carry personal data, and so, sometimes, does the QR itself — Costa
+Rica's encodes the signatory's and authenticating official's names.
 
 1. **Redact before sending.** Black out names, DOB, addresses, and the underlying
-   document details. The QR code, the apostille number, and the issue date are
-   what matter.
-2. **Do not black out the QR itself** — it is the artifact under test. If the QR
-   encodes personal data, that is a finding worth recording, so send it and note
-   the concern rather than redacting it away.
-3. **Never commit specimens to this repo.** No apostille image, redacted or not,
-   belongs in git history. Send them out-of-band and I will record only the
-   decoded payload template, host, and redirect chain.
+   document details. Leave the QR, the apostille number, and the issue date.
+2. **Do not commit specimens.** No apostille image belongs in git history. Keep
+   them under `specimens/` (gitignored) or outside the repo, and never in
+   `public/`, which is copied into the production build.
+3. **Decoded values stay out of the repo too** where they are personal. The
+   registry records Costa Rica's field *order*, never its values.
 
-If a specimen is your own document and you would rather not share it at all,
-decoding it yourself and sending me just the payload string is enough for most
-of what is listed below.
+## What a second specimen buys
 
-## What counts as a qualifying specimen
+One specimen makes the host empirical fact, so we bind host + path + declared
+query params. It cannot tell a stable path segment from a coincidence, so
+canonical URL reconstruction — rebuilding the destination from our own stored
+base rather than opening what the QR supplied — stays locked until a second
+independent issuance confirms which parts vary.
 
-The gate needs **two per authority, from independent issuances** — two different
-apostilles, not two photos of one. One specimen tells us the payload shape; the
-second tells us which parts are stable and which vary per document. A single
-specimen cannot distinguish a fixed path segment from a coincidence.
+## Decoded — one specimen held (16)
 
-Also useful, in descending order: issue date (payload formats change over time),
-whether it is paper or electronic, and the destination page you land on.
+These route today. A **second specimen from an independent issuance** unlocks
+canonical URL reconstruction, which is the remaining tightening step.
 
----
-
-## Priority 1 — documented host, needs payload confirmation
-
-These already have an allowlisted host from an official source, so a specimen
-completes the gate rather than starting it. Highest value per specimen.
-
-| Authority | Function | Known host(s) | What the specimen resolves |
-|---|---|---|---|
-| Armenia — Ministry of Justice | `verification_url` | `e-verify.am` | Path shape; whether the tracking number is in the URL |
-| Brazil — CNJ | `verification_url` | `apostil.cnj.jus.br`, `apostila.cnj.jus.br` | Which host by issue date (split at 3 Aug 2020); path template |
-| Chile — national authorities | `verification_url` | `consulta.apostilla.gob.cl` | Confirm the `/QR/<token>` pattern already guessed from the live service |
-| China — Mainland MFA | `verification_url` | `consular.mfa.gov.cn` | Path template; whether the last-page QR differs from the sticker QR |
-| Colombia — MFA | `verification_url` | `cancilleria.gov.co`, `tramites.cancilleria.gov.co` | Which of the two hosts is current; redirect between them |
-| Guatemala — MFA | `verification_url` | `apostilla.minex.gob.gt` | Path template. Note: host is behind a Cloudflare bot challenge |
-| Japan — MFA | `portal_or_token` | `ezairyu.mofa.go.jp` | Applies to issuances from 1 Jun 2026. Which fields the QR prefills vs. which the user still types |
-| Mexico — Interior (legacy) | `document_url` | `dicoppu.segob.gob.mx` | Confirm it still returns a PDF and has not been migrated |
-| Bulgaria — NACID | `unknown` | `apostille.bg` | **Function is unknown** — specimen determines whether this is a lookup, a portal, or a document fetch |
-
-## Priority 2 — confirmed QR, no host documented
-
-The issuing authority or HCCH confirms a QR exists, but no official source gave a
-URL. Until a specimen arrives these authorities block every payload — expected
-behaviour, not a bug. A specimen here supplies the host from scratch.
-
-| Authority | Function | Evidence basis |
+| Authority | Function | Verified host(s) |
 |---|---|---|
-| Bangladesh — MFA | `verification_url` | MFA verification instructions |
-| Bolivia — MFA | `verification_url` | 2025 MFA publication |
-| Costa Rica — MFA | `verification_url` | MFA statement, QR since 12 Jul 2019 |
-| Ecuador — MFA and Human Mobility | `verification_url` | HCCH chart |
-| Greece — Ministry of Digital Governance | `verification_url` | Official e-Apostille FAQ |
-| Kazakhstan — justice authorities | `verification_url` | Government guidance. **Several competent authorities — note which issued yours** |
-| Philippines — DFA | `verification_url` | DFA guidance |
-| China — Hong Kong Judiciary | `portal_or_token` | Judiciary verification guide (prefills apostille number + reference code) |
-| Mexico — Interior (federal e-Apostille) | `verification_url` | HCCH notification. Distinct from the legacy flow above |
+| Armenia — Ministry of Justice | `verification_url` | `e-verify.am` |
+| Bahrain — Ministry of Foreign Affairs | `verification_url` | `www.mofa.gov.bh` |
+| Brazil (apostil-current) — National Council of Justice | `verification_url` | `apostil.org.br` |
+| Brazil (sei-legacy) — National Council of Justice | `verification_url` | `www.cnj.jus.br` |
+| Bulgaria — National Center for Information and Documenta | `document_url` | `apostille.nacid.bg` |
+| Chile — Relevant authorities of the Ministries of Jus | `verification_url` | `consulta.apostilla.gob.cl` |
+| China — China (Mainland): Ministry of Foreign Affairs | `verification_url` | `consular.mfa.gov.cn` |
+| Colombia — Ministry of Foreign Affairs | `verification_url` | `tramites.cancilleria.gov.co` |
+| Costa Rica — Ministry of Foreign Affairs and Worship | `embedded_fields` | — |
+| Ecuador — Ministry of Foreign Affairs and Human Mobilit | `verification_url` | `serviciosciudadanos.cancilleria.gob.ec` |
+| Guatemala — Ministry of Foreign Affairs | `verification_url` | `apostilla.minex.gob.gt` |
+| Japan — Ministry of Foreign Affairs | `portal_or_token` | `www.ezairyu.mofa.go.jp` |
+| Mexico (legacy-physical-certificate) — Ministry of Interior | `document_url` | `consultasislac.segob.gob.mx` |
+| Pakistan — Ministry of Foreign Affairs | `verification_url` | `apostille.mofa.gov.pk` |
+| Panama — Ministry of Foreign Affairs | `verification_url` | `sigob.mire.gob.pa` |
+| Russian Federation — Ministry of Justice | `verification_url` | `minjust.gov.ru` |
 
-## Priority 3 — confirmed QR, function also unknown
+Four of these are HTTP-only and carry an explicit `insecureAccepted` risk
+acceptance: Armenia, China, Mexico, Panama. Testing whether HTTPS works on the same hosts would let us drop those.
 
-HCCH says "via QR code" and nothing further. The specimen has to establish both
-the destination *and* what the QR is for — a status result, a portal, or a file.
+## Still needed — no decoded specimen (11)
 
-| Authority | Evidence basis |
+Confirmed by HCCH or the authority, but the payload has never been seen. These
+fall back to the tier-2 government-namespace heuristic and get explicitly
+unverified copy.
+
+| Authority | Function | Verified host(s) |
+|---|---|---|
+| Bangladesh — Ministry of Foreign Affairs of the Government | `verification_url` | — |
+| Bolivia — Ministry of Foreign Affairs | `verification_url` | — |
+| China — Hong Kong SAR: The Registrar, the Senior Depu | `portal_or_token` | — |
+| El Salvador — Ministry of Foreign Affairs | `unknown` | — |
+| Greece — Ministry of Digital Governance | `verification_url` | — |
+| Kazakhstan — Relevant authorities of several Ministries an | `verification_url` | — |
+| Luxembourg — Ministry of Foreign Affairs | `offline_app` | — |
+| Mexico (federal-e-apostille) — Ministry of Interior | `verification_url` | — |
+| Panama — Órgano Judicial | `unknown` | — |
+| Philippines — Department of Foreign Affairs | `verification_url` | — |
+| Rwanda — Ministry of Foreign Affairs and International | `unknown` | — |
+
+## Excluded, deliberately
+
+| Case | Why |
 |---|---|
-| Bahrain — MFA | HCCH: QR generates unique URLs, hence no general lookup link |
-| El Salvador — MFA | HCCH: e-Register "Via QR code" |
-| Pakistan — MFA | HCCH lists both a conventional link and QR |
-| Panama — Judicial Branch | HCCH: "Via QR Code". **Not** the Panama MFA row |
-| Russian Federation — Ministry of Justice | HCCH: "Via QR code" |
-| Rwanda — MFA | HCCH: link "or via QR code" |
-
-## Priority 4 — special case, no web routing possible
-
-| Authority | Why |
-|---|---|
-| Luxembourg — MFA | `offline_app`. The QR is read by the government GouvCheck app, not a browser. A specimen is still useful to confirm the payload is not a URL, but this authority will never get an "open" action |
-
----
-
-## Not on this list, deliberately
-
-- **`public_specimen` (Kosovo, Latvia)** — a QR is visible on publicly filed
-  documents, but not issuer-hosted and not current. Needs an issuer-sourced
-  specimen before it moves to `confirmed`, so it is not a Phase 3C candidate yet.
-- **`reported` (12 parties incl. Belgium, France, UK, Venezuela)** — no primary
-  source establishes a QR on the apostille. A specimen here would be a *research*
-  finding that changes `presence`, not a gate completion. Still worth sending if
-  you have one, but it lands differently.
-- **`underlying_only` (Singapore)** — the QR belongs to the source document.
-- **`not_established` (26 parties)** — including the entire US, where support is
-  per state and no country-wide rule exists.
-
-## What I do with each specimen
-
-1. Decode the payload and record the exact template.
-2. Add the host to `allowedUrls` with the tightest `pathnamePattern` two
-   specimens justify.
-3. Test the destination and record the redirect chain.
-4. Add positive fixtures plus adversarial negatives from adjacent authorities.
-5. Flip `enabled: true` — one authority per pull request, so evidence, URL rules,
-   fixtures, and copy get reviewed together.
+| Bangladesh | Its only specimen decoded to `apostille.training.mygov.bd` — a training environment. Not allowlisted at any tier; `looksNonProduction()` blocks that host shape. A production specimen is still wanted. |
+| Kosovo, Latvia | `public_specimen` — QR visible on publicly filed apostilles, but not issuer-hosted and not current. |
+| 15 reported parties | No primary source establishes a QR on the apostille. A specimen here changes `presence`, rather than completing a gate. |
+| Singapore | `underlying_only` — the QR belongs to the source document. |
+| 54 not-established authorities | Including all 17 US states; support is per state with no country-wide rule. |

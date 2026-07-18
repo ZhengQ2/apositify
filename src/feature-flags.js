@@ -1,6 +1,7 @@
-// Phase 3A ships behind a flag with no authority enabled, so the scanner can be
-// exercised in development and staging without appearing in production until an
-// authority actually passes the evidence gate.
+// The scanner is gated behind a flag so it can be exercised in development and
+// staging while authority coverage is still being built out. Coverage is no
+// longer empty: 15 authorities have a decoded specimen and route at tier 1
+// (see gateEnabled() in ./data/qr-codes.js).
 //
 // Set VITE_QR_SCANNER=on to surface the scanner entry point. It renders for two
 // groups, which the classifier then treats very differently:

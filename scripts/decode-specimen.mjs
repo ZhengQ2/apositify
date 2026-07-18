@@ -6,6 +6,8 @@
 // reports how the production classifier would treat the payload. Runs entirely
 // locally; nothing is uploaded and nothing is written back to the repository.
 //
+// Requires Node >= 20 (jimp's file-type dependency), matching package.json.
+//
 // Photographed specimens frequently fail to decode on the first pass, so this
 // retries with a few preprocessing variants before giving up — a failure here
 // usually means the crop or focus is insufficient, not that the QR is invalid.
@@ -101,5 +103,7 @@ if (authorityId) {
   }
 }
 
-console.log('\nReminder: one specimen is not a gate. Two independent issuances are')
-console.log('required before an authority can be enabled.')
+console.log('\nGate: one decoded specimen makes an authority routable, binding host +')
+console.log('path + declared query params. A SECOND specimen from an independent')
+console.log('issuance is still needed to unlock canonical URL reconstruction, since')
+console.log('one sample cannot tell a stable path segment from a coincidence.')

@@ -5,9 +5,17 @@
 // works when camera permission is denied, no camera exists, or the page is not
 // in a secure context, and it must stay keyboard-operable throughout.
 //
-// The dialog never claims an apostille is valid. It reports what it decoded and,
-// only for an authority that passed the evidence gate, offers to open a
-// destination that matched that authority's complete URL rule.
+// The dialog never claims an apostille is valid. It reports what it decoded, and
+// may offer to leave the app at one of two strengths:
+//
+//   tier 1  The authority has a decoded specimen and the payload matched its
+//           complete protocol/host/port/path rule. Primary action, "open the
+//           official lookup".
+//   tier 2  No specimen for this authority, but the host sits in the party's
+//           government namespace. Secondary action, "continue to this address",
+//           with copy stating outright that the format is unconfirmed.
+//
+// Neither is a verification claim. See ./qr-routing.js for the tier rules.
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AlertTriangle, Camera, ClipboardCopy, ExternalLink, FileImage, Landmark, QrCode, ShieldAlert, Smartphone, X } from 'lucide-react'
@@ -127,14 +135,34 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
       videoRef.current.srcObject = stream
       await videoRef.current.play().catch(() => {})
     }
+    // play() is a second await, and camera startup can be slow. If the dialog
+    // closed or the authority changed during it, cleanup has already run and
+    // will not run again -- so installing an interval here would leave a timer
+    // ticking against a dead dialog.
+    if (session !== sessionRef.current) {
+      stopStream(stream)
+      return
+    }
     setState(STATE.SCANNING)
+
+    // setInterval does not wait for an async callback. Decoding a large frame
+    // can exceed SCAN_INTERVAL_MS -- more so since the jsQR path now runs a
+    // second masked pass to detect multiple codes -- so without this guard the
+    // decodes overlap, burn CPU, and race each other's state updates.
+    let decoding = false
     timerRef.current = setInterval(async () => {
+      if (decoding) return
       if (!videoRef.current || !canvasRef.current) return
-      const decoded = await decodeFromVideo(videoRef.current, canvasRef.current)
-      if (session !== sessionRef.current) return
-      if (decoded.status === DECODE.OK) handlePayload(decoded.text)
-      else if (decoded.status === DECODE.MULTIPLE) setDecodeIssue(DECODE.MULTIPLE)
-      else setDecodeIssue(null)
+      decoding = true
+      try {
+        const decoded = await decodeFromVideo(videoRef.current, canvasRef.current)
+        if (session !== sessionRef.current) return
+        if (decoded.status === DECODE.OK) handlePayload(decoded.text)
+        else if (decoded.status === DECODE.MULTIPLE) setDecodeIssue(DECODE.MULTIPLE)
+        else setDecodeIssue(null)
+      } finally {
+        decoding = false
+      }
     }, SCAN_INTERVAL_MS)
   }, [ensureCanvas, handlePayload, releaseCamera])
 
@@ -274,6 +302,7 @@ function QrResult({ result, country }) {
 function ReportPanel({ result }) {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [copyFailed, setCopyFailed] = useState(false)
 
   const payload = JSON.stringify(
     { authority: result.authorityId, outcome: result.kind, payload: result.raw },
@@ -286,9 +315,11 @@ function ReportPanel({ result }) {
       await navigator.clipboard.writeText(payload)
       setCopied(true)
     } catch {
-      // Clipboard can be blocked by permissions policy; the text is on screen
-      // and selectable either way, so surface the follow-up instructions.
-      setCopied(true)
+      // Clipboard access can be blocked by permissions policy or an insecure
+      // context. Saying "Copied" then would be a false success: the user walks
+      // away believing they have the text. Keep the preview on screen so they
+      // can select it by hand, and say what happened.
+      setCopyFailed(true)
     }
   }
 
@@ -313,6 +344,11 @@ function ReportPanel({ result }) {
           <small>{t.qrReportPreviewLabel}</small>
           <pre className="qr-raw">{payload}</pre>
           <small className="qr-report-warn"><AlertTriangle size={14} aria-hidden="true" /> {t.qrReportWarn}</small>
+          {copyFailed && (
+            <small className="qr-report-warn" role="status">
+              <AlertTriangle size={14} aria-hidden="true" /> {t.qrReportCopyFailed.replace('{email}', t.qrReportEmail)}
+            </small>
+          )}
           <div className="qr-actions">
             <button type="button" className="button" onClick={onCopy}>{t.qrReportConfirm}</button>
             <button type="button" className="button secondary" onClick={() => setOpen(false)}>{t.qrReportCancel}</button>

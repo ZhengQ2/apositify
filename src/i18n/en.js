@@ -63,7 +63,7 @@ export const messages = {
   qrFnOfflineBodyGeneric: 'This authority’s QR code is read by an official government app rather than a web page. Follow the authority’s published instructions.',
 
   qrBlockedTitle: 'Destination does not match this authority',
-  qrBlockedBody: 'The code was read, but it does not lead to the official address on record for the authority you selected. It has not been opened.',
+  qrBlockedBody: 'The code was read, but its destination does not match the rules we hold for the authority you selected. It has not been opened.',
   qrBlockedNoOpen: 'If you expected an official page, check that you selected the right issuing authority, and treat the destination above with caution.',
   qrNotEnabledTitle: 'QR routing not available for this authority yet',
   qrNotEnabledBody: 'The code was read, but this authority’s QR format has not been confirmed against official specimens, so no destination is offered. Here is the raw content:',
@@ -93,6 +93,7 @@ export const messages = {
   qrReportConfirm: 'Copy to clipboard',
   qrReportCancel: 'Cancel',
   qrReportDone: 'Copied. Email it to {email} and we\u2019ll look at adding support.',
+  qrReportCopyFailed: 'Your browser blocked clipboard access. Select the text above and copy it manually, then email it to {email}.',
   qrReportEmail: 'qr-specimens@apostifi.com',
 
   qrSectionHeading: 'QR code on this Apostille',

@@ -14,8 +14,11 @@
     "react-dom": "latest",
     "vite": "latest"
   },
-  "type": "module",
   "devDependencies": {
     "jimp": "^1.6.1"
-  }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module"
 }

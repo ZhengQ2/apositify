@@ -4,7 +4,7 @@ This revises the original 5-phase plan after three things surfaced during Phase 
 
 1. **Automating form submission against official government portals (original Phase 2) is the wrong foundation.** It risks violating portal terms of use, requires maintaining a scraper per jurisdiction with no stable contract, and creates real liability if a broken scraper or stale cache asserts "Valid" incorrectly. See "What changed" below.
 2. **e-Apostille and e-Register are different things and must not be conflated in data or code.** An **e-Apostille** is the electronic certificate itself (a signed PDF/XML issued by the competent authority). An **e-Register** is the government's own online lookup where anyone can check whether a given Apostille (paper or electronic) is genuine. A jurisdiction can have either, both, or neither — and several rows in our source data pointed at an e-Apostille *application* page when the chart claimed an e-Register. Investigating our "dead link" list (see Appendix) found this exact conflation in Nicaragua and Rhode Island.
-3. **Most authorities have no direct online path at all — Phase 2's own research confirmed this.** Of 75 fielded authorities tested by actually submitting their live forms, only 6 support one-click deep-linking; the rest are copy-assist. Given that, building a full QR/barcode/OCR image pipeline into the general web product (original Phase 3) front-loads OCR complexity onto the cases where it can't lead anywhere better than copy-assist anyway. Phase 3 is now scoped down to just QR-code scanning for the authorities that actually support it (Tier E); general photo-upload/OCR extraction moves to Phase 5, as an in-app-only feature of the native mobile app rather than a web feature — see below.
+3. **Most typed-field e-Registers have no direct online path, but QR support is broader and independent of the Phase 2 routing tiers.** Of 75 fielded authorities tested by actually submitting their live forms, only 6 support one-click deep-linking; the rest are copy-assist. Separate QR research now covers all 64 e-Register parties and identifies 23 parties with QR confirmed by HCCH, an issuing authority, or an official specimen, plus two parties supported only by public non-issuer specimens. Phase 3 therefore remains QR-only—no OCR or other barcode formats—but QR capability is modeled per authority rather than inferred from Tier E. General photo-upload/OCR extraction remains in Phase 5.
 
 ## Terminology (binding for schema and code)
 
@@ -18,7 +18,7 @@ Every dataset row must carry both `hasEApostille` and `hasERegister` as independ
 ## What changed from the original plan
 
 - **Original Phase 2** (headless-browser automated form submission + result scraping) is replaced with **structured manual verification + smart routing** — no server-side automation, no scraping of result pages, nothing that touches a government portal except a normal user-driven browser navigation.
-- **Original Phase 3** (image upload / QR / OCR, all in one phase) is split up: QR-code scanning stays in Phase 3, scoped to only the authorities that actually support QR verification. General photo-upload/OCR field extraction moves to Phase 5 and becomes an **in-app-only** feature of the native mobile app — it is explicitly not part of the web product.
+- **Original Phase 3** (image upload / QR / OCR, all in one phase) is split up: QR-code scanning stays in Phase 3 and is enabled authority by authority only after its payload and official destination are verified. General photo-upload/OCR field extraction moves to Phase 5 and becomes an **in-app-only** feature of the native mobile app — it is explicitly not part of the web product.
 - Phase 4 is lightly corrected (a wrong library recommendation) but structurally the same. Phase 5 absorbs the OCR/barcode/image-preprocessing work that used to be Phase 3's, on top of its original mobile-app scope.
 
 ---
@@ -41,7 +41,7 @@ Every authority row gets classified into exactly one tier, driven by data, not g
 - **Tier B — Deep-link (GET URL, or POST auto-submit).** The e-Register either accepts query parameters on a plain URL, or is a clean POST form with no CSRF token/CAPTCHA — the latter is driven by building a hidden `<form>` with the values and auto-submitting it client-side, the same mechanism payment-gateway redirects use (a real navigation, not a blocked cross-origin fetch). **Confirmed by testing to be rare: only 6 of 75 fielded authorities qualify** (Ukraine's Ministry of Education via GET; Bulgaria ×2, Andorra, Costa Rica, and Moldova via POST auto-submit — see [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md) for the full per-authority breakdown and exact URL/field templates). Several forms that looked GET-based in static HTML (Belgium, Bolivia, Indonesia, Delaware/USA) turned out, once actually filled in and submitted, to be JS/SPA forms in disguise — so this tier is populated only from live-verified cases, never guessed from a form's `method` attribute alone. Either mechanism is indistinguishable from a human submitting the same form themselves, so it carries none of the ToS/automation risk of headless submission.
 - **Tier C — POST-only or JS-driven portal, no stable URL scheme.** This is the default outcome for the large majority of authorities (confirmed CAPTCHA-gated, CSRF-token-guarded, or AJAX/SPA-based). We still collect the same fields (number, date, etc.) via a review/edit form, but instead of submitting anything ourselves we show a "here are your values — copy these, then open the official site" panel. The user pastes and submits it themselves, and reads the verdict on the government's own page. We never parse or store the result.
 - **Tier D — No e-Register exists.** (Nicaragua, Rhode Island post-pilot, and Baja California Sur all landed here after investigation — see Appendix. USA/Texas and Austria were briefly misclassified here too, before their real verifiers were found — see corrections in [APOSTILLE_FIELD_REQUIREMENTS.md](APOSTILLE_FIELD_REQUIREMENTS.md).) Show a clear "contact the issuing authority directly" message with the authority's contact info, exactly like Phase 1's manual-contact state.
-- **Tier E — QR-only or hybrid.** Unchanged from Phase 1: QR-only authorities (including Rwanda, reclassified after its listed link turned out to be a non-apostille file tracker) get an informational message; hybrid authorities (Pakistan) get both the link and the QR note.
+- **Tier E — QR-only or hybrid.** This remains a Phase 2 routing classification: QR-only authorities get an informational message and hybrid authorities get both the conventional link and QR note. It is not the source of truth for whether an apostille contains a QR. Phase 3 uses separate authority-scoped `qrCode` metadata because many Tier A–C authorities also issue QR-bearing apostilles.
 
 ### Field-definition metadata
 
@@ -59,18 +59,119 @@ Phase 1 already gets a user to the right portal. Phase 2's actual new value is: 
 
 ---
 
-## Phase 3 — QR-code scanning (downscoped)
+## Phase 3 — Safe, authority-scoped QR scanning
 
-**Rescoped:** the original Phase 3 (QR + barcode + OCR from an uploaded image) tried to cover every authority uniformly. Given Phase 2's own research found the large majority of authorities have no deep link and would only get copy-assist value out of extracted fields anyway, that made OCR the most expensive part of the plan for the least payoff. Phase 3 now covers **only QR-code scanning, only for the authorities that actually support QR verification** — the existing Tier E set (QR-only: Bahrain, El Salvador, Luxembourg, Panama/Órgano Judicial, Russian Federation; hybrid: Pakistan) plus any authority whose e-Register also happens to expose a QR option. Barcode scanning and OCR field extraction are cut from this phase entirely and move to Phase 5 (see below).
+### Goal and evidence boundary
 
-**Why QR-only is a good place to stop for the web product:** many of these QR codes encode a direct verification URL (the record ID is baked into the link itself), so scanning one client-side (`getUserMedia` + a lightweight decoder like `jsQR`, no server round-trip) and opening the decoded URL is a true one-tap verification — no field-definition metadata needed, no OCR accuracy problem, no image ever leaves the browser. This is a small, self-contained feature: it only touches the handful of Tier E authorities, and it slots into the existing Phase 1 "scan the QR code" messaging by actually doing the scan instead of just telling the user to do it themselves.
+Let a user scan a QR from an apostille entirely in the browser and route the decoded content according to a verified authority-specific rule. The app may say that it decoded a QR and that a destination matches a documented official route. It must never say that the apostille is valid; only the issuing authority's result can do that.
 
-Workflow:
-1. User opens their camera in-browser (or uses a file picker as a fallback for a saved QR image).
-2. Client-side QR decode. If it resolves to a URL, open it directly.
-3. If the authority is hybrid (QR + a real e-Register link, e.g. Pakistan), the QR path is offered alongside Phase 2's existing link/routing — not a replacement for it.
+The complete evidence baseline is [PHASE_3_QR_CODE_RESEARCH.md](PHASE_3_QR_CODE_RESEARCH.md): 64 of 64 e-Register parties are accounted for; QR is officially confirmed for 23 parties, supported only by public specimens for two, reported but not confirmed for 12, found only on the underlying document for one, and not established for 26. These are party-level counts; implementation and enablement remain authority-scoped.
 
-Out of scope for this phase (see Phase 5): barcode formats other than QR, OCR of any kind, and general photo upload for authorities without QR support.
+An official statement that a QR exists is not enough to enable automatic routing. The production gate requires two current, redacted specimens from independent issuances, a decoded payload template, a documented official destination, and tests for the destination and known redirect behavior. The current research does not document two qualifying specimens for any authority. Phase 3 therefore begins with scanner infrastructure and a disabled-by-default authority registry; production authorities are enabled individually as their evidence gate is completed.
+
+### Deliverables
+
+#### 3.1 Data contract and migration
+
+- Add `qrCode` metadata independently of `verificationMode`; do not infer one from the other.
+- Scope each record to a competent authority and, where necessary, an issuance generation or effective date. This is required for China, Mexico, Panama, Bulgaria, Kazakhstan, Ukraine, the UK, and the United States.
+- Use the following minimum fields:
+
+```js
+qrCode: {
+  presence: 'confirmed', // confirmed | public_specimen | reported | underlying_only | not_established
+  evidence: 'authority', // hcch | authority | official_specimen | public_specimen | null
+  function: 'verification_url', // verification_url | portal_or_token | document_url | offline_app | unknown
+  enabled: false,
+  allowedUrls: [
+    {
+      protocol: 'https:',
+      hostname: 'example.gov',
+      port: '',
+      pathnamePattern: '^/verify/[A-Za-z0-9_-]+$'
+    }
+  ],
+  specimenCount: 0,
+  specimenTestedAt: null,
+  sourceUrl: 'https://…',
+  notes: null
+}
+```
+
+- Keep path/query rules separate from hostname matching. Hostnames use exact normalized matching unless a specific subdomain rule is documented; paths are checked against authority-specific patterns only after the host passes.
+- Extend `scripts/validate-data.mjs` to reject `enabled: true` unless the authority has a known function, at least two specimens, an evidence source, and the routing metadata required by that function.
+
+#### 3.2 Scanner component
+
+- Add a reusable QR scanner launched from the selected authority panel.
+- Support live camera scanning and a saved-image file picker at feature parity.
+- Decode locally; never upload, retain, log, or place the image or decoded payload in analytics.
+- Stop camera tracks when the dialog closes, the authority changes, a result is obtained, or the page is hidden.
+- Model explicit UI states: idle, requesting permission, scanning, decoding file, decoded, blocked destination, unsupported payload, no QR found, and camera unavailable.
+- Preserve keyboard operation, visible focus, screen-reader status announcements, and a non-camera fallback.
+- Choose the decoder through a short implementation spike using real fixtures. The dependency must support still images and camera frames, remain QR-only in the product UI, and add no network processing.
+
+#### 3.3 Payload classification and safe routing
+- Parse decoded text with the platform `URL` parser. Reject credentials, non-HTTP(S) schemes, unexpected ports, malformed hosts, and look-alike domains.
+- Normalize the hostname to ASCII and compare it exactly with the selected authority's allowlist. Never use substring matching.
+- Validate the documented path/query shape. Where possible, extract only the verified record token and rebuild a canonical URL from the stored official base instead of opening the raw decoded URL.
+- A browser-only app cannot reliably inspect an arbitrary cross-origin redirect chain before navigation. Do not promise that it can. For enabled authorities, document tested redirects and prefer canonical URLs without open redirect parameters. Show the expected official host before the user leaves the app, open in a new tab, and never label the navigation itself as verification.
+- Treat payload functions distinctly:
+  - `verification_url`: show the normalized official destination and an “Open official verification” action.
+  - `portal_or_token`: open the documented portal and prefill only fields whose extraction mapping is specimen-tested; otherwise show the token for copying.
+  - `document_url`: label it “Retrieve official document,” not “Verify.”
+  - `offline_app`: provide instructions for the named government app; do not attempt to reproduce its signature validation.
+  - `unknown`: show the decoded content with a warning and no official-verification action.
+- If the selected authority and payload rule do not match, block the official action and show the decoded hostname/content without opening it automatically.
+
+#### 3.4 User experience integration
+
+- Show “Scan QR” in the public UI only when the selected authority has `enabled: true`. Confirmed-but-not-enabled authorities retain their informational QR guidance until the evidence gate is complete.
+- Exercise disabled authorities only through the development fixture harness; do not expose public-specimen-only or reported cases as supported scanning routes.
+- Keep conventional e-Register actions available for hybrid authorities; scanning is an additional input route, never a replacement.
+- Explain that a QR on the underlying document is not an apostille QR and exclude `underlying_only` authorities from the apostille scanner entry point.
+- Use function-specific copy and avoid the words “valid,” “invalid,” or “verified” for any conclusion made by this app.
+
+#### 3.5 Specimen and rollout workstream
+
+- Maintain a private, access-controlled fixture manifest containing redacted specimen provenance, issuance date, decoded payload type, URL template, redirects, and test checksum. Do not commit personal documents to the repository.
+- Create synthetic QR fixtures only for decoder and security tests. Synthetic fixtures cannot satisfy an authority's evidence gate.
+- Prioritize specimen acquisition in this order:
+  1. Authorities with an official specimen and a documented host or portal: Armenia, Chile, China (Mainland), Greece, Hong Kong, Japan, and Mexico federal.
+  2. HCCH/authority-confirmed QR systems whose payload still needs a specimen: Bahrain, Bangladesh, Bolivia, Costa Rica, Ecuador, El Salvador, Pakistan, Panama Judicial Branch, Russian Federation, Rwanda, and Kazakhstan.
+  3. Authority-specific cases needing tighter scope: Brazil, Bulgaria, Colombia, Guatemala, and the Philippines.
+  4. Public-specimen-only and reported parties remain disabled until issuer evidence and current specimens are obtained.
+- Enable one authority per pull request so evidence, URL rules, fixtures, and copy can be reviewed together.
+
+#### 3.6 Tests
+
+- Unit-test URL parsing, IDN normalization, exact-host matching, optional subdomain rules, path patterns, token extraction, and canonical URL reconstruction.
+- Include adversarial cases: look-alike suffixes, user-info credentials, encoded host/path confusion, non-HTTPS URLs, unexpected ports, malformed percent encoding, JavaScript/data/file schemes, fragments, and open-redirect parameters.
+- Test every function type and every scanner state.
+- Test camera denial, no camera, switching cameras where supported, closing while scanning, authority changes, repeated scans, corrupt images, multiple QR codes, and very large images.
+- Run accessibility checks for dialog focus, status announcements, labels, error recovery, and keyboard-only file selection.
+- For every enabled authority, add positive fixture tests for all accepted URL templates and negative fixtures from adjacent authorities.
+
+### Release sequence
+
+1. **3A — Foundation:** schema, validator, scanner UI, local decoding, state/accessibility tests, and blocked-by-default routing. Release behind a feature flag with no authority enabled.
+2. **3B — Security and function routing:** canonical URL builder, function-specific result UI, adversarial tests, and privacy verification.
+3. **3C — Authority pilots:** acquire and test two current specimens, then enable the first small cohort one authority at a time.
+4. **3D — Expansion and maintenance:** continue evidence-gated enablement; add QR endpoints to link monitoring and revalidate enabled authorities periodically.
+
+### Acceptance criteria
+
+1. Images and decoded payloads remain on-device and are absent from logs and analytics.
+2. Camera resources are always released and file selection works when camera access is unavailable or denied.
+3. No decoded destination opens automatically.
+4. An “official” action appears only when the selected authority is enabled and the payload matches its complete protocol/host/port/path rule.
+5. Each enabled authority has two current independent specimens, documented payload and redirect behavior, positive fixtures, and adversarial tests.
+6. `document_url`, `portal_or_token`, `offline_app`, `unknown`, and mismatched-authority results cannot be presented as successful verification.
+7. The app never asserts whether an apostille is valid or invalid.
+
+### Explicitly out of scope
+
+Barcode formats other than QR, OCR, image enhancement, automatic country/authority recognition, server-side URL fetching, result-page scraping, result caching, offline cryptographic verification, and general apostille photo upload remain outside Phase 3. OCR and other barcode formats remain in Phase 5.
 
 ---
 
@@ -119,7 +220,7 @@ Dropping the automation-fleet requirement shortens Phase 2 meaningfully versus t
 
 1. **Phase 1** — done.
 2. **Phase 2** — done (tier classification, field-definition metadata, deep-link/copy-assist UI, live for all 97 authority rows).
-3. **Phase 3** — QR-code scanning for the ~6-7 Tier E authorities only. Much smaller than the original OCR-inclusive scope: 1–2 weeks, mostly camera-permission UX and wiring the decoded URL into the existing Phase 1/2 flow, no OCR accuracy work at all.
+3. **Phase 3** — safe QR scanning in four releases. Engineering foundation and security routing should be estimated separately from authority rollout: approximately 2–3 weeks for 3A/3B, followed by evidence-dependent 3C/3D enablement. Specimen acquisition is an external dependency and must not be hidden inside a fixed engineering estimate.
 4. **Phase 4** — e-Apostille signature verification. Budget 2+ months; this is the hardest phase technically (per-country trust chains) and should not be compressed to hit a date.
 5. **Phase 5** — native mobile app with in-app-only photo-upload/OCR and barcode scanning, absorbing the complexity cut from Phase 3. Budget accordingly (this now carries the OCR accuracy tuning and image-preprocessing work that used to be Phase 3's, on top of standard native-app development) — realistically the largest single phase after Phase 4.
 6. **Ongoing** — link-health monitoring and dataset reconciliation against HCCH updates (see Data foundation above) — this is a permanent cost, not a milestone.

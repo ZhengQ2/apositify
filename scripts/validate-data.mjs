@@ -135,6 +135,40 @@ for (const entry of eRegisters) {
         // any page on that host, including user-content and open-redirect paths.
         for (const rule of record.allowedUrls) {
           assert.ok(rule.pathnamePattern, `${entry.id} enabled rules must constrain the path, not just the host`)
+
+          // Every enabled rule must declare WHERE the apostille-specific
+          // reference lives, and then actually bind it. Without this, a payload
+          // carrying the right host and path but no reference at all -- e.g.
+          // https://apostil.org.br/v -- would be presented as the official
+          // lookup "for this Apostille".
+          const refs = ['path', 'query', 'fragment', 'none']
+          assert.ok(refs.includes(rule.documentRef), `${entry.id} rule needs documentRef (${refs.join('|')})`)
+
+          if (rule.documentRef === 'query') {
+            assert.ok(
+              (rule.requiredSearchParams || []).length > 0,
+              `${entry.id} declares documentRef 'query' but requires no parameter`
+            )
+            for (const key of rule.requiredSearchParams) {
+              assert.ok(
+                (rule.allowedSearchParams || []).includes(key),
+                `${entry.id} requires query parameter '${key}' that it does not allow`
+              )
+            }
+          }
+          if (rule.documentRef === 'fragment') {
+            assert.ok(rule.requireFragment, `${entry.id} declares documentRef 'fragment' but does not require one`)
+            assert.ok(rule.allowFragment, `${entry.id} requires a fragment it does not allow`)
+          }
+          // A reference-free payload cannot identify a document, so it must not
+          // be labelled as a lookup for one. Only portal flows, where the user
+          // still types the details, may carry no reference.
+          if (rule.documentRef === 'none') {
+            assert.equal(
+              record.function, 'portal_or_token',
+              `${entry.id} has a rule with no document reference, so its function must be portal_or_token`
+            )
+          }
         }
       }
       // Canonical reconstruction requires two specimens: one cannot tell a

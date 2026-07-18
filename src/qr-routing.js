@@ -102,11 +102,24 @@ function matchRule(url, rule) {
     if (!allowedParams.includes(key)) return 'unexpected_query_parameter'
   }
 
+  // Allowed is not the same as present. Rejecting only unexpected keys would
+  // accept a bare https://apostil.org.br/v -- the right host and path, but no
+  // apostille reference at all -- and then present it as the official lookup
+  // "for this Apostille". A payload that identifies no document must not be
+  // routed as though it identifies this one.
+  for (const key of rule.requiredSearchParams || []) {
+    const value = url.searchParams.get(key)
+    if (value === null || value.trim() === '') return 'missing_required_query_parameter'
+  }
+
   // Hash-router portals (China: consular.mfa.gov.cn/VERIFY/#/<token>) carry the
-  // record id in the fragment, so it cannot simply be rejected or dropped.
+  // record id in the fragment, so it cannot simply be rejected or dropped --
+  // and, by the same argument, cannot be allowed to be absent either.
   if (url.hash) {
     if (!rule.allowFragment) return 'unexpected_fragment'
     if (rule.fragmentPattern && !new RegExp(rule.fragmentPattern).test(url.hash)) return 'fragment_mismatch'
+  } else if (rule.requireFragment) {
+    return 'missing_required_fragment'
   }
   return null
 }
@@ -198,17 +211,29 @@ export function classifyQrPayload(rawText, authorityId, country = null) {
   const host = normalizeHostname(url.hostname)
 
   // --- Tier 1: specimen-verified allowlist ---------------------------------
-  let lastReason = 'host_not_allowlisted'
+  //
+  // Reason selection matters for multi-rule authorities. Brazil has two rules
+  // (current and legacy), so a payload that matches the first host but omits its
+  // reference would, under last-wins, report `host_not_allowlisted` from the
+  // second rule -- burying the real cause. A failure from a rule whose host
+  // matched is always the more informative one.
+  let bestReason = 'host_not_allowlisted'
+  let bestFromMatchedHost = false
   for (const entry of enabled) {
     for (const rule of entry.allowedUrls || []) {
       const failure = matchRule(url, rule)
       if (failure) {
-        lastReason = failure
+        const hostMatched = hostnameMatches(url.hostname, rule)
+        if (hostMatched || !bestFromMatchedHost) {
+          bestReason = failure
+          bestFromMatchedHost = bestFromMatchedHost || hostMatched
+        }
         continue
       }
       const destination = buildDestination(url, rule, entry)
       if (!destination) {
-        lastReason = 'token_not_extractable'
+        bestReason = 'token_not_extractable'
+        bestFromMatchedHost = true
         continue
       }
       if (entry.function === 'unknown') {
@@ -233,7 +258,7 @@ export function classifyQrPayload(rawText, authorityId, country = null) {
   // Once an authority has a specimen-verified host, a non-matching payload is a
   // mismatch -- never a tier-2 candidate. Falling back here would let a bad
   // payload launder itself through the weaker heuristic.
-  return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: lastReason, host, raw, authorityId }
+  return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: bestReason, host, raw, authorityId }
 }
 
 /**

@@ -36,7 +36,7 @@ const base = {
 qrCodes['fixture-verification'] = {
   ...base,
   function: 'verification_url',
-  allowedUrls: [{ protocol: 'https:', hostname: 'verify.example.gov', port: '', pathnamePattern: '^/apostille/[A-Z0-9-]{6,32}$' }]
+  allowedUrls: [{ protocol: 'https:', hostname: 'verify.example.gov', port: '', pathnamePattern: '^/apostille/[A-Z0-9-]{6,32}$', documentRef: 'path' }]
 }
 qrCodes['fixture-canonical'] = {
   ...base,
@@ -46,6 +46,7 @@ qrCodes['fixture-canonical'] = {
     hostname: 'legacy.example.gov',
     port: '',
     pathnamePattern: '^/r/[A-Z0-9]{8}$',
+    documentRef: 'path',
     tokenPattern: '^/r/([A-Z0-9]{8})$',
     canonicalUrlTemplate: 'https://verify.example.gov/apostille/{token}'
   }]
@@ -53,18 +54,18 @@ qrCodes['fixture-canonical'] = {
 qrCodes['fixture-subdomains'] = {
   ...base,
   function: 'portal_or_token',
-  allowedUrls: [{ protocol: 'https:', hostname: 'example.gov', port: '', pathnamePattern: null, allowSubdomains: true }]
+  allowedUrls: [{ protocol: 'https:', hostname: 'example.gov', port: '', pathnamePattern: null, allowSubdomains: true, documentRef: 'none' }]
 }
 qrCodes['fixture-document'] = {
   ...base,
   function: 'document_url',
-  allowedUrls: [{ protocol: 'https:', hostname: 'docs.example.gov', port: '', pathnamePattern: null, allowedSearchParams: ['id'] }]
+  allowedUrls: [{ protocol: 'https:', hostname: 'docs.example.gov', port: '', pathnamePattern: null, allowedSearchParams: ['id'], documentRef: 'path' }]
 }
 qrCodes['fixture-offline'] = { ...base, function: 'offline_app', allowedUrls: [], app: { name: 'GovCheck' } }
 qrCodes['fixture-unknown-fn'] = {
   ...base,
   function: 'unknown',
-  allowedUrls: [{ protocol: 'https:', hostname: 'mystery.example.gov', port: '', pathnamePattern: null }]
+  allowedUrls: [{ protocol: 'https:', hostname: 'mystery.example.gov', port: '', pathnamePattern: null, documentRef: 'path' }]
 }
 
 const GOOD = 'https://verify.example.gov/apostille/ABC12345'
@@ -350,6 +351,63 @@ check('tier 2 still accepts the real government namespace', () => {
   const result = classifyQrPayload('https://e-apostille.gov.gr/verify/X', 'greece-ministry-of-digital-governance', 'Greece')
   assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT)
   assert.equal(result.matchedSuffix, 'gov.gr')
+})
+
+// --- a matching host and path is not a document reference -------------------
+
+const referenceless = [
+  ['Brazil current', 'brazil-national-council-of-justice', 'https://apostil.org.br/v'],
+  ['Brazil current, blank value', 'brazil-national-council-of-justice', 'https://apostil.org.br/v?number=&crc='],
+  ['Brazil legacy', 'brazil-national-council-of-justice', 'https://www.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&id_orgao_acesso_externo=0'],
+  ['Pakistan', 'pakistan-ministry-of-foreign-affairs', 'https://apostille.mofa.gov.pk/verify-attestation-by-qr'],
+  ['Pakistan, date only', 'pakistan-ministry-of-foreign-affairs', 'https://apostille.mofa.gov.pk/verify-attestation-by-qr?day=31&month=07&year=2025'],
+  ['Armenia', 'armenia-ministry-of-justice', 'http://e-verify.am/'],
+  ['Russia', 'russian-federation-ministry-of-justice', 'https://minjust.gov.ru/ru/pages/apostil-ispf/'],
+  ['Ecuador', 'ecuador-ministry-of-foreign-affairs-and-human-mobility', 'https://serviciosciudadanos.cancilleria.gob.ec/ValidacionApostillaURL/DatosApostillaURL'],
+  ['Colombia', 'colombia-ministry-of-foreign-affairs', 'https://tramites.cancilleria.gov.co/Ciudadano/ConsultaApostilla/consulta.aspx?fecha=4/27/2022'],
+  ['Panama', 'panama-ministry-of-foreign-affairs', 'http://sigob.mire.gob.pa/reportes/MIA/PA/autenticaciones/apostille.aspx'],
+  ['Bahrain', 'bahrain-ministry-of-foreign-affairs', 'www.mofa.gov.bh/legalization'],
+  ['Mexico legacy', 'mexico-ministry-of-interior', 'http://consultasislac.segob.gob.mx/csislac/qr.do?a=1']
+]
+
+for (const [label, id, payload] of referenceless) {
+  check(`refuses a reference-free payload: ${label}`, () => {
+    const result = classifyQrPayload(payload, id)
+    assert.notEqual(result.kind, OUTCOME.OFFICIAL, `${label}: right host and path but no apostille reference must not route`)
+    assert.equal(result.reason, 'missing_required_query_parameter', `${label}: got ${result.reason}`)
+    assert.ok(!result.url)
+  })
+}
+
+check('China without its fragment carries no reference and must not route', () => {
+  const result = classifyQrPayload('http://consular.mfa.gov.cn/VERIFY/', 'china-china-mainland-ministry-of-foreign-affairs')
+  assert.notEqual(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.reason, 'missing_required_fragment')
+  assert.ok(!result.url)
+})
+
+check('Japan legitimately carries no reference and still routes as a portal', () => {
+  // The QR opens the portal; the user types the details. This is the one shape
+  // where a reference-free payload is correct, and it must not regress.
+  const result = classifyQrPayload('https://www.ezairyu.mofa.go.jp/eregister/eregi/authcheck', 'japan-ministry-of-foreign-affairs')
+  assert.equal(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.function, 'portal_or_token')
+})
+
+check('every enabled URL rule declares where the document reference lives', () => {
+  for (const value of Object.values(qrCodes)) {
+    for (const entry of Array.isArray(value) ? value : [value]) {
+      if (!entry.enabled) continue
+      for (const rule of entry.allowedUrls || []) {
+        assert.ok(['path', 'query', 'fragment', 'none'].includes(rule.documentRef),
+          `${rule.hostname} is missing documentRef`)
+        if (rule.documentRef === 'none') {
+          assert.equal(entry.function, 'portal_or_token',
+            `${rule.hostname} carries no reference, so it cannot be a ${entry.function}`)
+        }
+      }
+    }
+  }
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

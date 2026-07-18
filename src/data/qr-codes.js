@@ -73,7 +73,8 @@ export const qrCodes = {
     normalizeSchemelessTo: 'https:',
     allowedUrls: [{
       protocol: 'https:', hostname: 'www.mofa.gov.bh', port: '',
-      pathnamePattern: '^/legalization/?$', allowedSearchParams: ['id']
+      pathnamePattern: '^/legalization/?$',
+      allowedSearchParams: ['id'], requiredSearchParams: ['id'], documentRef: 'query'
     }],
     sourceUrl: HCCH_CHART
   }),
@@ -87,7 +88,8 @@ export const qrCodes = {
     allowedUrls: [{
       protocol: 'https:', hostname: 'serviciosciudadanos.cancilleria.gob.ec', port: '',
       pathnamePattern: '^/ValidacionApostillaURL/DatosApostillaURL$',
-      allowedSearchParams: ['validaDocumento']
+      allowedSearchParams: ['validaDocumento'],
+      requiredSearchParams: ['validaDocumento'], documentRef: 'query'
     }],
     sourceUrl: HCCH_CHART
   }),
@@ -111,7 +113,8 @@ export const qrCodes = {
     allowedUrls: [{
       protocol: 'https:', hostname: 'apostille.mofa.gov.pk', port: '',
       pathnamePattern: '^/verify-attestation-by-qr/?$',
-      allowedSearchParams: ['apostille_number', 'day', 'month', 'year']
+      allowedSearchParams: ['apostille_number', 'day', 'month', 'year'],
+      requiredSearchParams: ['apostille_number'], documentRef: 'query'
     }],
     sourceUrl: HCCH_CHART
   }),
@@ -129,7 +132,8 @@ export const qrCodes = {
     allowedUrls: [{
       protocol: 'https:', hostname: 'minjust.gov.ru', port: '',
       pathnamePattern: '^/ru/pages/apostil-ispf/?$',
-      allowedSearchParams: ['aposId']
+      allowedSearchParams: ['aposId'], requiredSearchParams: ['aposId'],
+      documentRef: 'query'
     }],
     sourceUrl: HCCH_CHART
   }),
@@ -150,7 +154,8 @@ export const qrCodes = {
     // Plain HTTP and the record id rides in ?tnum=. Not a government domain.
     allowedUrls: [{
       protocol: 'http:', hostname: 'e-verify.am', port: '', pathnamePattern: '^/$',
-      allowedSearchParams: ['tnum'], insecureAccepted: true
+      allowedSearchParams: ['tnum'], requiredSearchParams: ['tnum'],
+      documentRef: 'query', insecureAccepted: true
     }],
     sourceUrl: 'https://assets.hcch.net/docs/7148c8b9-6d72-41d3-9239-4c1991fda6d8.pdf'
   }),
@@ -180,7 +185,9 @@ export const qrCodes = {
       // Specimen 2026-07-18: https://apostil.org.br/v?number=0000000-00&crc=00000000
       allowedUrls: [{
         protocol: 'https:', hostname: 'apostil.org.br', port: '',
-        pathnamePattern: '^/v/?$', allowedSearchParams: ['number', 'crc']
+        pathnamePattern: '^/v/?$',
+        allowedSearchParams: ['number', 'crc'],
+        requiredSearchParams: ['number', 'crc'], documentRef: 'query'
       }],
       sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
     }),
@@ -195,7 +202,9 @@ export const qrCodes = {
       allowedUrls: [{
         protocol: 'https:', hostname: 'www.cnj.jus.br', port: '',
         pathnamePattern: '^/seiapostila/controlador_externo\\.php$',
-        allowedSearchParams: ['acao', 'id_orgao_acesso_externo', 'cv', 'crc']
+        allowedSearchParams: ['acao', 'id_orgao_acesso_externo', 'cv', 'crc'],
+        // cv + crc carry the document reference; acao/id_orgao are static routing.
+        requiredSearchParams: ['cv', 'crc'], documentRef: 'query'
       }],
       sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
     })
@@ -212,7 +221,8 @@ export const qrCodes = {
     // so this is document retrieval, not a human-readable status result.
     allowedUrls: [{
       protocol: 'https:', hostname: 'apostille.nacid.bg', port: '',
-      pathnamePattern: '^/api/Public/ElectronicApostille/[A-Z0-9]{8,20}$'
+      pathnamePattern: '^/api/Public/ElectronicApostille/[A-Z0-9]{8,20}$',
+      documentRef: 'path'
     }],
     sourceUrl: 'https://www.hcch.net/en/instruments/conventions/authorities1/print1/?cid=41'
   }),
@@ -223,7 +233,10 @@ export const qrCodes = {
     specimenTestedAt: '2026-07-18',
     // Specimen 2026-07-18: https://consulta.apostilla.gob.cl/QR/AAAAAAAAAAAAAAAAAAAAAA==
     // Confirms the /QR/<base64> shape inferred from the live service.
-    allowedUrls: [{ protocol: 'https:', hostname: 'consulta.apostilla.gob.cl', port: '', pathnamePattern: '^/QR/[A-Za-z0-9%+/=_-]+$' }],
+    allowedUrls: [{
+      protocol: 'https:', hostname: 'consulta.apostilla.gob.cl', port: '',
+      pathnamePattern: '^/QR/[A-Za-z0-9%+/=_-]+$', documentRef: 'path'
+    }],
     sourceUrl: 'https://consulta.apostilla.gob.cl/'
   }),
   'china-china-mainland-ministry-of-foreign-affairs': record('confirmed', 'Official e-Apostille sample instructs recipients to scan the QR on the last page. Mainland only — does not transfer to Hong Kong or Macao.', {
@@ -236,8 +249,10 @@ export const qrCodes = {
     // is never sent to the server -- so it must be preserved, not stripped.
     allowedUrls: [{
       protocol: 'http:', hostname: 'consular.mfa.gov.cn', port: '',
-      pathnamePattern: '^/VERIFY/?$', allowFragment: true,
-      fragmentPattern: '^#/[A-Za-z0-9_-]{6,64}$', insecureAccepted: true
+      pathnamePattern: '^/VERIFY/?$',
+      allowFragment: true, requireFragment: true,
+      fragmentPattern: '^#/[A-Za-z0-9_-]{6,64}$',
+      documentRef: 'fragment', insecureAccepted: true
     }],
     sourceUrl: 'https://cs.mfa.gov.cn/gyls/lsgz/fwxx/202506/P020250617541458190587.pdf'
   }),
@@ -256,7 +271,8 @@ export const qrCodes = {
     allowedUrls: [{
       protocol: 'https:', hostname: 'tramites.cancilleria.gov.co', port: '',
       pathnamePattern: '^/Ciudadano/ConsultaApostilla/consulta\\.aspx$',
-      allowedSearchParams: ['cod', 'fecha']
+      allowedSearchParams: ['cod', 'fecha'],
+      requiredSearchParams: ['cod'], documentRef: 'query'
     }],
     sourceUrl: 'https://www.cancilleria.gov.co/normograma/compilacion/docs/circular_minrelaciones_0040_2015.htm'
   }),
@@ -285,7 +301,8 @@ export const qrCodes = {
     // https://apostilla.minex.gob.gt/public/verificar/apostilla/0000000000/AAAAAA
     allowedUrls: [{
       protocol: 'https:', hostname: 'apostilla.minex.gob.gt', port: '',
-      pathnamePattern: '^/public/verificar/apostilla/[0-9]{6,20}/[A-Za-z0-9]{4,16}$'
+      pathnamePattern: '^/public/verificar/apostilla/[0-9]{6,20}/[A-Za-z0-9]{4,16}$',
+      documentRef: 'path'
     }],
     sourceUrl: 'https://www.minex.gob.gt/userfiles/apostilla.pdf'
   }),
@@ -300,7 +317,11 @@ export const qrCodes = {
     // still type certificate number, certification date, and access code.
     allowedUrls: [{
       protocol: 'https:', hostname: 'www.ezairyu.mofa.go.jp', port: '',
-      pathnamePattern: '^/eregister/eregi/authcheck/?$'
+      pathnamePattern: '^/eregister/eregi/authcheck/?$',
+      // Legitimately carries NO reference: the QR opens the portal and the user
+      // types certificate number, certification date, and access code. This is
+      // exactly why the function is portal_or_token and not verification_url.
+      documentRef: 'none'
     }],
     sourceUrl: 'https://www.mofa.go.jp/mofaj/toko/page22_000552.html',
     appliesFrom: '2026-06-01'
@@ -322,8 +343,9 @@ export const qrCodes = {
       // in the published QR documentation. Plain HTTP.
       allowedUrls: [{
         protocol: 'http:', hostname: 'consultasislac.segob.gob.mx', port: '',
-        pathnamePattern: '^/csislac/qr\\.do$', allowedSearchParams: ['a', 'b'],
-        insecureAccepted: true
+        pathnamePattern: '^/csislac/qr\\.do$',
+        allowedSearchParams: ['a', 'b'], requiredSearchParams: ['b'],
+        documentRef: 'query', insecureAccepted: true
       }],
       sourceUrl: 'https://dicoppu.segob.gob.mx/work/models/DICOPPU/QR/index.html'
     }),
@@ -421,7 +443,8 @@ export const qrCodes = {
     allowedUrls: [{
       protocol: 'http:', hostname: 'sigob.mire.gob.pa', port: '',
       pathnamePattern: '^/reportes/MIA/PA/autenticaciones/apostille\\.aspx$',
-      allowedSearchParams: ['args'], insecureAccepted: true
+      allowedSearchParams: ['args'], requiredSearchParams: ['args'],
+      documentRef: 'query', insecureAccepted: true
     }],
     sourceUrl: HCCH_CHART
   }),

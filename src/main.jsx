@@ -5,6 +5,9 @@ import { eRegisters, sourceUrl } from './data/e-registers'
 import { verificationFields } from './data/verification-fields'
 import { messages as t } from './i18n/en'
 import { fieldKey, fieldLabel, validateVerificationField } from './verification-validation'
+import { hasEnabledQrScanning, qrRecordsFor } from './data/qr-codes'
+import { qrScannerFlagEnabled } from './feature-flags'
+import { QrScannerDialog } from './QrScanner'
 import './styles.css'
 
 function App() {
@@ -123,7 +126,63 @@ function ResultPanel({ selected }) {
         </div>
         <small>{t.privacy}</small>
         <VerificationHelper entry={selected} />
+        <QrSection entry={selected} />
       </div>
+    </div>
+  )
+}
+
+/**
+ * Phase 3.4 entry point. The scanner button appears only for an authority whose
+ * QR record passed the evidence gate (`enabled: true`) — the feature flag can
+ * hide it but never bypasses that gate. Confirmed-but-not-yet-gated authorities
+ * keep informational guidance instead, and `underlying_only` authorities are
+ * excluded from the scanner entirely because their QR belongs to the source
+ * document, not the Apostille.
+ */
+function QrSection({ entry }) {
+  const [open, setOpen] = useState(false)
+  const records = qrRecordsFor(entry.id)
+  const scannable = qrScannerFlagEnabled && hasEnabledQrScanning(entry.id)
+
+  useEffect(() => setOpen(false), [entry.id])
+
+  if (records.length === 0) return null
+
+  if (scannable) {
+    return (
+      <div className="verify-helper">
+        <button type="button" className="button secondary" onClick={() => setOpen(true)}>
+          <QrCode size={16} aria-hidden="true" /> {t.qrScanCta}
+        </button>
+        {open && (
+          <QrScannerDialog
+            authorityId={entry.id}
+            authorityName={entry.authority}
+            onClose={() => setOpen(false)}
+          />
+        )}
+      </div>
+    )
+  }
+
+  const presences = new Set(records.map((record) => record.presence))
+  const guidance = presences.has('underlying_only')
+    ? t.qrInfoUnderlyingOnly
+    : presences.has('confirmed')
+      ? t.qrInfoConfirmed
+      : presences.has('public_specimen') || presences.has('reported')
+        ? t.qrInfoReported
+        : null
+  if (!guidance) return null
+
+  return (
+    <div className="verify-helper">
+      <div className="verify-helper-heading">
+        <QrCode size={16} aria-hidden="true" />
+        <span>QR code on this Apostille</span>
+      </div>
+      <small>{guidance}</small>
     </div>
   )
 }
@@ -244,6 +303,7 @@ function Status({ icon, title, message, selected, details, tone }) {
         <p>{message}</p>
         <small>{selected.notes}</small>
         {details.length > 0 && <small>{details.join(' · ')}</small>}
+        <QrSection entry={selected} />
       </div>
     </div>
   )

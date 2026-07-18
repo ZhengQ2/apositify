@@ -4,15 +4,15 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "clean:data": "node scripts/clean-eapp-data.mjs",
-    "test": "node scripts/validate-data.mjs"
+    "test": "node scripts/validate-data.mjs && node scripts/test-qr-routing.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "jsqr": "^1.4.0",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "lucide-react": "latest"
+    "vite": "latest"
   },
-  "devDependencies": {},
   "type": "module"
 }

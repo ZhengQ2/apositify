@@ -17,5 +17,60 @@ export const messages = {
   helperTitle: 'What you’ll need',
   helperIntroDeepLink: 'Enter the values exactly as printed on your Apostille. Once every field is valid, we’ll open the official verification result directly.',
   verifyNow: 'Verify now',
-  uploadKindNote: 'This authority verifies by uploading the original Apostille file instead of looking up a number.'
+  uploadKindNote: 'This authority verifies by uploading the original Apostille file instead of looking up a number.',
+
+  // Phase 3 — QR scanning. Copy here must never assert an outcome: this app can
+  // say what it decoded and where a destination leads, never whether an
+  // Apostille is genuine. Avoid "valid", "invalid", and "verified" as verdicts.
+  qrScanCta: 'Scan the QR code on your Apostille',
+  qrDialogTitle: 'Scan Apostille QR code',
+  qrDialogIntro: 'Point your camera at the QR code printed on the Apostille from {authority}, or choose a saved photo. The image is read on your device and never uploaded.',
+  qrClose: 'Close scanner',
+  qrVideoLabel: 'Live camera preview for QR scanning',
+  qrUseCamera: 'Use camera',
+  qrRestartCamera: 'Restart camera',
+  qrUseFile: 'Choose an image',
+  qrPrivacyNote: 'Images and decoded content stay on your device. Nothing is uploaded, stored, or logged.',
+
+  qrStateIdle: 'Choose the camera or an image file to start.',
+  qrStateRequesting: 'Waiting for camera permission…',
+  qrStateScanning: 'Scanning. Hold the QR code steady in frame.',
+  qrStateDecodingFile: 'Reading the selected image…',
+  qrStateDecoded: 'QR code read. See the result below.',
+  qrNoCodeFound: 'No QR code found in that image. Try a closer, sharper photo of just the QR code.',
+  qrUnreadableImage: 'That file could not be opened as an image. Try a JPEG or PNG.',
+  qrMultipleCodes: 'More than one QR code is in frame. Move closer so only the Apostille QR code is visible.',
+  qrCameraDenied: 'Camera permission was declined. You can still choose a saved image instead.',
+  qrCameraUnavailable: 'No camera is available on this device. Choose a saved image instead.',
+  qrCameraInsecure: 'The camera needs a secure (HTTPS) connection. Choose a saved image instead.',
+
+  qrDestinationHost: 'You will open:',
+  qrDecodedHost: 'Decoded destination:',
+  qrExtractedToken: 'Reference read from the code:',
+  qrNotAVerdict: 'This app does not decide whether an Apostille is genuine. Only the issuing authority’s own result page can tell you that.',
+
+  qrFnVerificationTitle: 'Official lookup page found',
+  qrFnVerificationBody: 'This code points to the issuing authority’s own lookup page for this Apostille. Open it and read the result there.',
+  qrOpenVerification: 'Open official lookup',
+  qrFnPortalTitle: 'Official portal found',
+  qrFnPortalBody: 'This code opens the authority’s portal. You will still need to enter the details printed on the Apostille to see a result.',
+  qrOpenPortal: 'Open official portal',
+  qrFnDocumentTitle: 'Official document retrieval',
+  qrFnDocumentBody: 'This code retrieves a copy of the document from the authority’s service. It returns a file, not a status result.',
+  qrOpenDocument: 'Retrieve official document',
+  qrFnOfflineTitle: 'Checked with a government app',
+  qrFnOfflineBody: 'This authority’s QR code is read by the official {app} app. Install it from the authority’s published link and scan the code there.',
+  qrFnOfflineBodyGeneric: 'This authority’s QR code is read by an official government app rather than a web page. Follow the authority’s published instructions.',
+
+  qrBlockedTitle: 'Destination does not match this authority',
+  qrBlockedBody: 'The code was read, but it does not lead to the official address on record for the authority you selected. It has not been opened.',
+  qrBlockedNoOpen: 'If you expected an official page, check that you selected the right issuing authority, and treat the destination above with caution.',
+  qrNotEnabledTitle: 'QR routing not available for this authority yet',
+  qrNotEnabledBody: 'The code was read, but this authority’s QR format has not been confirmed against official specimens, so no destination is offered. Here is the raw content:',
+  qrUnsupportedTitle: 'Code content not recognised',
+  qrUnsupportedBody: 'This code does not contain a documented official address. Here is the raw content:',
+
+  qrInfoConfirmed: 'Apostilles from this authority are documented to carry a QR code. In-app scanning is not offered yet — scan it with your phone’s camera and check the destination is an official government address.',
+  qrInfoReported: 'A QR code on this authority’s Apostilles has been reported but not confirmed from an official source. Use the lookup route above.',
+  qrInfoUnderlyingOnly: 'Any QR code you see may belong to the underlying document rather than to the Apostille itself. A QR on the source document does not verify the Apostille.'
 }

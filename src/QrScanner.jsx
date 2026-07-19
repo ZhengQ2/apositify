@@ -173,9 +173,33 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     }
     streamRef.current = stream
     ensureCanvas()
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream
-      await videoRef.current.play().catch(() => {})
+    const video = videoRef.current
+    if (!video) {
+      // React normally commits the REQUESTING state before getUserMedia settles,
+      // but an unusually fast implementation (or a renderer interruption) can
+      // still leave us without the element that owns the stream. Do not report
+      // "Scanning" when there is nowhere to obtain frames from.
+      releaseCamera()
+      setCameraError(CAMERA_ERROR.UNAVAILABLE)
+      setState(STATE.CAMERA_ERROR)
+      return
+    }
+    video.srcObject = stream
+    try {
+      await video.play()
+    } catch {
+      // Permission and playback are separate failure points. A browser may hand
+      // us a live stream and still refuse or fail to start the video element.
+      // Suppressing that rejection leaves the camera on while the dialog claims
+      // to be scanning an element that will never produce a frame.
+      if (session !== sessionRef.current) {
+        stopStream(stream)
+        return
+      }
+      releaseCamera()
+      setCameraError(CAMERA_ERROR.UNAVAILABLE)
+      setState(STATE.CAMERA_ERROR)
+      return
     }
     // play() is a second await, and camera startup can be slow. If the dialog
     // closed or the authority changed during it, cleanup has already run and

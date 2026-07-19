@@ -41,8 +41,11 @@ globalThis.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0)
 globalThis.cancelAnimationFrame = (id) => clearTimeout(id)
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-// jsdom has no media stack; the component only needs play() to resolve.
-dom.window.HTMLMediaElement.prototype.play = function () { return Promise.resolve() }
+// jsdom has no media stack. Keep playback injectable so the lifecycle suite can
+// cover the distinct case where permission succeeds but the video element does
+// not start.
+let playBehaviour = () => Promise.resolve()
+dom.window.HTMLMediaElement.prototype.play = function () { return playBehaviour(this) }
 
 // Track every MediaStreamTrack we hand out so leaks are observable.
 const issuedTracks = []
@@ -81,7 +84,10 @@ const { act } = await import('react')
 
 const { createServer } = await import('vite')
 const vite = await createServer({
-  server: { middlewareMode: true },
+  // The suite only uses Vite's JSX transform. HMR would otherwise open an
+  // unnecessary WebSocket listener, which can fail in restricted CI runners
+  // even though no browser ever connects to this middleware-mode server.
+  server: { middlewareMode: true, ws: false },
   appType: 'custom',
   logLevel: 'error',
   optimizeDeps: { noDiscovery: true }
@@ -207,6 +213,23 @@ await check('a denied prompt falls back to the file picker', async ({ root }) =>
   assert.match(statusText(), /permission was declined/i)
   assert.ok(document.querySelector('.qr-file-input'), 'file route must remain available')
   assert.equal(cameraButton().disabled, false, 'camera should be retryable after a denial')
+})
+
+await check('a playback failure stops the granted stream and stays retryable', async ({ root }) => {
+  gumBehaviour = async () => makeStream()
+  playBehaviour = () => Promise.reject(new Error('playback failed'))
+  try {
+    await render(root)
+    await act(async () => { cameraButton().click() })
+    await tick(10)
+
+    const track = issuedTracks[issuedTracks.length - 1]
+    assert.equal(track.readyState, 'ended', 'a stream that cannot produce frames must be stopped')
+    assert.match(statusText(), /no camera is available/i, 'must not claim to be scanning')
+    assert.equal(cameraButton().disabled, false, 'camera should be retryable after playback fails')
+  } finally {
+    playBehaviour = () => Promise.resolve()
+  }
 })
 
 // --- accessibility: aria-modal has to be true for a keyboard ---------------

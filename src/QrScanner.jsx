@@ -104,12 +104,43 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
   }, [releaseCamera])
 
   useEffect(() => {
+    // aria-modal promises assistive tech that content outside the dialog is
+    // inert, so keyboard focus has to actually honour that: trap Tab inside the
+    // dialog, and put focus back on the element that opened it when we close --
+    // otherwise a keyboard user is dropped at the top of the document and has to
+    // tab all the way back to where they were.
+    const opener = document.activeElement
     closeRef.current?.focus()
+
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab' || !dialogRef.current) return
+      const focusable = [...dialogRef.current.querySelectorAll(
+        'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )].filter((el) => el.offsetParent !== null || el === document.activeElement)
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      } else if (!dialogRef.current.contains(document.activeElement)) {
+        // Focus escaped (e.g. via a click on the backdrop area): pull it back.
+        event.preventDefault()
+        first.focus()
+      }
     }
     document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      if (opener instanceof HTMLElement && document.contains(opener)) opener.focus()
+    }
   }, [onClose])
 
   const handlePayload = useCallback((text) => {
@@ -384,13 +415,22 @@ function ReportPanel({ result }) {
 }
 
 function QrResultBody({ result, country }) {
-  if (result.kind === OUTCOME.OFFICIAL) {
-    const copy = {
-      verification_url: { title: t.qrFnVerificationTitle, body: t.qrFnVerificationBody, action: t.qrOpenVerification },
-      portal_or_token: { title: t.qrFnPortalTitle, body: t.qrFnPortalBody, action: t.qrOpenPortal },
-      document_url: { title: t.qrFnDocumentTitle, body: t.qrFnDocumentBody, action: t.qrOpenDocument }
-    }[result.function]
+  const officialCopy = result.kind === OUTCOME.OFFICIAL
+    ? {
+        verification_url: { title: t.qrFnVerificationTitle, body: t.qrFnVerificationBody, action: t.qrOpenVerification },
+        portal_or_token: { title: t.qrFnPortalTitle, body: t.qrFnPortalBody, action: t.qrOpenPortal },
+        document_url: { title: t.qrFnDocumentTitle, body: t.qrFnDocumentBody, action: t.qrOpenDocument }
+      }[result.function]
+    : null
 
+  // An OFFICIAL result whose function has no copy would crash on copy.title and
+  // take the whole dialog down. Unreachable with today's registry (the
+  // classifier filters unknown, offline_app, and embedded_fields before tier 1),
+  // but a data mistake should degrade to the no-action fallback below, not to a
+  // white screen -- and the fallback never overclaims, which is the safe
+  // direction for this app.
+  if (result.kind === OUTCOME.OFFICIAL && officialCopy) {
+    const copy = officialCopy
     return (
       <div className="status success qr-result">
         <ExternalLink aria-hidden="true" />

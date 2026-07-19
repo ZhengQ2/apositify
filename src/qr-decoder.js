@@ -109,9 +109,16 @@ async function decodeWithNative(source) {
   try {
     const codes = await detector.detect(source)
     if (codes.length === 0) return { status: DECODE.NONE }
-    // Two codes in frame means we cannot tell which one the user meant. Asking
-    // them to reframe is safer than picking one and routing on it.
-    if (codes.length > 1) return { status: DECODE.MULTIPLE }
+    // Two DIFFERENT codes in frame means we cannot tell which one the user
+    // meant, so refuse and ask them to reframe. Identical codes are not
+    // ambiguous -- documents legitimately print the same QR twice (sticker and
+    // page) -- and the jsQR fallback already treats agreement as OK, so the
+    // native path must match or Chrome and Safari would disagree on the same
+    // photo.
+    if (codes.length > 1) {
+      const distinct = new Set(codes.map((code) => code.rawValue))
+      if (distinct.size > 1) return { status: DECODE.MULTIPLE }
+    }
     return { status: DECODE.OK, text: codes[0].rawValue }
   } catch {
     return null
@@ -128,7 +135,10 @@ export async function decodeFromVideo(video, canvas) {
 
 /** Decode a user-picked image file. Same capability as the camera path. */
 export async function decodeFromFile(file, canvas) {
-  if (!file || !file.type?.startsWith('image/')) return { status: DECODE.UNREADABLE }
+  if (!file) return { status: DECODE.UNREADABLE }
+  // No MIME pre-check: file pickers report an empty type for perfectly valid
+  // images surprisingly often (extension-less downloads, some HEIC exports),
+  // and createImageBitmap below is the authoritative test either way.
   let bitmap
   try {
     bitmap = await createImageBitmap(file)

@@ -607,4 +607,47 @@ check('every real specimen still routes after duplicate rejection', () => {
   }
 })
 
+// --- tier 2 must not lend a government host to a redirect -------------------
+
+const RW = 'rwanda-ministry-of-foreign-affairs-and-international-cooperation'
+
+check('tier 2 still routes a plain government lookup', () => {
+  for (const payload of [
+    'https://apostille.gov.rw/verify?id=ABC123',
+    'https://apostille.gov.rw/verify/ABC123'
+  ]) {
+    const result = classifyQrPayload(payload, RW, 'Rwanda')
+    assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT, `${payload} should still route`)
+  }
+})
+
+const redirectPayloads = [
+  ['named redirect parameter', 'https://apostille.gov.rw/v?next=https://attacker.test', 'redirect_parameter'],
+  ['protocol-relative redirect', 'https://apostille.gov.rw/v?url=//evil.test', 'redirect_parameter'],
+  ['camel-cased return url', 'https://apostille.gov.rw/v?returnUrl=https://attacker.test', 'redirect_parameter'],
+  ['redirect under an innocuous name', 'https://apostille.gov.rw/v?doc=https://attacker.test', 'redirect_shaped_value'],
+  ['percent-encoded redirect', 'https://apostille.gov.rw/v?doc=https%3A%2F%2Fattacker.test', 'redirect_shaped_value'],
+  ['redirect in the fragment', 'https://apostille.gov.rw/v#https://attacker.test', 'redirect_shaped_value']
+]
+
+for (const [label, payload, reason] of redirectPayloads) {
+  check(`tier 2 refuses ${label}`, () => {
+    const result = classifyQrPayload(payload, RW, 'Rwanda')
+    assert.notEqual(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT,
+      `${label}: a government host must not be lent to someone else's destination`)
+    assert.equal(result.reason, reason)
+    assert.ok(!result.url)
+  })
+}
+
+check('tier 1 was already immune: its allowlist is closed', () => {
+  // The same trick against a specimen-verified authority is rejected as an
+  // undocumented parameter, which is why REDIRECT_PARAM_NAMES is tier-2 only.
+  const result = classifyQrPayload(
+    'https://apostil.org.br/v?number=0000000-00&crc=00000000&next=https://attacker.test',
+    'brazil-national-council-of-justice', 'Brazil')
+  assert.notEqual(result.kind, OUTCOME.OFFICIAL)
+  assert.equal(result.reason, 'unexpected_query_parameter')
+})
+
 console.log(`QR routing: ${passed} checks passed.`)

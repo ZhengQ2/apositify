@@ -26,3 +26,4 @@
 .qr-report-preview{margin-top:10px}
 .qr-report-warn{display:flex;align-items:flex-start;gap:6px;margin-top:8px;color:#7a4b00}
 .qr-report-done{margin-top:16px;padding:12px 14px;border-radius:12px;background:#ecfdf3;color:#155730}
+.qr-gov-url{max-height:none;margin:4px 0 10px;font-size:.85rem}

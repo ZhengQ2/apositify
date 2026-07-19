@@ -319,6 +319,38 @@ export function classifyQrPayload(rawText, authorityId, country = null) {
   return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: bestReason, host, raw, authorityId }
 }
 
+// Parameter names that conventionally carry a destination. Tier 1 does not need
+// this list -- its allowlist is closed, so anything undocumented is already
+// rejected -- but tier 2 accepts an unknown template on a government host, and
+// that host may have an open redirect. Deliberately narrow: names that could
+// plausibly be a document reference (ref, id, u, r, to) are NOT here, because
+// over-blocking would make the tier useless.
+const REDIRECT_PARAM_NAMES = new Set([
+  'next', 'url', 'redirect', 'redirect_uri', 'redirect_url', 'redirecturl', 'redir',
+  'return', 'returnurl', 'return_url', 'return_to', 'returnto', 'rurl',
+  'continue', 'dest', 'destination', 'target', 'goto', 'forward', 'callback',
+  'out', 'link', 'origin', 'checkout_url'
+])
+
+/**
+ * A document reference is never itself a URL. So a query or fragment value that
+ * looks like one is a redirect payload regardless of the parameter's name, which
+ * catches the whole class rather than the names we happened to enumerate.
+ */
+function looksLikeUrlValue(value) {
+  const trimmed = String(value || '').trim()
+  if (!trimmed) return false
+  if (trimmed.startsWith('//')) return true                 // protocol-relative
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)) return true // absolute
+  if (/^(https?|javascript|data|file|vbscript):/i.test(trimmed)) return true
+  try {
+    // %2F%2Fevil.test and friends.
+    const decoded = decodeURIComponent(trimmed)
+    if (decoded !== trimmed) return looksLikeUrlValue(decoded)
+  } catch { /* malformed encoding is caught earlier */ }
+  return false
+}
+
 /**
  * Tier 2. Narrows an unbounded internet to the party's government namespace.
  * That is worth something; it is not evidence, and the caller must not label the
@@ -340,6 +372,23 @@ function governmentTier(raw, country, authorityId) {
   if (url.port) {
     return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'unexpected_port', host, raw, authorityId }
   }
+
+  // Tier 1 rejects undocumented parameters outright, so it is immune to this.
+  // Tier 2 has no template to check against, so a government host with an open
+  // redirect would let an attacker borrow its legitimacy: the card shows a
+  // government hostname while the destination is theirs.
+  for (const [key, value] of url.searchParams.entries()) {
+    if (REDIRECT_PARAM_NAMES.has(key.toLowerCase())) {
+      return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'redirect_parameter', host, raw, authorityId }
+    }
+    if (looksLikeUrlValue(value)) {
+      return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'redirect_shaped_value', host, raw, authorityId }
+    }
+  }
+  if (url.hash && looksLikeUrlValue(url.hash.slice(1))) {
+    return { kind: OUTCOME.BLOCKED, trust: TRUST.NONE, reason: 'redirect_shaped_value', host, raw, authorityId }
+  }
+
   return {
     kind: OUTCOME.UNVERIFIED_GOVERNMENT,
     trust: TRUST.GOVERNMENT,

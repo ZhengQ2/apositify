@@ -472,6 +472,15 @@ function QrResultBody({ result, country }) {
           <strong>{t.qrGovTitle}</strong>
           <p>{t.qrGovBody.replace('{country}', country || '')}</p>
           <p className="qr-host">{t.qrDecodedHost} <code>{result.host}</code></p>
+          {/*
+            Tier 1 can show the host alone: the payload matched a closed template,
+            so the rest of the URL is already known-good. Tier 2 has no template,
+            so the host is the ONLY thing established -- showing just that would
+            present a government hostname while hiding whatever path and query
+            the user is about to open.
+          */}
+          <p className="qr-host">{t.qrGovFullUrl}</p>
+          <pre className="qr-raw qr-gov-url">{result.url}</pre>
           <a className="button secondary" href={result.url} target="_blank" rel="noreferrer noopener">
             <ExternalLink size={16} aria-hidden="true" /> {t.qrGovOpen}
           </a>

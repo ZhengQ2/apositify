@@ -43,6 +43,23 @@ for (const entry of eRegisters) {
   modeCounts[entry.verificationMode] += 1
 }
 
+// classifyQrPayload() dispatches on function BEFORE it parses a URL: offline_app
+// and embedded_fields short-circuit on the raw text. So an authority holding a
+// non-URL record alongside a URL record would have its URL generation swallowed
+// by the earlier branch. No authority mixes them today, and this freezes that
+// assumption rather than leaving it implicit in the ordering of two if-blocks.
+const NON_URL_FUNCTIONS = new Set(['offline_app', 'embedded_fields'])
+for (const entry of eRegisters) {
+  const functions = qrRecordsFor(entry.id).filter((r) => r.enabled).map((r) => r.function)
+  const nonUrl = functions.filter((fn) => NON_URL_FUNCTIONS.has(fn))
+  const urlBased = functions.filter((fn) => !NON_URL_FUNCTIONS.has(fn))
+  assert.ok(
+    nonUrl.length === 0 || urlBased.length === 0,
+    `${entry.id} mixes non-URL (${nonUrl.join(', ')}) and URL-based (${urlBased.join(', ')}) enabled records; ` +
+    'classifyQrPayload would short-circuit on the non-URL branch and never reach the URL rules'
+  )
+}
+
 assert.equal(countries.size, 64, 'dataset should cover all 64 HCCH implementation chart contracting-party rows')
 assert.equal(eRegisters.length, 97, 'dataset should include all 97 competent-authority rows')
 assert.equal(modeCounts.qr_only, 6, 'dataset should include the six QR-only authority rows (includes Rwanda, reclassified 2026-07 after its listed link turned out to be a non-apostille file tracker)')

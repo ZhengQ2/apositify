@@ -76,6 +76,7 @@ export const messages = {
   // basis explicit and must not use the word verify.
   qrGovTitle: 'Government address — format not confirmed',
   qrGovBody: 'This code points to an address inside {country}\u2019s government domain, but we have not confirmed this authority\u2019s QR format against a real Apostille. Check the address below looks right before continuing.',
+  qrGovFullUrl: 'Full address in the code:',
   qrGovOpen: 'Continue to this address',
   qrGovCaution: 'We cannot tell you whether this page belongs to the issuing authority or what it will show.',
 

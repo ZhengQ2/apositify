@@ -11,6 +11,7 @@
 import assert from 'node:assert/strict'
 import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, isReportable, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
+import { messages } from '../src/i18n/en.js'
 import { governmentSuffixes, matchesGovernmentSuffix } from '../src/data/government-domains.js'
 
 let passed = 0
@@ -648,6 +649,48 @@ check('tier 1 was already immune: its allowlist is closed', () => {
     'brazil-national-council-of-justice', 'Brazil')
   assert.notEqual(result.kind, OUTCOME.OFFICIAL)
   assert.equal(result.reason, 'unexpected_query_parameter')
+})
+
+// --- fallback guidance must not demand a government domain ------------------
+//
+// Four of the decoded specimens sit on non-government hosts (e-verify.am,
+// apostil.org.br, www.cnj.jus.br, apostille.nacid.bg). Copy telling users to
+// expect a government address would have them distrust the genuine destination,
+// so no guidance string may require one.
+
+check('no confirmed-authority guidance requires a government address', () => {
+  const requiresGovernment = /official government (address|one)|government address|is a government/i
+  for (const [key, value] of Object.entries(messages)) {
+    if (!key.startsWith('qrInfoConfirmed')) continue
+    // offline_app copy legitimately names a government APP, not an address.
+    if (key.includes('OfflineApp')) continue
+    assert.ok(
+      !requiresGovernment.test(value),
+      `${key} tells users to expect a government address, which is wrong for ` +
+      'Armenia (e-verify.am), Brazil (apostil.org.br) and Bulgaria (apostille.nacid.bg)'
+    )
+  }
+})
+
+check('every confirmed non-government host is one we hold on record', () => {
+  // Documents the exact set the guidance has to stay correct for. If a future
+  // specimen adds another, this listing changes and the reviewer is reminded why
+  // the copy is phrased the way it is.
+  const nonGovernment = []
+  for (const value of Object.values(qrCodes)) {
+    for (const entry of Array.isArray(value) ? value : [value]) {
+      if (entry.presence !== 'confirmed') continue
+      for (const rule of entry.allowedUrls || []) {
+        if (!/\.(gov|gob|go|government|egov|mygov|judiciary|public|etat)\./.test(`.${rule.hostname}.`)) {
+          nonGovernment.push(rule.hostname)
+        }
+      }
+    }
+  }
+  assert.ok(nonGovernment.length > 0, 'the non-government case must remain covered by a real host')
+  for (const host of ['e-verify.am', 'apostil.org.br', 'apostille.nacid.bg']) {
+    assert.ok(nonGovernment.includes(host), `${host} should be recognised as non-government`)
+  }
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

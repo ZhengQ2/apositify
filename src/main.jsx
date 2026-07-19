@@ -224,6 +224,15 @@ function confirmedGuidance(records) {
   const confirmed = records.filter((record) => record.presence === 'confirmed')
   const functions = new Set(confirmed.map((record) => record.function))
 
+  // Where specimens gave us the real destination, name it. That is both more
+  // useful than describing a namespace and the only phrasing that stays correct
+  // for authorities whose official host is not a government domain -- Armenia,
+  // Brazil, and Bulgaria among the decoded set.
+  const hosts = [...new Set(
+    confirmed.flatMap((record) => (record.allowedUrls || []).map((rule) => rule.hostname))
+  )]
+  const hostList = formatHostList(hosts)
+
   // Only collapse to a single non-URL message when every confirmed record for
   // this authority agrees; a mixed authority still needs the URL wording.
   if (functions.size === 1) {
@@ -234,9 +243,22 @@ function confirmedGuidance(records) {
         ? t.qrInfoConfirmedOfflineApp.replace('{app}', appName)
         : t.qrInfoConfirmedOfflineAppGeneric
     }
-    if (functions.has('document_url')) return t.qrInfoConfirmedDocument
+    if (functions.has('document_url')) {
+      return hostList
+        ? t.qrInfoConfirmedDocumentKnownHost.replace('{hosts}', hostList)
+        : t.qrInfoConfirmedDocument
+    }
   }
-  return t.qrInfoConfirmed
+  return hostList
+    ? t.qrInfoConfirmedKnownHost.replace('{hosts}', hostList)
+    : t.qrInfoConfirmed
+}
+
+/** "a", "a or b", "a, b or c" — Brazil has two generations on two hosts. */
+function formatHostList(hosts) {
+  if (hosts.length === 0) return null
+  if (hosts.length === 1) return hosts[0]
+  return `${hosts.slice(0, -1).join(', ')} or ${hosts[hosts.length - 1]}`
 }
 
 function VerificationHelper({ entry }) {

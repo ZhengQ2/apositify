@@ -98,8 +98,20 @@ function matchRule(url, rule) {
   if (rule.pathnamePattern && !new RegExp(rule.pathnamePattern).test(url.pathname)) return 'path_mismatch'
 
   const allowedParams = rule.allowedSearchParams || []
+  const seenParams = new Set()
   for (const key of url.searchParams.keys()) {
     if (!allowedParams.includes(key)) return 'unexpected_query_parameter'
+    // A repeated key makes the payload ambiguous, and every check below reads a
+    // single value via get(), which returns only the FIRST. So
+    // ?acao=documento_conferir&acao=procedimento_trabalhar would satisfy the
+    // static-value check while the URL we open still carries the second value --
+    // and backends disagree on whether first or last wins. The same applies to
+    // the document reference: a duplicated cv identifies two different records.
+    //
+    // No specimen repeats a key, so rejecting duplicates outright costs nothing
+    // and removes the whole class rather than patching it per parameter.
+    if (seenParams.has(key)) return 'duplicate_query_parameter'
+    seenParams.add(key)
   }
 
   // Allowed is not the same as present. Rejecting only unexpected keys would

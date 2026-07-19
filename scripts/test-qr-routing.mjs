@@ -557,4 +557,54 @@ check('a static parameter is never also the document reference', () => {
   }
 })
 
+// --- duplicate query keys make a payload ambiguous --------------------------
+
+const duplicates = [
+  ['static value, tampered second', `${SEI}?acao=documento_conferir&acao=procedimento_trabalhar&id_orgao_acesso_externo=0&cv=0000000&crc=11111111`],
+  ['static value, tampered first', `${SEI}?acao=procedimento_trabalhar&acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111`],
+  ['duplicated document reference', `${SEI}?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&cv=9999999&crc=11111111`],
+  ['duplicated checksum', `${SEI}?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111&crc=deadbeef`]
+]
+
+for (const [label, payload] of duplicates) {
+  check(`refuses a duplicated query key: ${label}`, () => {
+    const result = classifyQrPayload(payload, BR)
+    assert.notEqual(result.kind, OUTCOME.OFFICIAL)
+    assert.equal(result.reason, 'duplicate_query_parameter')
+    assert.ok(!result.url, 'must not open a URL whose parameters are ambiguous')
+  })
+}
+
+check('duplicate rejection applies to every real specimen that has a query', () => {
+  // Take each REAL specimen payload and duplicate one of its own query keys.
+  // Building synthetic probe URLs would fail on path_mismatch first and pass
+  // this assertion for the wrong reason.
+  let covered = 0
+  for (const [id, payload, label] of realSpecimens) {
+    let url
+    try { url = new URL(payload) } catch { continue }
+    const keys = [...url.searchParams.keys()]
+    if (keys.length === 0) continue
+
+    const baseline = classifyQrPayload(payload, id)
+    assert.equal(baseline.kind, OUTCOME.OFFICIAL, `${label}: baseline should route`)
+
+    const tampered = `${payload}&${keys[0]}=duplicated`
+    const result = classifyQrPayload(tampered, id)
+    assert.equal(result.reason, 'duplicate_query_parameter',
+      `${label}: duplicating ${keys[0]} should be rejected, got ${result.reason}`)
+    assert.ok(!result.url)
+    covered += 1
+  }
+  // Guard against the assertion silently covering nothing.
+  assert.ok(covered >= 8, `expected several query-carrying specimens, covered ${covered}`)
+})
+
+check('every real specimen still routes after duplicate rejection', () => {
+  for (const [id, payload, label] of realSpecimens) {
+    const result = classifyQrPayload(payload, id)
+    assert.equal(result.kind, OUTCOME.OFFICIAL, `${label} regressed: ${result.reason}`)
+  }
+})
+
 console.log(`QR routing: ${passed} checks passed.`)

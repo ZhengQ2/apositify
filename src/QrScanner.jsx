@@ -85,7 +85,18 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') {
         releaseCamera()
-        setState((current) => (current === STATE.SCANNING ? STATE.IDLE : current))
+        // releaseCamera() bumps the session, so any in-flight async work returns
+        // early without touching state. That means EVERY transient state has to
+        // be reset here, not just SCANNING: leaving REQUESTING stuck shows
+        // "Waiting for camera permission…" forever with the camera button
+        // disabled, and leaving DECODING_FILE stuck shows "Reading the selected
+        // image…" forever. Both are easy to hit on mobile by backgrounding the
+        // browser during the permission prompt or a slow decode.
+        setState((current) => (
+          current === STATE.SCANNING || current === STATE.REQUESTING || current === STATE.DECODING_FILE
+            ? STATE.IDLE
+            : current
+        ))
       }
     }
     document.addEventListener('visibilitychange', onVisibility)

@@ -140,19 +140,36 @@ function ResultPanel({ selected }) {
  *
  *   - Authorities with a decoded specimen, which can route against a verified
  *     host allowlist (tier 1).
- *   - Authorities whose QR presence is `confirmed` but whose format we have not
- *     seen, which fall back to the government-namespace heuristic (tier 2) and
- *     get explicitly unverified copy.
+ *   - Authorities whose QR presence is `confirmed`, whose format we have not
+ *     seen, AND whose function is URL-based, which fall back to the
+ *     government-namespace heuristic (tier 2) and get explicitly unverified copy.
  *
- * `underlying_only` authorities are excluded outright: their QR belongs to the
- * source document, not the Apostille. `reported` and `public_specimen` keep
- * informational guidance only, since we have no basis to route at all.
+ * Everything else keeps guidance instead, because opening a scanner that can
+ * only answer "not enabled" is worse than the text it replaces:
+ *   - `offline_app` and `embedded_fields` without a specimen have no URL for
+ *     tier 2 to match, so their guidance (use GouvCheck; compare the printed
+ *     fields) is the actually useful answer.
+ *   - `underlying_only` is excluded outright: the QR belongs to the source
+ *     document, not the Apostille.
+ *   - `reported` and `public_specimen` give no basis to route at all.
  */
+// Functions whose payload is a URL, and which tier 2 can therefore help with.
+// offline_app and embedded_fields are non-routable by nature: their payloads are
+// a signed blob and delimited text, so a government-namespace heuristic has
+// nothing to match and the scanner can only report "not enabled".
+const TIER_2_CAPABLE = new Set(['verification_url', 'portal_or_token', 'document_url', 'unknown'])
+
 function QrSection({ entry }) {
   const [open, setOpen] = useState(false)
   const records = qrRecordsFor(entry.id)
-  const confirmed = records.some((record) => record.presence === 'confirmed')
-  const scannable = qrScannerFlagEnabled && (hasEnabledQrScanning(entry.id) || confirmed)
+  // A confirmed authority is only worth opening the scanner for if it can
+  // actually reach a tier. Luxembourg is confirmed offline_app with no specimen:
+  // scanning it returns NOT_ENABLED and costs the user the GouvCheck
+  // instructions that confirmedGuidance() would otherwise show.
+  const tier2Candidate = records.some(
+    (record) => record.presence === 'confirmed' && TIER_2_CAPABLE.has(record.function)
+  )
+  const scannable = qrScannerFlagEnabled && (hasEnabledQrScanning(entry.id) || tier2Candidate)
 
   useEffect(() => setOpen(false), [entry.id])
 

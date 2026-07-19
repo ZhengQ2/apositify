@@ -129,6 +129,23 @@ for (const entry of eRegisters) {
       } else if (record.function === 'embedded_fields') {
         assert.ok(record.fieldShape, `${entry.id} embedded_fields records need a documented fieldShape`)
         assert.equal(record.allowedUrls.length, 0, `${entry.id} embedded_fields payloads have no destination`)
+        // Without a delimiter there is no shape to check, and the classifier
+        // would accept ANY non-URL payload as this authority's field data --
+        // telling someone who scanned an unrelated QR that it holds their
+        // apostille's details.
+        assert.ok(record.fieldDelimiter, `${entry.id} embedded_fields records need a fieldDelimiter to validate against`)
+        assert.ok(
+          record.fieldShape.split(record.fieldDelimiter).length > 1,
+          `${entry.id} fieldShape does not split on its own fieldDelimiter`
+        )
+        if (record.payloadPattern) {
+          assert.doesNotThrow(() => new RegExp(record.payloadPattern), `${entry.id} has an invalid payloadPattern`)
+          // The documented shape must not itself be a real payload.
+          assert.ok(
+            !new RegExp(record.payloadPattern).test(record.fieldShape),
+            `${entry.id} fieldShape looks like real data rather than field names`
+          )
+        }
       } else {
         assert.ok(record.allowedUrls.length > 0, `${entry.id} needs at least one allowedUrls rule before enabling`)
         // Every enabled rule must bind the path. A host-only rule would accept

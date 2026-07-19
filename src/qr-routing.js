@@ -125,6 +125,30 @@ function matchRule(url, rule) {
 }
 
 /**
+ * Check a payload against an embedded_fields authority's declared structure.
+ * Returns null when it matches, or a reason code.
+ *
+ * The field COUNT is derived from `fieldShape` rather than stored separately, so
+ * the documented shape and the check can never drift apart.
+ */
+function embeddedShapeError(raw, record) {
+  const delimiter = record.fieldDelimiter
+  const shape = record.fieldShape
+  if (!delimiter || !shape) return 'embedded_shape_undocumented'
+
+  // An optional tighter pattern for authorities whose fields have a known form.
+  if (record.payloadPattern && !new RegExp(record.payloadPattern).test(raw)) {
+    return 'embedded_shape_mismatch'
+  }
+
+  const expected = shape.split(delimiter).length
+  const parts = raw.split(delimiter)
+  if (parts.length !== expected) return 'embedded_field_count_mismatch'
+  if (parts.some((part) => part.trim() === '')) return 'embedded_field_empty'
+  return null
+}
+
+/**
  * Rebuild from the authority's stored base where a token mapping is documented,
  * so navigation targets a URL we constructed. Requires two specimens: one
  * specimen cannot distinguish a stable path segment from a coincidence.
@@ -191,8 +215,17 @@ export function classifyQrPayload(rawText, authorityId, country = null) {
   // Costa Rica's QR is delimited plain text carrying the apostille's own fields
   // -- including personal names. There is no destination, and the values must
   // not be rendered wholesale.
+  //
+  // "Not a URL" is not the same as "is this authority's field data". Accepting
+  // any non-URL payload here would tell someone who scanned an unrelated QR that
+  // the code stores their apostille's details, and would route it away from the
+  // unsupported path that offers a report. The declared shape must actually match.
   const embedded = enabled.find((entry) => entry.function === 'embedded_fields')
   if (embedded && !/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
+    const shapeError = embeddedShapeError(raw, embedded)
+    if (shapeError) {
+      return { kind: OUTCOME.UNSUPPORTED, trust: TRUST.NONE, reason: shapeError, raw, authorityId }
+    }
     return {
       kind: OUTCOME.EMBEDDED_FIELDS,
       trust: TRUST.NONE,

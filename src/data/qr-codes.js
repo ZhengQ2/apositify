@@ -303,6 +303,12 @@ export const qrCodes = {
     // Specimen 2026-07-18 shape (values withheld -- the payload carries the
     // names of the signatory and the authenticating official):
     fieldShape: 'issueDate//code//authenticatingOfficial//signatory//capacity',
+    fieldDelimiter: '//',
+    // Structure only -- no real values. DD/MM/YYYY, an alphanumeric code, then
+    // three free-text fields (names and a capacity, which carry accents and
+    // spaces). The field COUNT is derived from fieldShape, so this pattern only
+    // has to pin the parts with a known form.
+    payloadPattern: '^\\d{2}/\\d{2}/\\d{4}//[A-Za-z0-9-]{4,40}(?://[^/]{1,120}){3}$',
     containsPersonalData: true,
     sourceUrl: 'https://www.rree.go.cr/?cat=prensa&cont=593&id=4848&sec=servicios'
   }),

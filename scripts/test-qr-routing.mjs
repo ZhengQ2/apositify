@@ -9,7 +9,7 @@
 //   behaviour the schema grew to accommodate. Personal values are withheld.
 
 import assert from 'node:assert/strict'
-import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, normalizeHostname } from '../src/qr-routing.js'
+import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, isReportable, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
 import { governmentSuffixes, matchesGovernmentSuffix } from '../src/data/government-domains.js'
 
@@ -457,6 +457,50 @@ check('tier 2 for the China party accepts Hong Kong domains, not only gov.cn', (
   assert.equal(matchesGovernmentSuffix('anything.gov.hk', 'China'), 'gov.hk')
   assert.equal(matchesGovernmentSuffix('anything.gov.cn', 'China'), 'gov.cn')
   assert.equal(matchesGovernmentSuffix('notjudiciary.hk', 'China'), null)
+})
+
+// --- embedded_fields must match the documented shape ------------------------
+
+const CR = 'costa-rica-ministry-of-foreign-affairs-and-worship'
+
+check('a payload matching the documented shape is field data', () => {
+  const result = classifyQrPayload('12/07/2019//NCDXATKNWGC//Official Name//Signatory Name//Certificador de Registro', CR)
+  assert.equal(result.kind, OUTCOME.EMBEDDED_FIELDS)
+  assert.equal(result.containsPersonalData, true)
+})
+
+const wrongShape = [
+  ['plain word', 'hello'],
+  ['unrelated text', 'random text with no delimiters'],
+  ['mailto scheme', 'mailto:x@y.z'],
+  ['javascript scheme', 'javascript:alert(1)'],
+  ['delimiter present but too few fields', 'a//b'],
+  ['one field short', '12/07/2019//NCDXATKNWGC//Official Name//Signatory Name'],
+  ['one field too many', '12/07/2019//NCDXATKNWGC//A//B//C//D'],
+  ['empty field in the middle', '12/07/2019//NCDXATKNWGC////Signatory//Capacity'],
+  ['wrong date format', '2019-07-12//NCDXATKNWGC//A//B//C']
+]
+
+for (const [label, payload] of wrongShape) {
+  check(`embedded_fields refuses the wrong shape: ${label}`, () => {
+    const result = classifyQrPayload(payload, CR)
+    assert.notEqual(result.kind, OUTCOME.EMBEDDED_FIELDS,
+      `${label}: must not be presented as this authority's apostille details`)
+    assert.equal(result.kind, OUTCOME.UNSUPPORTED)
+    // Unsupported is reportable, so the user is offered a way to tell us about
+    // a format we do not handle. Misclassifying as embedded_fields hid that.
+    assert.ok(isReportable(result), `${label}: should offer a report path`)
+  })
+}
+
+check('every enabled embedded_fields authority can actually be shape-checked', () => {
+  for (const value of Object.values(qrCodes)) {
+    for (const entry of Array.isArray(value) ? value : [value]) {
+      if (!entry.enabled || entry.function !== 'embedded_fields') continue
+      assert.ok(entry.fieldDelimiter, 'embedded_fields needs a fieldDelimiter')
+      assert.ok(entry.fieldShape, 'embedded_fields needs a fieldShape')
+    }
+  }
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

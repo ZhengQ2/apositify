@@ -205,8 +205,11 @@ export const qrCodes = {
         protocol: 'https:', hostname: 'www.cnj.jus.br', port: '',
         pathnamePattern: '^/seiapostila/controlador_externo\\.php$',
         allowedSearchParams: ['acao', 'id_orgao_acesso_externo', 'cv', 'crc'],
-        // cv + crc carry the document reference; acao/id_orgao are static routing.
-        requiredSearchParams: ['cv', 'crc'], documentRef: 'query'
+        // cv + crc carry the document reference.
+        requiredSearchParams: ['cv', 'crc'], documentRef: 'query',
+        // acao/id_orgao are static routing: they select which SEI action runs,
+        // so their VALUES are part of the verified template, not free input.
+        staticSearchParams: { acao: 'documento_conferir', id_orgao_acesso_externo: '0' }
       }],
       sourceUrl: 'https://www.cnj.jus.br/poder-judiciario/relacoes-internacionais/apostila-da-haia/validacao-de-apostila/'
     })
@@ -370,6 +373,8 @@ export const qrCodes = {
         protocol: 'http:', hostname: 'consultasislac.segob.gob.mx', port: '',
         pathnamePattern: '^/csislac/qr\\.do$',
         allowedSearchParams: ['a', 'b'], requiredSearchParams: ['b'],
+        // b carries the record reference; a was constant across the specimen.
+        staticSearchParams: { a: '1' },
         documentRef: 'query', insecureAccepted: true
       }],
       sourceUrl: 'https://dicoppu.segob.gob.mx/work/models/DICOPPU/QR/index.html'

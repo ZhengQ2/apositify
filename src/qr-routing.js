@@ -112,6 +112,19 @@ function matchRule(url, rule) {
     if (value === null || value.trim() === '') return 'missing_required_query_parameter'
   }
 
+  // Static routing parameters must hold their documented VALUE, not merely
+  // appear. Brazil's legacy endpoint takes ?acao=documento_conferir; any other
+  // action is a different function of the same government system, so accepting
+  // an arbitrary value would let us label it "the official lookup for this
+  // Apostille" when it is nothing of the sort.
+  //
+  // Constrained rather than canonicalised on purpose: rewriting a tampered value
+  // back to the expected one would mean opening a URL the QR did not contain,
+  // which is exactly the substitution this module refuses to make elsewhere.
+  for (const [key, expected] of Object.entries(rule.staticSearchParams || {})) {
+    if (url.searchParams.get(key) !== expected) return 'static_query_parameter_mismatch'
+  }
+
   // Hash-router portals (China: consular.mfa.gov.cn/VERIFY/#/<token>) carry the
   // record id in the fragment, so it cannot simply be rejected or dropped --
   // and, by the same argument, cannot be allowed to be absent either.

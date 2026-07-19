@@ -503,4 +503,58 @@ check('every enabled embedded_fields authority can actually be shape-checked', (
   }
 })
 
+// --- static routing parameters must hold their documented value -------------
+
+const SEI = 'https://www.cnj.jus.br/seiapostila/controlador_externo.php'
+const BR = 'brazil-national-council-of-justice'
+
+check('Brazil legacy accepts the verified static values', () => {
+  const result = classifyQrPayload(
+    `${SEI}?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111`, BR)
+  assert.equal(result.kind, OUTCOME.OFFICIAL)
+})
+
+const staticTamper = [
+  ['a different SEI action', `${SEI}?acao=procedimento_trabalhar&id_orgao_acesso_externo=0&cv=0000000&crc=11111111`],
+  ['a different orgao id', `${SEI}?acao=documento_conferir&id_orgao_acesso_externo=999&cv=0000000&crc=11111111`],
+  ['both static values changed', `${SEI}?acao=x&id_orgao_acesso_externo=9&cv=0000000&crc=11111111`],
+  ['static parameter omitted entirely', `${SEI}?id_orgao_acesso_externo=0&cv=0000000&crc=11111111`],
+  ['static parameter left empty', `${SEI}?acao=&id_orgao_acesso_externo=0&cv=0000000&crc=11111111`]
+]
+
+for (const [label, payload] of staticTamper) {
+  check(`Brazil legacy refuses ${label}`, () => {
+    const result = classifyQrPayload(payload, BR)
+    assert.notEqual(result.kind, OUTCOME.OFFICIAL,
+      `${label}: must not be labelled the official lookup for this Apostille`)
+    assert.equal(result.reason, 'static_query_parameter_mismatch')
+    assert.ok(!result.url)
+  })
+}
+
+check('Mexico legacy pins its static parameter too', () => {
+  const MX = 'mexico-ministry-of-interior'
+  const ok = classifyQrPayload('http://consultasislac.segob.gob.mx/csislac/qr.do?a=1&b=000000', MX)
+  assert.equal(ok.kind, OUTCOME.OFFICIAL)
+  const tampered = classifyQrPayload('http://consultasislac.segob.gob.mx/csislac/qr.do?a=9&b=000000', MX)
+  assert.equal(tampered.reason, 'static_query_parameter_mismatch')
+  assert.ok(!tampered.url)
+})
+
+check('a static parameter is never also the document reference', () => {
+  for (const value of Object.values(qrCodes)) {
+    for (const entry of Array.isArray(value) ? value : [value]) {
+      if (!entry.enabled) continue
+      for (const rule of entry.allowedUrls || []) {
+        for (const key of Object.keys(rule.staticSearchParams || {})) {
+          assert.ok(!(rule.requiredSearchParams || []).includes(key),
+            `${rule.hostname}: '${key}' cannot be both static and the document reference`)
+          assert.ok((rule.allowedSearchParams || []).includes(key),
+            `${rule.hostname}: static '${key}' must be an allowed key`)
+        }
+      }
+    }
+  }
+})
+
 console.log(`QR routing: ${passed} checks passed.`)

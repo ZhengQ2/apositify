@@ -173,6 +173,21 @@ for (const entry of eRegisters) {
               )
             }
           }
+
+          // Static parameters pin a VALUE, so they must be allowed keys, must
+          // not double as the document reference, and must not be left as a
+          // bare allowance where any value would pass.
+          for (const [key, value] of Object.entries(rule.staticSearchParams || {})) {
+            assert.ok(
+              (rule.allowedSearchParams || []).includes(key),
+              `${entry.id} pins static parameter '${key}' that it does not allow`
+            )
+            assert.ok(
+              !(rule.requiredSearchParams || []).includes(key),
+              `${entry.id} lists '${key}' as both static and document-reference`
+            )
+            assert.equal(typeof value, 'string', `${entry.id} static parameter '${key}' needs a string value`)
+          }
           if (rule.documentRef === 'fragment') {
             assert.ok(rule.requireFragment, `${entry.id} declares documentRef 'fragment' but does not require one`)
             assert.ok(rule.allowFragment, `${entry.id} requires a fragment it does not allow`)

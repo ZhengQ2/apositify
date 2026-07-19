@@ -67,7 +67,11 @@ Let a user scan a QR from an apostille entirely in the browser and route the dec
 
 The complete evidence baseline is [PHASE_3_QR_CODE_RESEARCH.md](PHASE_3_QR_CODE_RESEARCH.md): 64 of 64 e-Register parties are accounted for; QR is officially confirmed for 23 parties, supported only by public specimens for two, reported but not confirmed for 12, found only on the underlying document for one, and not established for 26. These are party-level counts; implementation and enablement remain authority-scoped.
 
-An official statement that a QR exists is not enough to enable automatic routing. The production gate requires two current, redacted specimens from independent issuances, a decoded payload template, a documented official destination, and tests for the destination and known redirect behavior. The current research does not document two qualifying specimens for any authority. Phase 3 therefore begins with scanner infrastructure and a disabled-by-default authority registry; production authorities are enabled individually as their evidence gate is completed.
+An official statement that a QR exists is not enough to enable automatic routing. This is not a theoretical caution: Costa Rica's Ministry states its QR "enables authenticity verification", and the decoded specimen turned out to be delimited plain text with no URL in it at all. The Philippines' DFA describes "quick access to the verification link", and the specimen carries only a bare hostname with no document reference. Both would have shipped as broken deep links on the strength of official wording alone.
+
+**The production gate is one decoded specimen**, plus a known payload function, an evidence source, and the routing metadata that function requires. `gateEnabled()` in `src/data/qr-codes.js` is the single authority on this rule — `enabled` is derived there, never hand-written, and `scripts/validate-data.mjs` asserts the derivation stayed honest. Treat that function as normative and this paragraph as commentary; restating the threshold in prose is what let the two drift apart in the first place.
+
+**Revised from two specimens to one on 2026-07-18.** The original bar was written before any specimen existed, when we did not know what these payloads contained. Eighteen decodes later, the calculus is different: a decoded host is empirical fact, and the residual risk of a single specimen is a path template that is too *tight* — which fails closed, showing the user "blocked", rather than routing them somewhere wrong. Canonical URL reconstruction is the one operation where a mistaken template could open a URL the QR never contained, and it still requires two specimens, enforced in `buildDestination()` and asserted in the validator.
 
 ### Deliverables
 
@@ -99,7 +103,7 @@ qrCode: {
 ```
 
 - Keep path/query rules separate from hostname matching. Hostnames use exact normalized matching unless a specific subdomain rule is documented; paths are checked against authority-specific patterns only after the host passes.
-- Extend `scripts/validate-data.mjs` to reject `enabled: true` unless the authority has a known function, at least two specimens, an evidence source, and the routing metadata required by that function.
+- Extend `scripts/validate-data.mjs` to reject `enabled: true` unless the authority has a known function, a decoded specimen, an evidence source, and the routing metadata required by that function. It must also reject a rule that binds only a host without constraining the path, an authority that mixes URL-based and non-URL functions, and any canonical-reconstruction template backed by fewer than two specimens.
 
 #### 3.2 Scanner component
 
@@ -154,9 +158,9 @@ qrCode: {
 
 ### Release sequence
 
-1. **3A — Foundation:** schema, validator, scanner UI, local decoding, state/accessibility tests, and blocked-by-default routing. Release behind a feature flag with no authority enabled.
+1. **3A — Foundation:** schema, validator, scanner UI, local decoding, state/accessibility tests, and blocked-by-default routing. Released behind a feature flag with no authority enabled, since no specimen had been decoded yet.
 2. **3B — Security and function routing:** canonical URL builder, function-specific result UI, adversarial tests, and privacy verification.
-3. **3C — Authority pilots:** acquire and test two current specimens, then enable the first small cohort one authority at a time.
+3. **3C — Authority pilots:** acquire and decode a current specimen, then enable authorities as their evidence lands. A second specimen from an independent issuance remains valuable — it is what unlocks canonical URL reconstruction — but it is no longer a precondition for routing.
 4. **3D — Expansion and maintenance:** continue evidence-gated enablement; add QR endpoints to link monitoring and revalidate enabled authorities periodically.
 
 ### Acceptance criteria
@@ -165,7 +169,7 @@ qrCode: {
 2. Camera resources are always released and file selection works when camera access is unavailable or denied.
 3. No decoded destination opens automatically.
 4. An “official” action appears only when the selected authority is enabled and the payload matches its complete protocol/host/port/path rule.
-5. Each enabled authority has two current independent specimens, documented payload and redirect behavior, positive fixtures, and adversarial tests.
+5. Each enabled authority has at least one decoded specimen, a documented payload function, positive fixtures, and adversarial tests. Any authority whose rule reconstructs a canonical URL has two specimens from independent issuances.
 6. `document_url`, `portal_or_token`, `offline_app`, `unknown`, and mismatched-authority results cannot be presented as successful verification.
 7. The app never asserts whether an apostille is valid or invalid.
 

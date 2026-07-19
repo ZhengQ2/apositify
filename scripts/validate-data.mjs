@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { eRegisters, sourceUrl } from '../src/data/e-registers.js'
 import { verificationFields } from '../src/data/verification-fields.js'
 import { validateVerificationField } from '../src/verification-validation.js'
@@ -280,6 +281,45 @@ for (const [country, suffixes] of Object.entries(governmentSuffixes)) {
       `${country}: '${suffix}' is a bare TLD, not a government namespace`
     )
   }
+}
+
+// --- documentation drift guard ---------------------------------------------
+//
+// Stale prose caused five separate review findings during Phase 3: comments and
+// plan text that described a rule the code had stopped implementing, which a
+// reviewer then filed as a code bug. This cannot verify prose in general, but it
+// CAN fail when the plan reasserts a threshold the gate no longer enforces.
+//
+// Keep the phrases narrow and specific. A vague matcher would fire on ordinary
+// discussion of the history, which the plan legitimately contains.
+const planText = readFileSync(new URL('../docs/DEVELOPMENT_PLAN.md', import.meta.url), 'utf8')
+const enabledCount = eRegisters.filter((entry) => hasEnabledQrScanning(entry.id)).length
+
+const stalePlanClaims = [
+  ['The production gate requires two current, redacted specimens', 'the gate is one decoded specimen'],
+  ['at least two specimens, an evidence source', 'the validator requires one'],
+  ['Release behind a feature flag with no authority enabled', `${enabledCount} authorities are enabled`],
+  ['acquire and test two current specimens, then enable', 'enablement needs one'],
+  ['Each enabled authority has two current independent specimens', 'enablement needs one']
+]
+for (const [phrase, why] of stalePlanClaims) {
+  assert.ok(
+    !planText.includes(phrase),
+    `DEVELOPMENT_PLAN.md still claims "${phrase}" but ${why}. ` +
+    'gateEnabled() in src/data/qr-codes.js is normative; update the plan to match it.'
+  )
+}
+
+// The inverse: if the gate is ever tightened back to two, the plan must stop
+// advertising the one-specimen rule. Checked from the code, not from prose.
+const gateSource = readFileSync(new URL('../src/data/qr-codes.js', import.meta.url), 'utf8')
+const gateThreshold = /record\.specimenCount < (\d+)/.exec(gateSource)?.[1]
+assert.ok(gateThreshold, 'could not locate the specimen threshold in gateEnabled()')
+if (gateThreshold !== '1') {
+  assert.ok(
+    !planText.includes('**The production gate is one decoded specimen**'),
+    `gateEnabled() now requires ${gateThreshold} specimens, but the plan still states one.`
+  )
 }
 
 assert.equal(validateVerificationField({ format: 'date-iso' }, '2026-02-28'), '')

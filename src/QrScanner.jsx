@@ -206,7 +206,13 @@ export function QrScannerDialog({ authorityId, authorityName, country, onClose }
       case STATE.REQUESTING: return t.qrStateRequesting
       case STATE.SCANNING: return decodeIssue === DECODE.MULTIPLE ? t.qrMultipleCodes : t.qrStateScanning
       case STATE.DECODING_FILE: return t.qrStateDecodingFile
-      case STATE.NO_QR: return decodeIssue === DECODE.UNREADABLE ? t.qrUnreadableImage : t.qrNoCodeFound
+      case STATE.NO_QR:
+        // The file path can report MULTIPLE too, not just NONE/UNREADABLE.
+        // Collapsing it into "no QR code found" told the user the opposite of
+        // what happened and sent them looking for a code that was already there.
+        if (decodeIssue === DECODE.UNREADABLE) return t.qrUnreadableImage
+        if (decodeIssue === DECODE.MULTIPLE) return t.qrMultipleCodesFile
+        return t.qrNoCodeFound
       case STATE.CAMERA_ERROR: return cameraErrorMessage(cameraError)
       case STATE.DECODED: return t.qrStateDecoded
       default: return t.qrStateIdle

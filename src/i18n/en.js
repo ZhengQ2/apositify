@@ -40,6 +40,8 @@ export const messages = {
   qrNoCodeFound: 'No QR code found in that image. Try a closer, sharper photo of just the QR code.',
   qrUnreadableImage: 'That file could not be opened as an image. Try a JPEG or PNG.',
   qrMultipleCodes: 'More than one QR code is in frame. Move closer so only the Apostille QR code is visible.',
+  // Same condition, different recovery: you cannot "move closer" to a saved file.
+  qrMultipleCodesFile: 'That image contains more than one QR code, so we cannot tell which one is the Apostille’s. Crop it to just the Apostille QR code and try again.',
   qrCameraDenied: 'Camera permission was declined. You can still choose a saved image instead.',
   qrCameraUnavailable: 'No camera is available on this device. Choose a saved image instead.',
   qrCameraInsecure: 'The camera needs a secure (HTTPS) connection. Choose a saved image instead.',

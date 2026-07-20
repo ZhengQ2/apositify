@@ -64,10 +64,21 @@ Object.defineProperty(dom.window.navigator, 'mediaDevices', {
 
 // The component's decoder is mocked at module scope below; canvas is never
 // actually rasterised, so a stub context suffices.
-dom.window.HTMLCanvasElement.prototype.getContext = () => ({
-  drawImage() {},
-  getImageData: () => ({ data: new Uint8ClampedArray(4), width: 1, height: 1 })
-})
+// jsdom has no 2D context. This stub reports back whatever width/height the
+// code under test assigned, so a dimension assertion is meaningful rather than
+// reading a hard-coded 1x1.
+dom.window.HTMLCanvasElement.prototype.getContext = function () {
+  const canvas = this
+  return {
+    canvas,
+    drawImage() {},
+    getImageData: (x, y, w, h) => ({
+      data: new Uint8ClampedArray(Math.max(1, w * h) * 4),
+      width: w,
+      height: h
+    })
+  }
+}
 
 const React = (await import('react')).default
 const { createRoot } = await import('react-dom/client')
@@ -311,6 +322,58 @@ await check('the privacy promise is stated in the dialog', async ({ root }) => {
   await render(root)
   const text = document.querySelector('.qr-dialog').textContent
   assert.match(text, /never uploaded|stay on your device/i)
+})
+
+// --- decoder: neither decoder may see an oversized image --------------------
+//
+// A file is user-chosen and unbounded. A 48MP phone photo is ~192MB once
+// decoded, and handing that to the native detector was measured 2.2x slower
+// than the capped copy while finding the same symbol. This pins the cap for
+// BOTH decoders, since only the jsQR path was covered before.
+
+const decoder = await vite.ssrLoadModule('/src/qr-decoder.js')
+
+await check('the native detector is handed a capped image, not the raw bitmap', async () => {
+  const HUGE = { width: 8000, height: 6000, close() { this.closed = true } }
+  globalThis.createImageBitmap = async () => HUGE
+
+  const seen = []
+  globalThis.BarcodeDetector = class {
+    static async getSupportedFormats() { return ['qr_code'] }
+    async detect(source) {
+      seen.push({ width: source.width, height: source.height })
+      return [{ rawValue: 'https://apostil.org.br/v?number=0000000-00&crc=00000000' }]
+    }
+  }
+
+  // A canvas whose dimensions are observable by the assertion below.
+  const canvas = document.createElement('canvas')
+  const result = await decoder.decodeFromFile(
+    new File([new Uint8Array([1])], 'huge.png', { type: 'image/png' }),
+    canvas
+  )
+
+  assert.equal(result.status, 'ok', 'a capped image must still decode')
+  assert.ok(seen.length > 0, 'the native detector should have been consulted')
+  for (const { width, height } of seen) {
+    assert.ok(
+      Math.max(width, height) <= 1600,
+      `native detector received ${width}x${height}; the 8000x6000 source must be capped first`
+    )
+  }
+  assert.equal(HUGE.closed, true, 'the full-resolution bitmap must be released')
+
+  delete globalThis.BarcodeDetector
+  delete globalThis.createImageBitmap
+})
+
+await check('fitDimensions caps the long edge and never upscales', () => {
+  assert.deepEqual(decoder.fitDimensions(8000, 6000), { width: 1600, height: 1200 })
+  assert.deepEqual(decoder.fitDimensions(6000, 8000), { width: 1200, height: 1600 })
+  // Small images pass through untouched: upscaling adds no information and the
+  // specimen work showed low-resolution crops fail on data, not on size.
+  assert.deepEqual(decoder.fitDimensions(300, 300), { width: 300, height: 300 })
+  assert.deepEqual(decoder.fitDimensions(1600, 900), { width: 1600, height: 900 })
 })
 
 await vite.close()

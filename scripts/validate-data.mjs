@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { eRegisters, sourceUrl } from '../src/data/e-registers.js'
 import { verificationFields } from '../src/data/verification-fields.js'
 import { validateVerificationField } from '../src/verification-validation.js'
+import { QR_EVIDENCE, QR_FUNCTION, QR_PRESENCE, hasEnabledQrScanning, qrCodes, qrRecordsFor } from '../src/data/qr-codes.js'
+import { governmentSuffixes, looksNonProduction } from '../src/data/government-domains.js'
 
 assert.equal(sourceUrl, 'https://assets.hcch.net/docs/e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf')
 assert.ok(eRegisters.length > 0, 'dataset must not be empty')
@@ -41,6 +44,23 @@ for (const entry of eRegisters) {
   modeCounts[entry.verificationMode] += 1
 }
 
+// classifyQrPayload() dispatches on function BEFORE it parses a URL: offline_app
+// and embedded_fields short-circuit on the raw text. So an authority holding a
+// non-URL record alongside a URL record would have its URL generation swallowed
+// by the earlier branch. No authority mixes them today, and this freezes that
+// assumption rather than leaving it implicit in the ordering of two if-blocks.
+const NON_URL_FUNCTIONS = new Set(['offline_app', 'embedded_fields'])
+for (const entry of eRegisters) {
+  const functions = qrRecordsFor(entry.id).filter((r) => r.enabled).map((r) => r.function)
+  const nonUrl = functions.filter((fn) => NON_URL_FUNCTIONS.has(fn))
+  const urlBased = functions.filter((fn) => !NON_URL_FUNCTIONS.has(fn))
+  assert.ok(
+    nonUrl.length === 0 || urlBased.length === 0,
+    `${entry.id} mixes non-URL (${nonUrl.join(', ')}) and URL-based (${urlBased.join(', ')}) enabled records; ` +
+    'classifyQrPayload would short-circuit on the non-URL branch and never reach the URL rules'
+  )
+}
+
 assert.equal(countries.size, 64, 'dataset should cover all 64 HCCH implementation chart contracting-party rows')
 assert.equal(eRegisters.length, 97, 'dataset should include all 97 competent-authority rows')
 assert.equal(modeCounts.qr_only, 6, 'dataset should include the six QR-only authority rows (includes Rwanda, reclassified 2026-07 after its listed link turned out to be a non-apostille file tracker)')
@@ -70,6 +90,242 @@ assert.deepEqual(brazil.registerGuide, {
   ]
 })
 
+// --- Phase 3.1: authority-scoped QR registry -------------------------------
+
+const qrPresence = new Set(QR_PRESENCE)
+const qrEvidence = new Set(QR_EVIDENCE)
+const qrFunction = new Set(QR_FUNCTION)
+const presenceCounts = Object.fromEntries([...qrPresence].map((value) => [value, 0]))
+
+for (const id of Object.keys(qrCodes)) {
+  assert.ok(ids.has(id), `qrCodes has an entry for unknown authority id: ${id}`)
+}
+
+for (const entry of eRegisters) {
+  const records = qrRecordsFor(entry.id)
+  assert.ok(records.length > 0, `${entry.id} needs a qrCode record (use not_established when no QR was found)`)
+
+  for (const record of records) {
+    assert.ok(qrPresence.has(record.presence), `${entry.id} has invalid qrCode.presence: ${record.presence}`)
+    assert.ok(record.evidence === null || qrEvidence.has(record.evidence), `${entry.id} has invalid qrCode.evidence`)
+    assert.ok(qrFunction.has(record.function), `${entry.id} has invalid qrCode.function`)
+    assert.equal(typeof record.enabled, 'boolean', `${entry.id} qrCode.enabled must be a boolean`)
+    assert.ok(record.notes, `${entry.id} qrCode record needs notes explaining the evidence`)
+    assert.ok(Array.isArray(record.allowedUrls), `${entry.id} qrCode.allowedUrls must be an array`)
+
+    // Evidence must accompany any positive presence claim.
+    if (record.presence === 'confirmed' || record.presence === 'public_specimen') {
+      assert.ok(record.evidence, `${entry.id} claims ${record.presence} but cites no evidence source`)
+      assert.ok(record.sourceUrl, `${entry.id} claims ${record.presence} but cites no sourceUrl`)
+    }
+    // The inverse: a not_established/reported row must not carry routing data,
+    // so a future edit cannot half-enable an authority by adding hosts alone.
+    if (record.presence === 'not_established' || record.presence === 'reported') {
+      assert.equal(record.allowedUrls.length, 0, `${entry.id} is ${record.presence} and must not carry allowedUrls`)
+    }
+
+    for (const rule of record.allowedUrls) {
+      assert.ok(rule.protocol === 'https:' || rule.protocol === 'http:', `${entry.id} allowedUrls protocol must be http(s)`)
+      assert.ok(rule.hostname && !rule.hostname.includes('/'), `${entry.id} allowedUrls.hostname must be a bare hostname, not a path`)
+      assert.equal(rule.hostname, rule.hostname.toLowerCase(), `${entry.id} allowedUrls.hostname must be lowercase ASCII`)
+      if (rule.pathnamePattern) assert.doesNotThrow(() => new RegExp(rule.pathnamePattern), `${entry.id} has an invalid pathnamePattern`)
+    }
+
+    // The production gate. `enabled` is derived by gateEnabled() in qr-codes.js;
+    // these assertions verify the derivation stayed honest rather than
+    // re-deriving it. The bar is ONE decoded specimen (see that file's header for
+    // why this differs from DEVELOPMENT_PLAN.md); canonical URL reconstruction
+    // still requires two, asserted below.
+    if (record.enabled) {
+      assert.notEqual(record.function, 'unknown', `${entry.id} cannot be enabled with an undocumented QR function`)
+      assert.ok(record.specimenCount >= 1, `${entry.id} needs a decoded specimen before enabling`)
+      assert.ok(record.specimenTestedAt, `${entry.id} needs a specimenTestedAt date before enabling`)
+      assert.ok(record.evidence, `${entry.id} needs an evidence source before enabling`)
+      assert.equal(record.presence, 'confirmed', `${entry.id} may only be enabled when presence is confirmed`)
+      if (record.function === 'offline_app') {
+        assert.ok(record.app?.name, `${entry.id} offline_app records need the government app name`)
+      } else if (record.function === 'embedded_fields') {
+        assert.ok(record.fieldShape, `${entry.id} embedded_fields records need a documented fieldShape`)
+        assert.equal(record.allowedUrls.length, 0, `${entry.id} embedded_fields payloads have no destination`)
+        // Without a delimiter there is no shape to check, and the classifier
+        // would accept ANY non-URL payload as this authority's field data --
+        // telling someone who scanned an unrelated QR that it holds their
+        // apostille's details.
+        assert.ok(record.fieldDelimiter, `${entry.id} embedded_fields records need a fieldDelimiter to validate against`)
+        assert.ok(
+          record.fieldShape.split(record.fieldDelimiter).length > 1,
+          `${entry.id} fieldShape does not split on its own fieldDelimiter`
+        )
+        if (record.payloadPattern) {
+          assert.doesNotThrow(() => new RegExp(record.payloadPattern), `${entry.id} has an invalid payloadPattern`)
+          // The documented shape must not itself be a real payload.
+          assert.ok(
+            !new RegExp(record.payloadPattern).test(record.fieldShape),
+            `${entry.id} fieldShape looks like real data rather than field names`
+          )
+        }
+      } else {
+        assert.ok(record.allowedUrls.length > 0, `${entry.id} needs at least one allowedUrls rule before enabling`)
+        // Every enabled rule must bind the path. A host-only rule would accept
+        // any page on that host, including user-content and open-redirect paths.
+        for (const rule of record.allowedUrls) {
+          assert.ok(rule.pathnamePattern, `${entry.id} enabled rules must constrain the path, not just the host`)
+
+          // Every enabled rule must declare WHERE the apostille-specific
+          // reference lives, and then actually bind it. Without this, a payload
+          // carrying the right host and path but no reference at all -- e.g.
+          // https://apostil.org.br/v -- would be presented as the official
+          // lookup "for this Apostille".
+          const refs = ['path', 'query', 'fragment', 'none']
+          assert.ok(refs.includes(rule.documentRef), `${entry.id} rule needs documentRef (${refs.join('|')})`)
+
+          if (rule.documentRef === 'query') {
+            assert.ok(
+              (rule.requiredSearchParams || []).length > 0,
+              `${entry.id} declares documentRef 'query' but requires no parameter`
+            )
+            for (const key of rule.requiredSearchParams) {
+              assert.ok(
+                (rule.allowedSearchParams || []).includes(key),
+                `${entry.id} requires query parameter '${key}' that it does not allow`
+              )
+            }
+          }
+
+          // Static parameters pin a VALUE, so they must be allowed keys, must
+          // not double as the document reference, and must not be left as a
+          // bare allowance where any value would pass.
+          for (const [key, value] of Object.entries(rule.staticSearchParams || {})) {
+            assert.ok(
+              (rule.allowedSearchParams || []).includes(key),
+              `${entry.id} pins static parameter '${key}' that it does not allow`
+            )
+            assert.ok(
+              !(rule.requiredSearchParams || []).includes(key),
+              `${entry.id} lists '${key}' as both static and document-reference`
+            )
+            assert.equal(typeof value, 'string', `${entry.id} static parameter '${key}' needs a string value`)
+          }
+          if (rule.documentRef === 'fragment') {
+            assert.ok(rule.requireFragment, `${entry.id} declares documentRef 'fragment' but does not require one`)
+            assert.ok(rule.allowFragment, `${entry.id} requires a fragment it does not allow`)
+          }
+          // A reference-free payload cannot identify a document, so it must not
+          // be labelled as a lookup for one. Only portal flows, where the user
+          // still types the details, may carry no reference.
+          if (rule.documentRef === 'none') {
+            assert.equal(
+              record.function, 'portal_or_token',
+              `${entry.id} has a rule with no document reference, so its function must be portal_or_token`
+            )
+          }
+        }
+      }
+      // Canonical reconstruction requires two specimens: one cannot tell a
+      // stable path segment from a coincidence.
+      for (const rule of record.allowedUrls) {
+        if (rule.canonicalUrlTemplate) {
+          assert.ok(record.specimenCount >= 2, `${entry.id} canonical reconstruction needs two specimens`)
+        }
+      }
+    }
+
+    // Plain HTTP is only reachable through an explicit, per-rule risk acceptance.
+    for (const rule of record.allowedUrls) {
+      if (rule.protocol === 'http:') {
+        assert.ok(rule.insecureAccepted, `${entry.id} http:// rules need an explicit insecureAccepted risk acceptance`)
+      }
+    }
+
+    // A non-production host must never be allowlisted, at any tier.
+    for (const rule of record.allowedUrls) {
+      assert.ok(!looksNonProduction(rule.hostname), `${entry.id} allowlists a non-production host: ${rule.hostname}`)
+    }
+
+    presenceCounts[record.presence] += 1
+  }
+}
+
+// Matches docs/PHASE_3_QR_CODE_RESEARCH.md. Update these together with the
+// research doc, never separately.
+const confirmedAuthorities = eRegisters.filter((entry) => qrRecordsFor(entry.id).some((record) => record.presence === 'confirmed'))
+const confirmedParties = new Set(confirmedAuthorities.map((entry) => entry.country))
+// The research counts 23 *parties*. That is 24 *authorities*, because China's
+// Mainland MFA and Hong Kong Judiciary are separately confirmed while Macao is
+// not — exactly the kind of country-level inheritance the registry must prevent.
+assert.equal(confirmedParties.size, 23, 'research documents 23 parties with a confirmed apostille QR')
+// 25 authorities: China contributes two (Mainland + Hong Kong), and Panama now
+// contributes two -- a specimen showed the MFA also issues QR-bearing
+// apostilles, where HCCH only flags the Judicial Branch.
+assert.equal(confirmedAuthorities.length, 25, 'those 23 parties resolve to 25 competent authorities')
+const enabledAuthorities = eRegisters.filter((entry) => hasEnabledQrScanning(entry.id))
+assert.equal(enabledAuthorities.length, 17, '17 authorities have a decoded specimen and are routable (Philippines added 2026-07-18)')
+
+// Bangladesh's only specimen decoded to a training host, so it must stay off.
+assert.ok(
+  !hasEnabledQrScanning('bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh'),
+  'Bangladesh must stay disabled: its only specimen is from a training environment'
+)
+
+// Government suffixes are a tier-2 heuristic and must never be treated as hosts.
+for (const [country, suffixes] of Object.entries(governmentSuffixes)) {
+  assert.ok(Array.isArray(suffixes) && suffixes.length > 0, `${country} needs at least one suffix`)
+  for (const suffix of suffixes) {
+    assert.equal(suffix, suffix.toLowerCase(), `${country} suffix must be lowercase`)
+    assert.ok(!suffix.startsWith('.') && !suffix.includes('/'), `${country} suffix must be a bare namespace`)
+    // A bare ccTLD would turn tier 2 from "inside this government's domain"
+    // into "anywhere in this country". Only '.gov' (the US) is a whole TLD
+    // reserved for government use.
+    assert.ok(
+      suffix.includes('.') || suffix === 'gov',
+      `${country}: '${suffix}' is a bare TLD, not a government namespace`
+    )
+  }
+}
+
+// --- documentation drift guard ---------------------------------------------
+//
+// Stale prose caused five separate review findings during Phase 3: comments and
+// plan text that described a rule the code had stopped implementing, which a
+// reviewer then filed as a code bug. This cannot verify prose in general, but it
+// CAN fail when the plan reasserts a threshold the gate no longer enforces.
+//
+// Keep the phrases narrow and specific. A vague matcher would fire on ordinary
+// discussion of the history, which the plan legitimately contains.
+const planText = readFileSync(new URL('../docs/DEVELOPMENT_PLAN.md', import.meta.url), 'utf8')
+const enabledCount = eRegisters.filter((entry) => hasEnabledQrScanning(entry.id)).length
+
+const stalePlanClaims = [
+  ['The production gate requires two current, redacted specimens', 'the gate is one decoded specimen'],
+  ['at least two specimens, an evidence source', 'the validator requires one'],
+  ['Release behind a feature flag with no authority enabled', `${enabledCount} authorities are enabled`],
+  ['acquire and test two current specimens, then enable', 'enablement needs one'],
+  ['Each enabled authority has two current independent specimens', 'enablement needs one'],
+  ['Show \u201cScan QR\u201d in the public UI only when the selected authority has `enabled: true`',
+   'tier 2 also opens the scanner for confirmed URL-based authorities without a specimen'],
+  ['Exercise disabled authorities only through the development fixture harness',
+   'tier 2 exposes them in-product with explicitly unverified copy']
+]
+for (const [phrase, why] of stalePlanClaims) {
+  assert.ok(
+    !planText.includes(phrase),
+    `DEVELOPMENT_PLAN.md still claims "${phrase}" but ${why}. ` +
+    'gateEnabled() in src/data/qr-codes.js is normative; update the plan to match it.'
+  )
+}
+
+// The inverse: if the gate is ever tightened back to two, the plan must stop
+// advertising the one-specimen rule. Checked from the code, not from prose.
+const gateSource = readFileSync(new URL('../src/data/qr-codes.js', import.meta.url), 'utf8')
+const gateThreshold = /record\.specimenCount < (\d+)/.exec(gateSource)?.[1]
+assert.ok(gateThreshold, 'could not locate the specimen threshold in gateEnabled()')
+if (gateThreshold !== '1') {
+  assert.ok(
+    !planText.includes('**The production gate is one decoded specimen**'),
+    `gateEnabled() now requires ${gateThreshold} specimens, but the plan still states one.`
+  )
+}
+
 assert.equal(validateVerificationField({ format: 'date-iso' }, '2026-02-28'), '')
 assert.notEqual(validateVerificationField({ format: 'date-iso' }, '2026-02-30'), '')
 assert.equal(validateVerificationField({ format: 'date-dotted' }, '28.02.2026'), '')
@@ -78,3 +334,4 @@ assert.notEqual(validateVerificationField({ format: 'non-arij-apostille-code' },
 
 console.log(`Validated ${eRegisters.length} e-Register entries across ${countries.size} jurisdictions.`)
 console.log(`Mode counts: ${JSON.stringify(modeCounts)}`)
+console.log(`QR presence counts: ${JSON.stringify(presenceCounts)}`)

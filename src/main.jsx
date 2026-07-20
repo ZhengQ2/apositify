@@ -5,6 +5,10 @@ import { eRegisters, sourceUrl } from './data/e-registers'
 import { verificationFields } from './data/verification-fields'
 import { messages as t } from './i18n/en'
 import { fieldKey, fieldLabel, validateVerificationField } from './verification-validation'
+import { hasEnabledQrScanning, qrRecordsFor } from './data/qr-codes'
+import { qrScannerFlagEnabled } from './feature-flags'
+import { QrScannerDialog } from './QrScanner'
+import { confirmedGuidance } from './qr-guidance'
 import './styles.css'
 
 function App() {
@@ -123,7 +127,91 @@ function ResultPanel({ selected }) {
         </div>
         <small>{t.privacy}</small>
         <VerificationHelper entry={selected} />
+        <QrSection entry={selected} />
       </div>
+    </div>
+  )
+}
+
+/**
+ * Phase 3.4 entry point.
+ *
+ * The scanner opens for two groups, which then get very different treatment
+ * from the classifier:
+ *
+ *   - Authorities with a decoded specimen, which can route against a verified
+ *     host allowlist (tier 1).
+ *   - Authorities whose QR presence is `confirmed`, whose format we have not
+ *     seen, AND whose function is URL-based, which fall back to the
+ *     government-namespace heuristic (tier 2) and get explicitly unverified copy.
+ *
+ * Everything else keeps guidance instead, because opening a scanner that can
+ * only answer "not enabled" is worse than the text it replaces:
+ *   - `offline_app` and `embedded_fields` without a specimen have no URL for
+ *     tier 2 to match, so their guidance (use GouvCheck; compare the printed
+ *     fields) is the actually useful answer.
+ *   - `underlying_only` is excluded outright: the QR belongs to the source
+ *     document, not the Apostille.
+ *   - `reported` and `public_specimen` give no basis to route at all.
+ */
+// Functions whose payload is a URL, and which tier 2 can therefore help with.
+// offline_app and embedded_fields are non-routable by nature: their payloads are
+// a signed blob and delimited text, so a government-namespace heuristic has
+// nothing to match and the scanner can only report "not enabled".
+const TIER_2_CAPABLE = new Set(['verification_url', 'portal_or_token', 'document_url', 'unknown'])
+
+
+function QrSection({ entry }) {
+  const [open, setOpen] = useState(false)
+  const records = qrRecordsFor(entry.id)
+  // A confirmed authority is only worth opening the scanner for if it can
+  // actually reach a tier. Luxembourg is confirmed offline_app with no specimen:
+  // scanning it returns NOT_ENABLED and costs the user the GouvCheck
+  // instructions that confirmedGuidance() would otherwise show.
+  const tier2Candidate = records.some(
+    (record) => record.presence === 'confirmed' && TIER_2_CAPABLE.has(record.function)
+  )
+  const scannable = qrScannerFlagEnabled && (hasEnabledQrScanning(entry.id) || tier2Candidate)
+
+  useEffect(() => setOpen(false), [entry.id])
+
+  if (records.length === 0) return null
+
+  if (scannable) {
+    return (
+      <div className="verify-helper">
+        <button type="button" className="button secondary" onClick={() => setOpen(true)}>
+          <QrCode size={16} aria-hidden="true" /> {t.qrScanCta}
+        </button>
+        {open && (
+          <QrScannerDialog
+            authorityId={entry.id}
+            authorityName={entry.authority}
+            country={entry.country}
+            onClose={() => setOpen(false)}
+          />
+        )}
+      </div>
+    )
+  }
+
+  const presences = new Set(records.map((record) => record.presence))
+  const guidance = presences.has('underlying_only')
+    ? t.qrInfoUnderlyingOnly
+    : presences.has('confirmed')
+      ? confirmedGuidance(records)
+      : presences.has('public_specimen') || presences.has('reported')
+        ? t.qrInfoReported
+        : null
+  if (!guidance) return null
+
+  return (
+    <div className="verify-helper">
+      <div className="verify-helper-heading">
+        <QrCode size={16} aria-hidden="true" />
+        <span>{t.qrSectionHeading}</span>
+      </div>
+      <small>{guidance}</small>
     </div>
   )
 }
@@ -244,6 +332,7 @@ function Status({ icon, title, message, selected, details, tone }) {
         <p>{message}</p>
         <small>{selected.notes}</small>
         {details.length > 0 && <small>{details.join(' · ')}</small>}
+        <QrSection entry={selected} />
       </div>
     </div>
   )

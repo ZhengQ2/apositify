@@ -300,7 +300,11 @@ const stalePlanClaims = [
   ['at least two specimens, an evidence source', 'the validator requires one'],
   ['Release behind a feature flag with no authority enabled', `${enabledCount} authorities are enabled`],
   ['acquire and test two current specimens, then enable', 'enablement needs one'],
-  ['Each enabled authority has two current independent specimens', 'enablement needs one']
+  ['Each enabled authority has two current independent specimens', 'enablement needs one'],
+  ['Show \u201cScan QR\u201d in the public UI only when the selected authority has `enabled: true`',
+   'tier 2 also opens the scanner for confirmed URL-based authorities without a specimen'],
+  ['Exercise disabled authorities only through the development fixture harness',
+   'tier 2 exposes them in-product with explicitly unverified copy']
 ]
 for (const [phrase, why] of stalePlanClaims) {
   assert.ok(

@@ -693,4 +693,58 @@ check('every confirmed non-government host is one we hold on record', () => {
   }
 })
 
+// --- what a tier-2 authority can and cannot be told -------------------------
+//
+// Tier 2 deliberately opens the scanner for confirmed authorities with no
+// specimen. The safety property is not "no routing happens" -- it is that such a
+// result can never be dressed as verification, and that the checks it applies
+// are strictly more than the alternative (guidance telling the user to point
+// their phone camera at the code, which applies none).
+
+const TIER2_AUTHORITIES = [
+  ['bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh', 'Bangladesh'],
+  ['bolivia-ministry-of-foreign-affairs', 'Bolivia'],
+  ['greece-ministry-of-digital-governance', 'Greece'],
+  ['kazakhstan-relevant-authorities-of-several-ministries-and-services', 'Kazakhstan'],
+  ['panama-organo-judicial', 'Panama'],
+  ['rwanda-ministry-of-foreign-affairs-and-international-cooperation', 'Rwanda']
+]
+
+check('a tier-2 authority can never produce an OFFICIAL result', () => {
+  for (const [id, country] of TIER2_AUTHORITIES) {
+    const govHost = (governmentSuffixes[country] || [])[0]
+    assert.ok(govHost, `${country} needs a government suffix for this test to mean anything`)
+    const result = classifyQrPayload(`https://apostille.${govHost}/verify/ABC123`, id, country)
+    assert.notEqual(result.kind, OUTCOME.OFFICIAL,
+      `${country}: no specimen, so nothing may be labelled the official lookup`)
+    assert.equal(result.trust, TRUST.GOVERNMENT)
+    assert.notEqual(result.trust, TRUST.VERIFIED)
+  }
+})
+
+check('tier 2 applies checks the guidance alternative cannot', () => {
+  // Each of these is refused for an authority with no specimen. Pointing a phone
+  // camera at the same code would follow every one of them.
+  const [id, country] = ['greece-ministry-of-digital-governance', 'Greece']
+  const refused = [
+    'http://apostille.gov.gr/v',                      // no HTTPS
+    'https://apostille.gov.gr:8443/v',                // unexpected port
+    'https://training.gov.gr/v',                      // non-production host
+    'https://apostille.gov.gr/v?next=https://evil.test', // redirect parameter
+    'https://not-the-government.gr/v',                // outside the namespace
+    'https://apostille.gov.gr.attacker.test/v'        // look-alike suffix
+  ]
+  for (const payload of refused) {
+    const result = classifyQrPayload(payload, id, country)
+    assert.equal(result.kind, OUTCOME.BLOCKED, `${payload} must be refused`)
+    assert.ok(!result.url)
+  }
+})
+
+check('a tier-2 result is reportable, so a wrong answer has an exit', () => {
+  const result = classifyQrPayload('https://apostille.gov.gr/v/ABC', 'greece-ministry-of-digital-governance', 'Greece')
+  assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT)
+  assert.ok(isReportable(result), 'the user must be offered a way to tell us it was wrong')
+})
+
 console.log(`QR routing: ${passed} checks passed.`)

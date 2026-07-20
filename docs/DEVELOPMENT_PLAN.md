@@ -130,8 +130,16 @@ qrCode: {
 
 #### 3.4 User experience integration
 
-- Show “Scan QR” in the public UI only when the selected authority has `enabled: true`. Confirmed-but-not-enabled authorities retain their informational QR guidance until the evidence gate is complete.
-- Exercise disabled authorities only through the development fixture harness; do not expose public-specimen-only or reported cases as supported scanning routes.
+- Show “Scan QR” when the selected authority can reach a routing tier. Two groups qualify, and the classifier treats them very differently:
+  - **Tier 1** — a decoded specimen exists, so the payload is matched against a closed protocol/host/port/path rule and may be labelled the official lookup.
+  - **Tier 2** — no specimen, but the QR presence is `confirmed` and the payload function is URL-based, so a destination inside the party's own government namespace gets a deliberately weaker treatment: amber styling, "continue to this address" rather than any verification wording, the full URL displayed, and copy stating outright that the format is unconfirmed.
+
+  **Revised 2026-07-18, superseding the original "only when `enabled: true`" rule.** That was written during 3A, before tier 2 existed. Restricting the entry point to gated authorities does not remove risk, it relocates it: the guidance shown instead *tells the user to scan with their phone camera*, which applies no host allowlist, no HTTPS requirement, no redirect-parameter refusal, no non-production-host check, and shows no URL before they leave. Tier 2 is compared against that, not against nothing.
+
+  Authorities that cannot reach either tier keep guidance, because a scanner that can only answer "not enabled" is worse than the text it replaces: `offline_app` and `embedded_fields` without a specimen (no URL for tier 2 to match), `underlying_only` (the QR belongs to the source document), and `reported`/`public_specimen` (no basis to route at all).
+
+  `QrSection` in `src/main.jsx` is normative for this rule; the paragraphs above are commentary.
+- Never present a tier-2 result as a supported scanning route: it establishes a namespace, not an authority. Public-specimen-only and reported cases reach no tier at all.
 - Keep conventional e-Register actions available for hybrid authorities; scanning is an additional input route, never a replacement.
 - Explain that a QR on the underlying document is not an apostille QR and exclude `underlying_only` authorities from the apostille scanner entry point.
 - Use function-specific copy and avoid the words “valid,” “invalid,” or “verified” for any conclusion made by this app.

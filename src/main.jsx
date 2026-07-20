@@ -8,6 +8,7 @@ import { fieldKey, fieldLabel, validateVerificationField } from './verification-
 import { hasEnabledQrScanning, qrRecordsFor } from './data/qr-codes'
 import { qrScannerFlagEnabled } from './feature-flags'
 import { QrScannerDialog } from './QrScanner'
+import { confirmedGuidance } from './qr-guidance'
 import './styles.css'
 
 function App() {
@@ -159,6 +160,7 @@ function ResultPanel({ selected }) {
 // nothing to match and the scanner can only report "not enabled".
 const TIER_2_CAPABLE = new Set(['verification_url', 'portal_or_token', 'document_url', 'unknown'])
 
+
 function QrSection({ entry }) {
   const [open, setOpen] = useState(false)
   const records = qrRecordsFor(entry.id)
@@ -212,53 +214,6 @@ function QrSection({ entry }) {
       <small>{guidance}</small>
     </div>
   )
-}
-
-/**
- * Guidance shown when in-app scanning is unavailable. It has to branch on the
- * QR's function: "check the destination is an official government address" is
- * actively wrong for Costa Rica, whose QR is local field data with no
- * destination, and for Luxembourg, whose QR is read by a government app.
- */
-function confirmedGuidance(records) {
-  const confirmed = records.filter((record) => record.presence === 'confirmed')
-  const functions = new Set(confirmed.map((record) => record.function))
-
-  // Where specimens gave us the real destination, name it. That is both more
-  // useful than describing a namespace and the only phrasing that stays correct
-  // for authorities whose official host is not a government domain -- Armenia,
-  // Brazil, and Bulgaria among the decoded set.
-  const hosts = [...new Set(
-    confirmed.flatMap((record) => (record.allowedUrls || []).map((rule) => rule.hostname))
-  )]
-  const hostList = formatHostList(hosts)
-
-  // Only collapse to a single non-URL message when every confirmed record for
-  // this authority agrees; a mixed authority still needs the URL wording.
-  if (functions.size === 1) {
-    if (functions.has('embedded_fields')) return t.qrInfoConfirmedFields
-    if (functions.has('offline_app')) {
-      const appName = confirmed.find((record) => record.app?.name)?.app?.name
-      return appName
-        ? t.qrInfoConfirmedOfflineApp.replace('{app}', appName)
-        : t.qrInfoConfirmedOfflineAppGeneric
-    }
-    if (functions.has('document_url')) {
-      return hostList
-        ? t.qrInfoConfirmedDocumentKnownHost.replace('{hosts}', hostList)
-        : t.qrInfoConfirmedDocument
-    }
-  }
-  return hostList
-    ? t.qrInfoConfirmedKnownHost.replace('{hosts}', hostList)
-    : t.qrInfoConfirmed
-}
-
-/** "a", "a or b", "a, b or c" — Brazil has two generations on two hosts. */
-function formatHostList(hosts) {
-  if (hosts.length === 0) return null
-  if (hosts.length === 1) return hosts[0]
-  return `${hosts.slice(0, -1).join(', ')} or ${hosts[hosts.length - 1]}`
 }
 
 function VerificationHelper({ entry }) {

@@ -12,6 +12,9 @@ import assert from 'node:assert/strict'
 import { OUTCOME, TRUST, classifyQrPayload, hostnameMatches, isReportable, normalizeHostname } from '../src/qr-routing.js'
 import { qrCodes } from '../src/data/qr-codes.js'
 import { messages } from '../src/i18n/en.js'
+import { NON_ROUTABLE_FUNCTIONS, confirmedGuidance, guidanceHosts } from '../src/qr-guidance.js'
+import { qrRecordsFor } from '../src/data/qr-codes.js'
+import { eRegisters } from '../src/data/e-registers.js'
 import { governmentSuffixes, matchesGovernmentSuffix } from '../src/data/government-domains.js'
 
 let passed = 0
@@ -745,6 +748,69 @@ check('a tier-2 result is reportable, so a wrong answer has an exit', () => {
   const result = classifyQrPayload('https://apostille.gov.gr/v/ABC', 'greece-ministry-of-digital-governance', 'Greece')
   assert.equal(result.kind, OUTCOME.UNVERIFIED_GOVERNMENT)
   assert.ok(isReportable(result), 'the user must be offered a way to tell us it was wrong')
+})
+
+// --- fallback guidance: never claim more specificity than we hold -----------
+
+check('an authority with a complete host picture is named', () => {
+  const guidance = confirmedGuidance(qrRecordsFor('brazil-national-council-of-justice'))
+  assert.match(guidance, /apostil\.org\.br/, 'both Brazilian generations have hosts')
+  assert.match(guidance, /www\.cnj\.jus\.br/)
+})
+
+check('an authority with a PARTIAL host picture names none of them', () => {
+  // Mexico: legacy generation has a decoded host, the current federal
+  // e-Apostille does not. Naming the legacy address would tell someone holding
+  // a current apostille to expect the wrong host, and so to distrust a genuine
+  // QR -- the same failure as the government-domain wording, from the other side.
+  const records = qrRecordsFor('mexico-ministry-of-interior')
+  const urlRecords = records.filter((r) => r.presence === 'confirmed' && !NON_ROUTABLE_FUNCTIONS.has(r.function))
+  assert.equal(urlRecords.length, 2, 'Mexico should still hold two URL-based generations')
+  assert.equal(urlRecords.filter((r) => (r.allowedUrls || []).length > 0).length, 1, 'only one has a host')
+
+  const guidance = confirmedGuidance(records)
+  assert.doesNotMatch(guidance, /consultasislac/, 'must not name the legacy-only host')
+  assert.doesNotMatch(guidance, /segob\.gob\.mx/)
+  assert.equal(guidance, messages.qrInfoConfirmed, 'should use the generic copy')
+})
+
+check('guidanceHosts returns null unless every URL record carries a host', () => {
+  const complete = [
+    { presence: 'confirmed', function: 'verification_url', allowedUrls: [{ hostname: 'a.example' }] },
+    { presence: 'confirmed', function: 'document_url', allowedUrls: [{ hostname: 'b.example' }] }
+  ]
+  assert.equal(guidanceHosts(complete), 'a.example or b.example')
+
+  const partial = [
+    { presence: 'confirmed', function: 'verification_url', allowedUrls: [{ hostname: 'a.example' }] },
+    { presence: 'confirmed', function: 'verification_url', allowedUrls: [] }
+  ]
+  assert.equal(guidanceHosts(partial), null, 'a partial list reads as an exhaustive one')
+
+  // Non-URL records never contribute and never block: they have no host by nature.
+  const withNonUrl = [
+    { presence: 'confirmed', function: 'verification_url', allowedUrls: [{ hostname: 'a.example' }] },
+    { presence: 'confirmed', function: 'offline_app', allowedUrls: [] }
+  ]
+  assert.equal(guidanceHosts(withNonUrl), 'a.example')
+})
+
+check('every authority named in guidance has a complete host picture', () => {
+  for (const entry of eRegisters) {
+    const records = qrRecordsFor(entry.id)
+    if (!records.some((r) => r.presence === 'confirmed')) continue
+    const guidance = confirmedGuidance(records)
+    const named = [...guidance.matchAll(/[a-z0-9-]+(?:\.[a-z0-9-]+){1,}/gi)].map((m) => m[0])
+    const known = new Set(records.flatMap((r) => (r.allowedUrls || []).map((u) => u.hostname)))
+    for (const host of named) {
+      if (!known.has(host)) continue
+      const urlRecords = records.filter((r) => r.presence === 'confirmed' && !NON_ROUTABLE_FUNCTIONS.has(r.function))
+      assert.ok(
+        urlRecords.every((r) => (r.allowedUrls || []).length > 0),
+        `${entry.id} names ${host} while another confirmed generation has no host`
+      )
+    }
+  }
 })
 
 console.log(`QR routing: ${passed} checks passed.`)

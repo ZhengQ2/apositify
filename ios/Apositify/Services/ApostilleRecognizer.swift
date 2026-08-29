@@ -27,7 +27,8 @@ struct ApostilleRecognizer {
         let preparedImage = try Self.preparedImage(from: image)
         guard let cgImage = preparedImage.cgImage else { throw RecognitionError.missingImage }
 
-        let payloads = (try? await detectQrPayloads(in: cgImage)) ?? []
+        let barcodes = (try? await detectBarcodes(in: cgImage)) ?? []
+        let payloads = Array(Set(barcodes.filter { $0.symbology == .qr }.map(\.payload)))
         // Never guess which symbol is the Apostille when a photo contains more
         // than one QR. The text review explains that QR routing was withheld.
         if payloads.count == 1,
@@ -36,7 +37,19 @@ struct ApostilleRecognizer {
             return ScanAnalysis(outcome: .qr(match), previewImage: preparedImage)
         }
 
-        let recognition = try await recognize(cgImage: cgImage)
+        let fullPageStickerLines = barcodes.compactMap { barcode -> RecognizedLine? in
+            guard barcode.symbology == .code128 || barcode.symbology == .code39 else { return nil }
+            return ChinaStickerBarcode.recognizedLine(payload: barcode.payload, visionBounds: barcode.bounds)
+        }
+        let stickerLines: [RecognizedLine]
+        if fullPageStickerLines.isEmpty {
+            stickerLines = (try? await detectFocusedStickerBarcodes(in: cgImage))?.compactMap { barcode in
+                ChinaStickerBarcode.recognizedLine(payload: barcode.payload, visionBounds: barcode.bounds)
+            } ?? []
+        } else {
+            stickerLines = fullPageStickerLines
+        }
+        let recognition = try await recognize(cgImage: cgImage, supplementalLines: stickerLines)
         return ScanAnalysis(
             outcome: .text(recognition, detectedQrPayloads: payloads),
             previewImage: preparedImage
@@ -90,8 +103,12 @@ struct ApostilleRecognizer {
         return UIImage(cgImage: thumbnail, scale: 1, orientation: .up)
     }
 
-    private func recognize(cgImage: CGImage) async throws -> RecognitionResult {
-        let lines = try await recognizeLines(in: cgImage)
+    private func recognize(cgImage: CGImage, supplementalLines: [RecognizedLine]) async throws -> RecognitionResult {
+        let lines = (try await recognizeLines(in: cgImage) + supplementalLines).sorted {
+            let rowDifference = abs($0.bounds.y - $1.bounds.y)
+            if rowDifference < 0.012 { return $0.bounds.x < $1.bounds.x }
+            return $0.bounds.y > $1.bounds.y
+        }
         guard !lines.isEmpty else { throw RecognitionError.noText }
         return RecognitionResult(lines: lines)
     }
@@ -151,23 +168,58 @@ struct ApostilleRecognizer {
         }
     }
 
-    private func detectQrPayloads(in cgImage: CGImage) async throws -> [String] {
+    private struct DetectedBarcode {
+        let payload: String
+        let symbology: VNBarcodeSymbology
+        let bounds: NormalizedRect
+    }
+
+    private func detectBarcodes(in cgImage: CGImage) async throws -> [DetectedBarcode] {
         return try await withCheckedThrowingContinuation { continuation in
             let request = VNDetectBarcodesRequest { request, error in
                 if let error {
                     continuation.resume(throwing: error)
                     return
                 }
-                let payloads = ((request.results as? [VNBarcodeObservation]) ?? [])
-                    .compactMap(\.payloadStringValue)
-                continuation.resume(returning: Array(Set(payloads)))
+                let barcodes = ((request.results as? [VNBarcodeObservation]) ?? []).compactMap { observation -> DetectedBarcode? in
+                    guard let payload = observation.payloadStringValue?.trimmingCharacters(in: .whitespacesAndNewlines),
+                          !payload.isEmpty else { return nil }
+                    let box = observation.boundingBox
+                    return DetectedBarcode(
+                        payload: payload,
+                        symbology: observation.symbology,
+                        bounds: NormalizedRect(x: box.origin.x, y: box.origin.y, width: box.width, height: box.height)
+                    )
+                }
+                continuation.resume(returning: barcodes)
             }
-            request.symbologies = [.qr]
+            request.symbologies = [.qr, .code128, .code39]
             do {
                 try VNImageRequestHandler(cgImage: cgImage, orientation: .up).perform([request])
             } catch {
                 continuation.resume(throwing: error)
             }
+        }
+    }
+
+    private func detectFocusedStickerBarcodes(in cgImage: CGImage) async throws -> [DetectedBarcode] {
+        let region = CGRect(
+            x: CGFloat(cgImage.width) * 0.52,
+            y: CGFloat(cgImage.height) * 0.06,
+            width: CGFloat(cgImage.width) * 0.42,
+            height: CGFloat(cgImage.height) * 0.26
+        ).integral
+        guard let cropped = cgImage.cropping(to: region) else { return [] }
+        let local = try await detectBarcodes(in: cropped)
+        return local.compactMap { barcode in
+            guard barcode.symbology == .code128 || barcode.symbology == .code39 else { return nil }
+            let globalBounds = NormalizedRect(
+                x: 0.52 + barcode.bounds.x * 0.42,
+                y: 0.68 + barcode.bounds.y * 0.26,
+                width: barcode.bounds.width * 0.42,
+                height: barcode.bounds.height * 0.26
+            )
+            return DetectedBarcode(payload: barcode.payload, symbology: barcode.symbology, bounds: globalBounds)
         }
     }
 }

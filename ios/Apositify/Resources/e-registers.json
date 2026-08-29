@@ -938,7 +938,8 @@
             ],
             "browserSelectors": [],
             "captureSource": "document",
-            "standardItem": 8
+            "standardItem": 8,
+            "pattern": "\\b[A-Z]{2}-\\d{2}-\\d{6}-\\d{4}\\b"
           },
           {
             "id": "field-1",

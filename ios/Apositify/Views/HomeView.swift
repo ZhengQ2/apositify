@@ -19,7 +19,7 @@ struct HomeView: View {
                 .padding(20)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Apositify")
+            .navigationTitle("Apostifi")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showsCamera) {
                 DocumentScannerView(
@@ -141,7 +141,7 @@ struct HomeView: View {
                 .foregroundStyle(Color("BrandBlue"))
             VStack(alignment: .leading, spacing: 5) {
                 Text("Private by design").font(.headline)
-                Text("Recognition happens on this device. Scans are not uploaded or retained by Apositify.")
+                Text("Recognition happens on this device. Scans are not uploaded or retained by Apostifi.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

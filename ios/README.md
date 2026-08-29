@@ -1,4 +1,4 @@
-# Apositify for iOS
+# Apostifi for iOS
 
 A native SwiftUI app for iOS 17 and later. It captures one photo of a paper
 Apostille, checks QR codes against authority-scoped specimen rules first, then

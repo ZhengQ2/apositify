@@ -50,6 +50,7 @@ private var failures = 0
 private var passes = 0
 private var skips = 0
 private var requiredPasses = 0
+private let chinaBarcodeOnly = CommandLine.arguments.contains("--china-barcode-only")
 
 private func fail(_ fixture: SampleFixture, _ message: String) {
     failures += 1
@@ -138,11 +139,125 @@ private func recognize(_ image: CGImage, languages: [String]) throws -> Recognit
     return RecognitionResult(lines: lines)
 }
 
-private func qrPayloads(in image: CGImage) throws -> [String] {
+private func barcodeObservations(in image: CGImage) throws -> [VNBarcodeObservation] {
     let request = VNDetectBarcodesRequest()
-    request.symbologies = [.qr]
+    request.symbologies = [.qr, .code128, .code39]
     try VNImageRequestHandler(cgImage: image).perform([request])
-    return Array(Set((request.results ?? []).compactMap(\.payloadStringValue)))
+    return request.results ?? []
+}
+
+private func qrPayloads(in image: CGImage) throws -> [String] {
+    Array(Set(try barcodeObservations(in: image)
+        .filter { $0.symbology == .qr }
+        .compactMap(\.payloadStringValue)))
+}
+
+private func maskingQrCode(in image: CGImage) throws -> CGImage? {
+    guard let qr = try barcodeObservations(in: image).first(where: { $0.symbology == .qr }) else { return nil }
+    let width = image.width
+    let height = image.height
+    guard let representation = NSBitmapImageRep(
+        bitmapDataPlanes: nil,
+        pixelsWide: width,
+        pixelsHigh: height,
+        bitsPerSample: 8,
+        samplesPerPixel: 4,
+        hasAlpha: true,
+        isPlanar: false,
+        colorSpaceName: .deviceRGB,
+        bytesPerRow: 0,
+        bitsPerPixel: 0
+    ), let context = NSGraphicsContext(bitmapImageRep: representation) else { return nil }
+
+    NSGraphicsContext.saveGraphicsState()
+    NSGraphicsContext.current = context
+    NSImage(cgImage: image, size: NSSize(width: width, height: height)).draw(
+        in: NSRect(x: 0, y: 0, width: width, height: height)
+    )
+    let box = qr.boundingBox.insetBy(dx: -0.015, dy: -0.015)
+    NSColor.white.setFill()
+    NSRect(
+        x: box.minX * CGFloat(width),
+        y: box.minY * CGFloat(height),
+        width: box.width * CGFloat(width),
+        height: box.height * CGFloat(height)
+    ).fill()
+    context.flushGraphics()
+    NSGraphicsContext.restoreGraphicsState()
+    return representation.cgImage
+}
+
+private func focusedStickerObservations(in image: CGImage) throws -> [(String, NormalizedRect)] {
+    let region = CGRect(
+        x: CGFloat(image.width) * 0.52,
+        y: CGFloat(image.height) * 0.06,
+        width: CGFloat(image.width) * 0.42,
+        height: CGFloat(image.height) * 0.26
+    ).integral
+    guard let cropped = image.cropping(to: region) else { return [] }
+    return try barcodeObservations(in: cropped).compactMap { observation in
+        guard observation.symbology == .code128 || observation.symbology == .code39,
+              let payload = observation.payloadStringValue else { return nil }
+        let box = observation.boundingBox
+        return (
+            payload,
+            NormalizedRect(
+                x: 0.52 + box.minX * 0.42,
+                y: 0.68 + box.minY * 0.26,
+                width: box.width * 0.42,
+                height: box.height * 0.26
+            )
+        )
+    }
+}
+
+private func testChinaStickerBarcodeWithoutQr(
+    fixture: SampleFixture,
+    image: CGImage,
+    entries: [RegisterEntry]
+) {
+    do {
+        guard let masked = try maskingQrCode(in: image) else {
+            fail(fixture, "could not mask the specimen QR code")
+            return
+        }
+        if let outputPath = ProcessInfo.processInfo.environment["APOSITIFY_MASKED_CHINA_OUTPUT"] {
+            let representation = NSBitmapImageRep(cgImage: masked)
+            guard let png = representation.representation(using: .png, properties: [:]) else {
+                fail(fixture, "could not encode the QR-masked specimen")
+                return
+            }
+            try png.write(to: URL(fileURLWithPath: outputPath), options: .atomic)
+        }
+        let observations = try barcodeObservations(in: masked)
+        guard !observations.contains(where: { $0.symbology == .qr }) else {
+            fail(fixture, "the QR-masked specimen still decoded a QR code")
+            return
+        }
+        let focused = try focusedStickerObservations(in: masked)
+        let barcodeLines = focused.compactMap { payload, bounds in
+            ChinaStickerBarcode.recognizedLine(payload: payload, visionBounds: bounds)
+        }
+        guard barcodeLines.contains(where: { $0.text == "Sticker Number: E00268460" }) else {
+            let decoded = (observations.compactMap(\.payloadStringValue) + focused.map(\.0)).joined(separator: ", ")
+            fail(fixture, "upper-right barcode did not decode E00268460; decoded: \(decoded)")
+            return
+        }
+
+        var recognition = try recognize(masked, languages: fixture.languages)
+        recognition = RecognitionResult(lines: recognition.lines + barcodeLines)
+        let china = entries.first { $0.id == "china-china-mainland-ministry-of-foreign-affairs" }!
+        let sticker = ApostilleParser.extractFields(for: china, from: recognition).first { $0.id == "stickerNumber" }
+        guard sticker?.value == "E00268460" else {
+            fail(fixture, "barcode evidence did not populate stickerNumber")
+            return
+        }
+        passes += 1
+        requiredPasses += 1
+        print("PASS china-2025-official-without-qr: upper-right barcode populated E00268460")
+    } catch {
+        fail(fixture, "QR-masked barcode test failed: \(error.localizedDescription)")
+    }
 }
 
 private func matches(_ pattern: String, in value: String) -> Bool {
@@ -341,12 +456,14 @@ private let synthetic = try decoder.decode(
     from: Data(contentsOf: URL(fileURLWithPath: CommandLine.arguments[2]))
 )
 
-for fixture in synthetic.samples {
-    guard let sourceLines = fixture.lines, let image = render(sourceLines) else {
-        fail(fixture, "could not render the artificial sample")
-        continue
+if !chinaBarcodeOnly {
+    for fixture in synthetic.samples {
+        guard let sourceLines = fixture.lines, let image = render(sourceLines) else {
+            fail(fixture, "could not render the artificial sample")
+            continue
+        }
+        test(fixture, image: image, entries: catalog.entries, optionalUnreadable: fixture.optional ?? false)
     }
-    test(fixture, image: image, entries: catalog.entries, optionalUnreadable: fixture.optional ?? false)
 }
 
 if CommandLine.arguments.count >= 5 {
@@ -356,6 +473,7 @@ if CommandLine.arguments.count >= 5 {
     )
     let cache = URL(fileURLWithPath: CommandLine.arguments[4], isDirectory: true)
     for fixture in official.samples {
+        if chinaBarcodeOnly && fixture.id != "china-2025-official" { continue }
         let imageURL = cache.appendingPathComponent(fixture.id).appendingPathExtension("png")
         guard FileManager.default.fileExists(atPath: imageURL.path) else {
             skips += 1
@@ -367,7 +485,12 @@ if CommandLine.arguments.count >= 5 {
             print("SKIP \(fixture.id): cached sample is not a readable image")
             continue
         }
-        test(fixture, image: image, entries: catalog.entries, optionalUnreadable: true)
+        if !chinaBarcodeOnly {
+            test(fixture, image: image, entries: catalog.entries, optionalUnreadable: true)
+        }
+        if fixture.id == "china-2025-official" {
+            testChinaStickerBarcodeWithoutQr(fixture: fixture, image: image, entries: catalog.entries)
+        }
     }
 }
 

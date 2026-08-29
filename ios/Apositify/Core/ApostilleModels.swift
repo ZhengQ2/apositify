@@ -104,6 +104,28 @@ struct RecognitionResult: Hashable {
     }
 }
 
+enum ChinaStickerBarcode {
+    static func normalizedValue(from payload: String) -> String? {
+        let value = payload.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        guard value.range(of: "^E[0-9]{8}$", options: .regularExpression) != nil else { return nil }
+        return value
+    }
+
+    /// Vision rectangles use a lower-left origin. The security sticker on the
+    /// official Chinese specimen is the linear barcode in the upper-right,
+    /// beside (and distinct from) the verification QR code.
+    static func recognizedLine(payload: String, visionBounds bounds: NormalizedRect) -> RecognizedLine? {
+        guard bounds.x + bounds.width / 2 >= 0.55,
+              bounds.y + bounds.height / 2 >= 0.68,
+              let value = normalizedValue(from: payload) else { return nil }
+        return RecognizedLine(
+            text: "Sticker Number: \(value)",
+            confidence: 1,
+            bounds: bounds
+        )
+    }
+}
+
 struct QrRoute: Decodable, Hashable {
     let function: String
     let specimenCount: Int

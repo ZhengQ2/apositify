@@ -97,7 +97,7 @@ struct ReviewScanView: View {
             }
             Button("Cancel", role: .cancel) { insecureExternalURL = nil }
         } message: { _ in
-            Text("This authority only provides an unencrypted HTTP page. Its contents can be changed in transit. Apositify will open it outside the official verifier and will not send or autofill certificate values.")
+            Text("This authority only provides an unencrypted HTTP page. Its contents can be changed in transit. Apostifi will open it outside the official verifier and will not send or autofill certificate values.")
         }
     }
 
@@ -147,20 +147,50 @@ struct ReviewScanView: View {
                     .foregroundStyle(.orange)
             }
 
-            Picker("Country or jurisdiction", selection: $country) {
-                ForEach(countries, id: \.self) { Text($0).tag($0) }
+            Menu {
+                Picker("Country or jurisdiction", selection: $country) {
+                    ForEach(countries, id: \.self) { Text($0).tag($0) }
+                }
+            } label: {
+                selectionMenuLabel(country)
             }
+            .accessibilityLabel("Country or jurisdiction")
             .onChange(of: country) { _, newCountry in
                 if selectedEntry?.country != newCountry {
                     selectedEntryID = entries.first(where: { $0.country == newCountry })?.id ?? ""
                 }
             }
 
-            Picker("Issuing authority", selection: $selectedEntryID) {
-                ForEach(authorities) { entry in Text(entry.authority).tag(entry.id) }
+            // A plain Picker renders its value in a single fixed-height row, so
+            // a long authority name — "Ministry of Public and Business Service
+            // Delivery and Procurement of the province of Ontario" — wrapped and
+            // was clipped top and bottom. The user has to read the whole name to
+            // confirm it, so the label wraps and the row grows instead.
+            Menu {
+                Picker("Issuing authority", selection: $selectedEntryID) {
+                    ForEach(authorities) { entry in Text(entry.authority).tag(entry.id) }
+                }
+            } label: {
+                selectionMenuLabel(selectedEntry?.authority ?? "Select an authority")
             }
+            .accessibilityLabel("Issuing authority")
         }
         .cardStyle()
+    }
+
+    private func selectionMenuLabel(_ value: String) -> some View {
+        HStack(alignment: .center, spacing: 10) {
+            Text(value)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: 16)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder
@@ -332,7 +362,7 @@ struct ReviewScanView: View {
     private var actionExplanation: String {
         guard let entry = selectedEntry else { return "Choose an authority to continue." }
         if primaryVerifierIsInsecure {
-            return "This authority only provides an unencrypted HTTP page. Apositify will warn before opening it in Safari and will not send or autofill any certificate values."
+            return "This authority only provides an unencrypted HTTP page. Apostifi will warn before opening it in Safari and will not send or autofill any certificate values."
         }
         if entry.verification?.deepLink != nil {
             return "The reviewed values will be sent directly to the authority’s official lookup. Its result—not this scan—determines whether the Apostille is genuine."
@@ -480,7 +510,7 @@ struct QrReviewView: View {
             }
             Button("Cancel", role: .cancel) { insecureExternalURL = nil }
         } message: { _ in
-            Text("The decoded authority URL uses unencrypted HTTP, so its contents can be changed in transit. Apositify will not display it with official branding.")
+            Text("The decoded authority URL uses unencrypted HTTP, so its contents can be changed in transit. Apostifi will not display it with official branding.")
         }
     }
 }

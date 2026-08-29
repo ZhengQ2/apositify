@@ -61,7 +61,7 @@ struct WebVerifierView: View {
             Button("Open in Safari") { UIApplication.shared.open(url) }
             Button("Stay here", role: .cancel) {}
         } message: { url in
-            Text("\(url.host ?? url.absoluteString) is not an approved website for this issuing authority. Apositify will not show it with official branding.")
+            Text("\(url.host ?? url.absoluteString) is not an approved website for this issuing authority. Apostifi will not show it with official branding.")
         }
     }
 
@@ -170,9 +170,9 @@ private struct OfficialWebView: UIViewRepresentable {
         case .post(let request):
             webView.load(request)
         case .externalInsecure:
-            webView.loadHTMLString("<main style='font: -apple-system-body; padding: 2rem'><h2>This site requires an external browser</h2><p>Apositify never loads unencrypted HTTP verifiers inside its branded verification view.</p></main>", baseURL: nil)
+            webView.loadHTMLString("<main style='font: -apple-system-body; padding: 2rem'><h2>This site requires an external browser</h2><p>Apostifi never loads unencrypted HTTP verifiers inside its branded verification view.</p></main>", baseURL: nil)
         case .unavailable:
-            webView.loadHTMLString("<main style='font: -apple-system-body; padding: 2rem'><h2>No online route is available</h2><p>Contact the issuing authority using the instructions in Apositify.</p></main>", baseURL: nil)
+            webView.loadHTMLString("<main style='font: -apple-system-body; padding: 2rem'><h2>No online route is available</h2><p>Contact the issuing authority using the instructions in Apostifi.</p></main>", baseURL: nil)
         }
         return webView
     }

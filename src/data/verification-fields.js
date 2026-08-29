@@ -114,7 +114,19 @@ export const verificationFields = {
   },
   'canada-ministry-of-public-and-business-service-delivery-and-procurement-of-the-province-of-ontario': {
     kind: 'fields',
-    fields: ['Apostille Number (format 11-AA-AAAA-AAAA)', 'Apostille Issue Date'],
+    fields: [
+      {
+        label: 'Apostille Number (format 11-AA-AAAA-AAAA)',
+        ocr: {
+          standardItem: 8,
+          // Ontario prints references such as ON-26-506237-8785. Requiring
+          // that documented shape prevents a damaged bilingual "N° / sous n°"
+          // label from being submitted as the certificate number.
+          pattern: '\\b[A-Z]{2}-\\d{2}-\\d{6}-\\d{4}\\b'
+        }
+      },
+      'Apostille Issue Date'
+    ],
     note: 'Only covers apostilles issued on or after 11 January 2024.'
   },
   'canada-minister-of-justice-of-the-province-of-quebec': {

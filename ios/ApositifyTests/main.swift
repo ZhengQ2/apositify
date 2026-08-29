@@ -24,6 +24,20 @@ let catalogURL = URL(fileURLWithPath: CommandLine.arguments[1])
 let catalog = try JSONDecoder().decode(RegisterCatalog.self, from: Data(contentsOf: catalogURL))
 expect(catalog.entries.count == 97, "the iOS catalog must contain all 97 authority entries")
 
+let validStickerBarcode = ChinaStickerBarcode.recognizedLine(
+    payload: "e00268460",
+    visionBounds: NormalizedRect(x: 0.66, y: 0.78, width: 0.2, height: 0.05)
+)
+expect(validStickerBarcode?.text == "Sticker Number: E00268460", "the upper-right China barcode must become sticker-number evidence")
+expect(
+    ChinaStickerBarcode.recognizedLine(
+        payload: "E00268460",
+        visionBounds: NormalizedRect(x: 0.66, y: 0.20, width: 0.2, height: 0.05)
+    ) == nil,
+    "the same value outside the upper-right sticker position must be rejected"
+)
+expect(ChinaStickerBarcode.normalizedValue(from: "E0026846O") == nil, "OCR-like letters must not be accepted as barcode digits")
+
 let recognition = RecognitionResult(lines: [
     line("APOSTILLE (Convention de La Haye du 5 octobre 1961)"),
     line("Application number: APP-4207"),
@@ -393,7 +407,7 @@ expect(
 // Geometry may order suggestions, but it must not silently decide between two
 // reference-shaped strings. The closer value is deliberately the wrong one.
 let ambiguousReferenceScan = RecognitionResult(lines: [
-    placed("DOC-OTHER-4411", x: 0.25, y: 0.405, width: 0.16, height: 0.016),
+    placed("ON-26-111111-2222", x: 0.25, y: 0.405, width: 0.16, height: 0.016),
     placed("8. Nº / sous n°", x: 0.10, y: 0.400, width: 0.11, height: 0.014),
     placed("ON-26-506237-8785", x: 0.45, y: 0.365, width: 0.16, height: 0.016)
 ])
@@ -402,7 +416,7 @@ let ambiguousReference = ApostilleParser.extractFields(for: ontario, from: ambig
 expect(ambiguousReference.value.isEmpty, "geometry alone must not prefill one of two plausible references")
 expect(ambiguousReference.needsCandidateSelection, "ambiguous references must require an explicit user selection")
 expect(
-    Set(ambiguousReference.suggestedValues) == Set(["DOC-OTHER-4411", "ON-26-506237-8785"]),
+    Set(ambiguousReference.suggestedValues) == Set(["ON-26-111111-2222", "ON-26-506237-8785"]),
     "both plausible references must be offered for review"
 )
 

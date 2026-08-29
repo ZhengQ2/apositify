@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Apositify</string>
+	<string>Apostifi</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,9 +21,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Apositify uses the camera to scan an Apostille and recognize its printed verification details on this device.</string>
+	<string>Apostifi uses the camera to scan an Apostille and recognize its printed verification details on this device.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Apositify can read Apostille photos you choose so it can recognize their printed verification details on this device.</string>
+	<string>Apostifi can read Apostille photos you choose so it can recognize their printed verification details on this device.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>

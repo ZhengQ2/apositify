@@ -247,19 +247,29 @@ export const qrCodes = {
   'china-china-mainland-ministry-of-foreign-affairs': record('confirmed', 'Official e-Apostille sample instructs recipients to scan the QR on the last page. Mainland only — does not transfer to Hong Kong or Macao.', {
     evidence: 'official_specimen',
     function: 'verification_url',
-    specimenCount: 1,
-    specimenTestedAt: '2026-07-18',
-    // Specimen 2026-07-18: http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX
-    // Plain HTTP, and the record id is in the FRAGMENT (hash-router SPA), which
-    // is never sent to the server -- so it must be preserved, not stripped.
+    specimenCount: 2,
+    specimenTestedAt: '2026-08-29',
+    // Rechecked against the authority-published 2025 sample on 2026-08-28.
+    // The QR uses HTTPS. Its SPA route and lookup fields live inside the
+    // fragment, which is never sent to the server and must be preserved.
+    // Values below are structural patterns only; live sample credentials stay
+    // out of source control.
+    //
+    // paperNo is OPTIONAL. The MFA sample carries the "E########" sticker that
+    // paperNo repeats, but a second specimen decoded on 2026-08-29 — issued by
+    // a provincial Foreign Affairs Office, with a plain barcode instead of an
+    // E-prefixed sticker — omits paperNo entirely and carries only content and
+    // checkCode. Requiring it refused a genuine QR on the authority's own host.
+    // Nothing else is relaxed: host, path, parameter order and value shapes are
+    // unchanged.
     allowedUrls: [{
-      protocol: 'http:', hostname: 'consular.mfa.gov.cn', port: '',
+      protocol: 'https:', hostname: 'consular.mfa.gov.cn', port: '',
       pathnamePattern: '^/VERIFY/?$',
       allowFragment: true, requireFragment: true,
-      fragmentPattern: '^#/[A-Za-z0-9_-]{6,64}$',
-      documentRef: 'fragment', insecureAccepted: true
+      fragmentPattern: '^#/[A-Za-z0-9_-]{6,64}\\?content=[0-9]{12}(?:&paperNo=E[0-9]{8})?&checkCode=[A-Za-z0-9+/=_-]{20,256}$',
+      documentRef: 'fragment'
     }],
-    sourceUrl: 'https://cs.mfa.gov.cn/gyls/lsgz/fwxx/202506/P020250617541458190587.pdf'
+    sourceUrl: 'https://cs.mfa.gov.cn/gyls/szzc/xgxw/202506/P020250617541458190587.pdf'
   }),
   'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court': record('confirmed', 'Specimen confirms the Judiciary guide: the QR opens the e-services portal with the apostille number and reference code prefilled, and the user completes the form there. The host is judiciary.hk — a Hong Kong domain, NOT a mainland gov.cn one, so the Mainland MFA record does not apply here in either direction.', {
     evidence: 'authority',

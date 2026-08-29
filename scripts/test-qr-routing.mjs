@@ -173,6 +173,33 @@ check('an oversized payload is refused and not echoed in full', () => {
   assert.ok(result.raw.length <= 256)
 })
 
+check('China accepts an absent paperNo but nothing else looser', () => {
+  const china = 'china-china-mainland-ministry-of-foreign-affairs'
+  const withoutPaperNo = 'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAA'
+  assert.equal(classifyQrPayload(withoutPaperNo, china).kind, OUTCOME.OFFICIAL)
+  // Making paperNo optional must not open the fragment to anything else.
+  const stillRefused = [
+    // an eleven-digit reference
+    'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=25000000000&checkCode=AAAAAAAAAAAAAAAAAAAAAAAA',
+    // a smuggled redirect appended to the documented parameters
+    'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAA&next=https://attacker.test',
+    // paperNo present but not the documented sticker shape
+    'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&paperNo=X00000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAA',
+    // the documented parameters in the wrong order
+    'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?checkCode=AAAAAAAAAAAAAAAAAAAAAAAA&content=250000000001'
+  ]
+  for (const payload of stillRefused) {
+    assert.notEqual(classifyQrPayload(payload, china).kind, OUTCOME.OFFICIAL, payload)
+  }
+})
+
+check('a redundant default port routes, a non-default one does not', () => {
+  // `URL` drops `:443` on an https URL, so this must behave exactly like the
+  // port-less payload. The iOS engine normalizes explicitly to stay in step.
+  assert.equal(classify('https://verify.example.gov:443/apostille/ABC12345').kind, OUTCOME.OFFICIAL)
+  assert.equal(classify('https://verify.example.gov:8443/apostille/ABC12345').reason, 'unexpected_port')
+})
+
 check('an allowed query parameter passes while others do not', () => {
   assert.equal(classify('https://docs.example.gov/f?id=7', 'fixture-document').kind, OUTCOME.OFFICIAL)
   assert.equal(classify('https://docs.example.gov/f?id=7&url=https://attacker.test', 'fixture-document').kind, OUTCOME.BLOCKED)
@@ -237,7 +264,8 @@ const realSpecimens = [
   ['brazil-national-council-of-justice', 'https://www.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&id_orgao_acesso_externo=0&cv=0000000&crc=11111111', 'Brazil legacy: judiciary .jus.br host'],
   ['bulgaria-national-center-for-information-and-documentation', 'https://apostille.nacid.bg/api/Public/ElectronicApostille/AAA0000A0AAA', 'Bulgaria: API document retrieval'],
   ['chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service', 'https://consulta.apostilla.gob.cl/QR/AAAAAAAAAAAAAAAAAAAAAA==', 'Chile: base64 path token'],
-  ['china-china-mainland-ministry-of-foreign-affairs', 'http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX', 'China: HTTP + fragment-carried token'],
+  ['china-china-mainland-ministry-of-foreign-affairs', 'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&paperNo=E00000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'China: HTTPS + fragment-carried lookup fields'],
+  ['china-china-mainland-ministry-of-foreign-affairs', 'https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'China: provincial issuance, no E-sticker so no paperNo'],
   ['colombia-ministry-of-foreign-affairs', 'https://tramites.cancilleria.gov.co/Ciudadano/ConsultaApostilla/consulta.aspx?cod=A0AAAA00000000&fecha=4/27/2022', 'Colombia: two query params'],
   ['ecuador-ministry-of-foreign-affairs-and-human-mobility', 'https://serviciosciudadanos.cancilleria.gob.ec/ValidacionApostillaURL/DatosApostillaURL?validaDocumento=000000000000000', 'Ecuador'],
   ['guatemala-ministry-of-foreign-affairs', 'https://apostilla.minex.gob.gt/public/verificar/apostilla/0000000000/AAAAAA', 'Guatemala: two path segments'],
@@ -393,7 +421,7 @@ for (const [label, id, payload] of referenceless) {
 }
 
 check('China without its fragment carries no reference and must not route', () => {
-  const result = classifyQrPayload('http://consular.mfa.gov.cn/VERIFY/', 'china-china-mainland-ministry-of-foreign-affairs')
+  const result = classifyQrPayload('https://consular.mfa.gov.cn/VERIFY/', 'china-china-mainland-ministry-of-foreign-affairs')
   assert.notEqual(result.kind, OUTCOME.OFFICIAL)
   assert.equal(result.reason, 'missing_required_fragment')
   assert.ok(!result.url)
@@ -450,7 +478,7 @@ check('Hong Kong and Mainland China do not inherit each other', () => {
     'https://www.e-services.judiciary.hk/judservice-web/?aToken=CCCC', MAINLAND)
   assert.notEqual(hkAsMainland.kind, OUTCOME.OFFICIAL)
   // ...nor a Mainland payload as Hong Kong.
-  const mainlandAsHk = classifyQrPayload('http://consular.mfa.gov.cn/VERIFY/#/XXXXXXXXXXXX', HK)
+  const mainlandAsHk = classifyQrPayload('https://consular.mfa.gov.cn/VERIFY/#/ABCDEFGHIJKL?content=250000000001&paperNo=E00000001&checkCode=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', HK)
   assert.notEqual(mainlandAsHk.kind, OUTCOME.OFFICIAL)
 })
 

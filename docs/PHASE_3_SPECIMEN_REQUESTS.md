@@ -56,9 +56,9 @@ canonical URL reconstruction, which is the remaining tightening step.
 | Philippines — Department of Foreign Affairs | `portal_or_token` | `e-registry.apostille.gov.ph` |
 | Russian Federation — Ministry of Justice | `verification_url` | `minjust.gov.ru` |
 
-Four are HTTP-only and carry an explicit `insecureAccepted` risk acceptance:
-Armenia, China (Mainland), Mexico, Panama. Testing whether HTTPS works on those
-same hosts would let us drop the exceptions.
+Three are HTTP-only and carry an explicit `insecureAccepted` risk acceptance:
+Armenia, Mexico, and Panama. Mainland China's authority-published specimen was
+rechecked on 2026-08-28 and uses HTTPS, so its earlier exception was removed.
 
 ## Still needed — no decoded specimen (9)
 

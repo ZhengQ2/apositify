@@ -128,7 +128,34 @@ export const verificationFields = {
   },
   'china-china-mainland-ministry-of-foreign-affairs': {
     kind: 'fields',
-    fields: ['Legalization/Apostille Number', 'Sticker Number'],
+    fields: [
+      {
+        name: 'apostilleNumber',
+        label: 'Legalization/Apostille Number',
+        placeholder: 'Exactly as printed',
+        ocr: {
+          standardItem: 8,
+          aliases: ['Apostille No.', 'Legalization No.', '附加证明书编号', '领事认证号'],
+          // Item 8 prints the number inside a Chinese document-class wrapper,
+          // "认字第263600004721号". The verifier wants the twelve digits alone —
+          // the QR's own `content` parameter carries exactly those digits — so
+          // the wrapper must not be submitted with them.
+          pattern: '[0-9]{12}'
+        }
+      },
+      {
+        name: 'stickerNumber',
+        label: 'Sticker Number',
+        placeholder: 'Exactly as printed',
+        ocr: {
+          aliases: ['Sticker No.', 'Sticker Code', '贴纸编号', '贴纸号码'],
+          // The current official e-Apostille specimen prints this only beneath
+          // its barcode, with no nearby label. Keep the pattern intentionally
+          // narrow so OCR fallback cannot mistake APOSTILLE or another code for it.
+          pattern: 'E\\d{8}'
+        }
+      }
+    ],
     note: 'Apostilles/legalizations issued before 7 November 2023 require scanning the QR code on a mobile device instead.'
   },
   'china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court': {
@@ -320,7 +347,33 @@ export const verificationFields = {
   },
   'singapore-singapore-academy-of-law': {
     kind: 'fields',
-    fields: ['Apostille Certificate No.', 'Notarial Certificate No.', 'Apostille Verification Code'],
+    fields: [
+      {
+        name: 'apostilleCertificateNumber',
+        label: 'Apostille Certificate No.',
+        placeholder: 'Exactly as printed',
+        format: 'mask:AA999A999A',
+        ocr: {
+          standardItem: 8,
+          aliases: ['Apostille Certificate No.', 'Certificate No.', 'Number', 'No.'],
+          pattern: '[A-Z]{2}[0-9OQDISBLZ]{3}[A-Z][0-9OQDISBLZ]{3}[A-Z]'
+        }
+      },
+      {
+        name: 'notarialCertificateNumber',
+        label: 'Notarial Certificate No.',
+        placeholder: 'Exactly as printed',
+        ocr: { aliases: ['Notarial Certificate No.'] }
+      },
+      {
+        name: 'apostilleVerificationCode',
+        label: 'Apostille Verification Code',
+        placeholder: 'Exactly as printed',
+        ocr: {
+          aliases: ['Apostille Verification Code', 'Verification code', '验证码']
+        }
+      }
+    ],
     note: 'Apostilles issued before 16 September 2021 use a different certificate/verification-code pair — check the date on your Apostille.'
   },
   'slovenia-11-district-courts': {

@@ -68,7 +68,7 @@ export const messages = {
   qrBlockedBody: 'The code was read, but its destination does not match the rules we hold for the authority you selected. It has not been opened.',
   qrBlockedNoOpen: 'If you expected an official page, check that you selected the right issuing authority, and treat the destination above with caution.',
   qrNotEnabledTitle: 'QR routing not available for this authority yet',
-  qrNotEnabledBody: 'The code was read, but this authority’s QR format has not been confirmed against official specimens, so no destination is offered. Here is the raw content:',
+  qrNotEnabledBody: 'The code was read, but we could not confirm where it leads for this authority, so no destination is offered. Here is the raw content:',
   qrUnsupportedTitle: 'Code content not recognised',
   qrUnsupportedBody: 'This code does not contain a documented official address. Here is the raw content:',
 

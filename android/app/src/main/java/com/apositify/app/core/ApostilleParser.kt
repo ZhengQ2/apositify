@@ -62,7 +62,7 @@ object ApostilleParser {
         }
 
         field.standardItem?.let { items[it]?.let { candidate -> return listOf(candidate) } }
-        valueBesideLabel(field, lines)?.let { return listOf(it) }
+        valueBesideLabel(field, lines)?.takeIf { suitsLabel(it.value, field) }?.let { return listOf(it) }
         return emptyList()
     }
 
@@ -155,25 +155,42 @@ object ApostilleParser {
         return result
     }
 
+    /// Shapes a printed date can take, in every language the corpus prints.
+    /// Loose on purpose: each match is gated on parsing as a real date.
+    private val datePatterns = listOf(
+        Regex("(?<!\\d)\\d{4}[-./]\\d{1,2}[-./]\\d{1,2}(?!\\d)"),
+        Regex("(?<!\\d)\\d{1,2}[-./]\\d{1,2}[-./]\\d{2,4}(?!\\d)"),
+        Regex("(?i)(?<!\\d)\\d{1,2}(?:st|nd|rd|th)?(?:\\s+de)?\\s+[\\p{L}.]+(?:\\s+de)?\\s+\\d{4}(?!\\d)"),
+        Regex("(?i)[\\p{L}.]+\\s+\\d{1,2}(?:st|nd|rd|th)?[,]?\\s+\\d{4}"),
+        // Japan prints "Jul. 10.2026" — a month name whose day and year are
+        // joined by the same separator, with no space before the year.
+        Regex("(?i)(?<![\\d\\p{L}])[\\p{L}]{3,}\\.?\\s*\\d{1,2}\\s*[.,]\\s*\\d{4}(?!\\d)"),
+        Regex("\\d{4}年\\d{1,2}月\\d{1,2}日"),
+    )
+
+    /// The date inside a longer labelled phrase.
+    private fun dateSubstring(value: String, country: String): String? =
+        datePatterns.firstNotNullOfOrNull { regex ->
+            regex.find(value)?.value?.takeIf { DateNormalizer.isoDate(it, country) != null }
+        }
+
     private fun dateCandidates(lines: List<RecognizedLine>, country: String): List<Candidate> {
-        val patterns = listOf(
-            Regex("(?<!\\d)\\d{4}[-./]\\d{1,2}[-./]\\d{1,2}(?!\\d)"),
-            Regex("(?<!\\d)\\d{1,2}[-./]\\d{1,2}[-./]\\d{2,4}(?!\\d)"),
-            Regex("(?i)(?<!\\d)\\d{1,2}(?:st|nd|rd|th)?(?:\\s+de)?\\s+[\\p{L}.]+(?:\\s+de)?\\s+\\d{4}(?!\\d)"),
-            Regex("(?i)[\\p{L}.]+\\s+\\d{1,2}(?:st|nd|rd|th)?[,]?\\s+\\d{4}"),
-            Regex("\\d{4}年\\d{1,2}月\\d{1,2}日"),
-        )
         val seenIso = mutableSetOf<String>()
         return lines.filterNot { conventionReference(it.text) }.flatMap { line ->
-            patterns.flatMap { regex -> regex.findAll(line.text).mapNotNull { match ->
+            datePatterns.flatMap { regex -> regex.findAll(line.text).mapNotNull { match ->
                 DateNormalizer.isoDate(match.value, country)?.takeIf(seenIso::add)?.let { Candidate(match.value, line.text) }
             }.toList() }
         }
     }
 
+    // Candidates arrive in reading order, so trimming to the review shortlist
+    // here dropped the value the item resolver had already settled on whenever
+    // three unrelated strings were printed above it — a watermark across the
+    // top of a photo was enough to lose the certificate number entirely.
+    // `prefer` ranks the full set and `unique` trims what survives.
     private fun referenceCandidates(lines: List<RecognizedLine>): List<Candidate> {
         val regex = Regex("[\\p{L}\\p{N}](?:[\\p{L}\\p{N}]|[._/\\-]){3,47}")
-        return unique(lines.filterNot { structural(it.text) }.flatMap { line ->
+        return distinct(lines.filterNot { structural(it.text) }.flatMap { line ->
             regex.findAll(line.text).mapNotNull { match -> match.value.takeIf(::plausibleReference)?.let { Candidate(it, line.text) } }.toList()
         })
     }
@@ -183,7 +200,12 @@ object ApostilleParser {
             val index = line.text.indexOf(alias, ignoreCase = true)
             if (index < 0) continue
             val value = clean(line.text.substring(index + alias.length).trim(' ', ':', '/', '-', '–', '—'))
-            if (value.isNotBlank() && semantic(field, value, country)) return Candidate(value, line.text)
+            if (value.isNotBlank() && semantic(field, value, country) && suitsLabel(value, field)) {
+                // Chile prints "Fecha Emisión [ 28-10-2016 ]". The brackets and
+                // the repeated label are not part of what its verifier accepts.
+                val narrowed = if (field.standardItem == 6) dateSubstring(value, country) else null
+                return Candidate(narrowed ?: value, line.text)
+            }
         }
         return null
     }
@@ -211,6 +233,19 @@ object ApostilleParser {
         return unique(listOfNotNull(selected) + candidates)
     }
 
+    /// Fields outside standard items 6 and 8 take whatever follows their label,
+    /// which on a dense page is often prose. "…this 12th day of February in the
+    /// Year Two Thousand and Twenty-six" filled Hong Kong's Year field with
+    /// "Two", and its Reference Code with a fragment of Japanese. A field that
+    /// asks for a number, year, code or reference is asking for a token.
+    private fun suitsLabel(value: String, field: VerificationField): Boolean {
+        val label = field.label
+        if (!Regex("(?i)number|numero|numéro|\\bno\\.|\\bcode\\b|c[oó]digo|clave|year|a[ñn]o|reference").containsMatchIn(label)) return true
+        if (!Regex("[A-Za-z0-9]{2,}").containsMatchIn(value)) return false
+        val asksForDigits = Regex("(?i)number|numero|numéro|\\bno\\.|year|a[ñn]o").containsMatchIn(label)
+        return !asksForDigits || value.any(Char::isDigit)
+    }
+
     private fun semantic(field: VerificationField, value: String, country: String): Boolean = when (field.standardItem) {
         6 -> DateNormalizer.isoDate(value, country) != null
         8 -> plausibleReference(value)
@@ -225,6 +260,10 @@ object ApostilleParser {
         // producing strings such as "N°7sous n。". This is still template
         // text, not a reference, even though it now contains a digit.
         if (Regex("(?i)^n[º°o.]?\\s*[17il|/]?\\s*sous\\s+n[º°o。.]*$").matches(cleaned)) return false
+        // Legalisation stickers print a fee beside the reference. "GBP40.00" is
+        // shaped like a reference and sat alone on the page often enough to be
+        // confirmed as the certificate number and sent to the verifier.
+        if (Regex("(?i)^(?:[A-Z]{3}|[$€£¥₹])\\s?\\d{1,3}(?:[ ,]\\d{3})*[.,]\\d{2}$").matches(cleaned)) return false
         // Android OCR occasionally substitutes zero for the initial O in a
         // month name (notably "0ctober"). iOS language correction fixes that
         // before parsing; do the equivalent semantic correction here so a
@@ -282,6 +321,8 @@ object ApostilleParser {
     private fun clean(value: String) = value.replace(Regex("\\s+"), " ").trim()
     private fun normalize(value: String) = Normalizer.normalize(value, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")
         .lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), " ").trim()
-    private fun unique(values: List<Candidate>): List<Candidate> = values.distinctBy { normalize(it.value) }.take(3)
+    private fun distinct(values: List<Candidate>): List<Candidate> = values.distinctBy { normalize(it.value) }
+    private fun unique(values: List<Candidate>): List<Candidate> = distinct(values).take(REVIEW_SHORTLIST)
+    private const val REVIEW_SHORTLIST = 3
     private fun format(value: String, field: VerificationField, country: String) = DateNormalizer.formatted(clean(value), field.format, country)
 }

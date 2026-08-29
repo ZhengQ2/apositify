@@ -113,11 +113,27 @@ struct ApostilleParser {
         let semantic = field.standardItem == 6
             ? dateCandidates(in: lines, for: field)
             : referenceCandidates(in: lines, for: field)
-        let candidates = uniqueCandidates(semantic)
+        // Rank before trimming to the review shortlist. Candidates arrive in
+        // reading order, so trimming first silently dropped the value the item
+        // resolver had already settled on whenever three unrelated strings
+        // happened to be printed above it — a watermark across the top of a
+        // photo was enough to lose the certificate number entirely.
+        let candidates = distinctCandidates(semantic)
+
+        // A numeric date such as 12/07/2019 has two valid readings and the
+        // certificate does not say which. Declining to guess is right, but
+        // discarding it left the field blank with nothing to review and no sign
+        // of what had been read. Offer the readings so the choice is the user's.
+        if field.standardItem == 6, candidates.isEmpty {
+            let readings = uniqueCandidates(ambiguousDateReadings(in: lines, for: field))
+            if !readings.isEmpty {
+                return FieldResolution(confirmed: nil, alternatives: readings)
+            }
+        }
 
         // A visible numbered anchor plus exactly one entity of the right type
         // is strong without assuming that the entity is on the same row. This
-        // handles two-column forms whose item 8 value is printed above its label.
+        // handles two-column forms whose item 8 value is printed above its row.
         if !anchors.isEmpty, candidates.count == 1 {
             return FieldResolution(confirmed: candidates[0], alternatives: [])
         }
@@ -284,7 +300,10 @@ struct ApostilleParser {
         })
     }
 
-    private static func uniqueCandidates(_ candidates: [Candidate]) -> [Candidate] {
+    /// Every distinct candidate, in the order given. Ranking must happen on the
+    /// full set; `uniqueCandidates` then trims the ranked result to what the
+    /// review screen can show.
+    private static func distinctCandidates(_ candidates: [Candidate]) -> [Candidate] {
         var seen = Set<String>()
         var result: [Candidate] = []
         for candidate in candidates where !candidate.value.isEmpty {
@@ -292,7 +311,13 @@ struct ApostilleParser {
             guard !key.isEmpty, seen.insert(key).inserted else { continue }
             result.append(candidate)
         }
-        return Array(result.prefix(3))
+        return result
+    }
+
+    private static let reviewShortlistLimit = 3
+
+    private static func uniqueCandidates(_ candidates: [Candidate]) -> [Candidate] {
+        Array(distinctCandidates(candidates).prefix(reviewShortlistLimit))
     }
 
     private static func candidatesMatching(pattern: String, in lines: [RecognizedLine]) -> [Candidate] {
@@ -307,14 +332,33 @@ struct ApostilleParser {
         }
     }
 
+    /// Shapes a printed date can take, in every language the corpus prints.
+    /// Loose on purpose: each match is gated on parsing as a real date.
+    private static let datePatterns = [
+        #"(?<!\d)\d{4}[-\./]\d{1,2}[-\./]\d{1,2}(?!\d)"#,
+        #"(?<!\d)\d{1,2}[-\./]\d{1,2}[-\./]\d{2,4}(?!\d)"#,
+        #"(?<!\d)\d{1,2}(?:st|nd|rd|th)?(?:\s+de)?\s+[\p{L}\.]+(?:\s+de)?\s+\d{4}(?!\d)"#,
+        #"[\p{L}\.]+\s+\d{1,2}(?:st|nd|rd|th)?[,]?\s+\d{4}"#,
+        // Japan prints "Jul. 10.2026" — a month name whose day and year are
+        // joined by the same separator, with no space before the year.
+        #"(?<![\d\p{L}])[\p{L}]{3,}\.?\s*\d{1,2}\s*[\.,]\s*\d{4}(?!\d)"#,
+        #"\d{4}年\d{1,2}月\d{1,2}日"#
+    ]
+
+    /// The date inside a longer labelled phrase. Chile prints
+    /// "Fecha Emisión [ 28-10-2016 ]"; the brackets and the repeated label are
+    /// not part of what its verifier accepts.
+    private static func dateSubstring(in value: String, for field: VerificationField) -> String? {
+        for pattern in datePatterns {
+            guard let range = value.range(of: pattern, options: [.regularExpression, .caseInsensitive]) else { continue }
+            let candidate = String(value[range])
+            if parseDate(candidate, expectedFormat: field.format) != nil { return candidate }
+        }
+        return nil
+    }
+
     private static func dateCandidates(in lines: [RecognizedLine], for field: VerificationField) -> [Candidate] {
-        let patterns = [
-            #"(?<!\d)\d{4}[-\./]\d{1,2}[-\./]\d{1,2}(?!\d)"#,
-            #"(?<!\d)\d{1,2}[-\./]\d{1,2}[-\./]\d{2,4}(?!\d)"#,
-            #"(?<!\d)\d{1,2}(?:st|nd|rd|th)?(?:\s+de)?\s+[\p{L}\.]+(?:\s+de)?\s+\d{4}(?!\d)"#,
-            #"[\p{L}\.]+\s+\d{1,2}(?:st|nd|rd|th)?[,]?\s+\d{4}"#,
-            #"\d{4}年\d{1,2}月\d{1,2}日"#
-        ]
+        let patterns = datePatterns
         var candidates: [Candidate] = []
         for line in lines where !isConventionReference(line.text) {
             for pattern in patterns {
@@ -337,6 +381,29 @@ struct ApostilleParser {
         }
     }
 
+    /// Both readings of a numeric date whose day and month could each be
+    /// either. A field that must submit ISO gets the two ISO dates; one that
+    /// submits the printed text gets the text, which is not itself ambiguous.
+    private static func ambiguousDateReadings(
+        in lines: [RecognizedLine],
+        for field: VerificationField
+    ) -> [Candidate] {
+        var result: [Candidate] = []
+        for line in lines where !isConventionReference(line.text) && !isUnderlyingDocumentDate(line.text) {
+            guard let match = firstMatch(#"(?<!\d)(\d{1,2})[-\./](\d{1,2})[-\./](\d{4})(?!\d)"#, in: line.text),
+                  let first = Int(match[1]), let second = Int(match[2]), let year = Int(match[3]),
+                  (1...12).contains(first), (1...12).contains(second) else { continue }
+            guard field.format == "date-iso" else {
+                result.append((match[0], line.confidence, line.text))
+                continue
+            }
+            // Day-first is the prevailing convention on Apostilles, so it leads.
+            result.append((String(format: "%04d-%02d-%02d", year, second, first), line.confidence, line.text))
+            result.append((String(format: "%04d-%02d-%02d", year, first, second), line.confidence, line.text))
+        }
+        return result
+    }
+
     private static func referenceCandidates(in lines: [RecognizedLine], for field: VerificationField) -> [Candidate] {
         let tokenPattern = #"[\p{L}\p{N}](?:[\p{L}\p{N}]|[._/\-]){3,47}"#
         guard let expression = try? NSRegularExpression(pattern: tokenPattern) else { return [] }
@@ -353,6 +420,26 @@ struct ApostilleParser {
         return candidates
     }
 
+    /// Fields outside standard items 6 and 8 take whatever follows their label,
+    /// which on a dense page is often prose. "…this 12th day of February in the
+    /// Year Two Thousand and Twenty-six" filled Hong Kong's Year field with
+    /// "Two", and its Reference Code with a fragment of Japanese. A field that
+    /// asks for a number, year, code or reference is asking for a token.
+    private static func suitsLabel(_ value: String, field: VerificationField) -> Bool {
+        let label = field.label
+        let asksForToken = label.range(
+            of: #"number|numero|numéro|\bno\.|\bcode\b|c[oó]digo|clave|year|a[ñn]o|reference"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil
+        guard asksForToken else { return true }
+        guard value.range(of: #"[A-Za-z0-9]{2,}"#, options: .regularExpression) != nil else { return false }
+        let asksForDigits = label.range(
+            of: #"number|numero|numéro|\bno\.|year|a[ñn]o"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil
+        return !asksForDigits || value.range(of: #"\d"#, options: .regularExpression) != nil
+    }
+
     private static func isSemanticallyValid(_ value: String, for field: VerificationField) -> Bool {
         if field.standardItem == 6 {
             return parseDate(value, expectedFormat: field.format) != nil
@@ -365,6 +452,13 @@ struct ApostilleParser {
         guard (4...48).contains(cleaned.count),
               cleaned.range(of: #"\d"#, options: .regularExpression) != nil,
               parseDate(cleaned) == nil else { return false }
+        // Legalisation stickers print a fee beside the reference. "GBP40.00" is
+        // shaped like a reference and sat alone on the page often enough to be
+        // confirmed as the certificate number and sent to the verifier.
+        if cleaned.range(
+            of: #"^(?:[A-Z]{3}|[$€£¥₹])\s?\d{1,3}(?:[ ,]\d{3})*[.,]\d{2}$"#,
+            options: [.regularExpression, .caseInsensitive]
+        ) != nil { return false }
         let alphanumerics = cleaned.unicodeScalars.filter(CharacterSet.alphanumerics.contains)
         guard alphanumerics.count >= 4 else { return false }
         if alphanumerics.allSatisfy(CharacterSet.decimalDigits.contains), alphanumerics.count < 5 {
@@ -385,6 +479,9 @@ struct ApostilleParser {
                 let suffix = clean(String(line.text[range.upperBound...])
                     .trimmingCharacters(in: CharacterSet(charactersIn: ":/·•–—- ")))
                 guard !suffix.isEmpty, isSemanticallyValid(suffix, for: field) else { continue }
+                if field.standardItem == 6, let narrowed = dateSubstring(in: suffix, for: field) {
+                    return (narrowed, line.confidence, line.text)
+                }
                 return (suffix, line.confidence, line.text)
             }
         }
@@ -427,7 +524,8 @@ struct ApostilleParser {
             }
         }
 
-        if let labeled = valueBesideLabel(aliases: field.aliases, pattern: field.pattern, lines: lines) {
+        if let labeled = valueBesideLabel(aliases: field.aliases, pattern: field.pattern, lines: lines),
+           suitsLabel(labeled.value, field: field) {
             return format(labeled, for: field)
         }
 

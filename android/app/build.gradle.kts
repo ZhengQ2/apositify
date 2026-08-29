@@ -8,6 +8,12 @@ plugins {
 // remote checkouts still compile and the fixture-dependent tests skip.
 val prepareLocalRecognitionTestAssets by tasks.registering(Sync::class) {
     from(rootProject.file("../specimens/device-test-local"))
+    // Every loose specimen too, so the on-device sweep reads the same corpus
+    // the host-side suite does. Subdirectories are excluded: the official
+    // cache is already covered by the host suite and would double the APK.
+    from(rootProject.file("../specimens")) {
+        include("*.png", "*.jpg", "*.jpeg", "*.JPG", "*.heic", "*.webp")
+    }
     into(layout.buildDirectory.dir("generated/localRecognitionTestAssets"))
 }
 val localRecognitionTestAssetsDirectory = layout.buildDirectory.dir("generated/localRecognitionTestAssets").get().asFile

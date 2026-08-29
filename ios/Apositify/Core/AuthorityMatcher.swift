@@ -12,9 +12,8 @@ struct AuthorityMatcher {
         let itemSeven = ApostilleParser.numberedItems(in: recognition.lines)[7].map(normalize) ?? ""
         let textTokens = Set(text.split(separator: " ").map(String.init))
         let itemSevenTokens = Set(itemSeven.split(separator: " ").map(String.init))
-        let detectedCountries = Set(entries.compactMap { entry in
-            countryNames(for: entry.country).contains(where: { containsPhrase($0, in: text) }) ? entry.country : nil
-        })
+        let normalizedLines = recognition.lines.map { normalize($0.text) }
+        let detectedCountries = detectCountries(in: normalizedLines, fullText: text)
 
         return entries.compactMap { entry -> AuthorityMatch? in
             let countryHit = detectedCountries.contains(entry.country)
@@ -82,7 +81,7 @@ struct AuthorityMatcher {
             "China": ["china", "中国", "中國"],
             "Türkiye": ["turkiye", "turkey"],
             "United States of America": ["united states of america", "united states", "usa"],
-            "Russian Federation": ["russian federation", "russia"]
+            "Russian Federation": ["russian federation", "russia", "российская федерация", "россия"]
         ]
         let regionCodes: [String: String] = [
             "Andorra": "AD", "Argentina": "AR", "Armenia": "AM", "Australia": "AU", "Austria": "AT",
@@ -106,8 +105,46 @@ struct AuthorityMatcher {
         return Array(Set(([country] + (aliases[country] ?? []) + localized).map(normalize)))
     }
 
+    /// An Apostille prints its country as a field value, not inside a sentence.
+    /// A Hong Kong certificate whose attached notarial page happens to mention
+    /// exporting goods "to India" was being read as an Indian Apostille, because
+    /// the country name appearing anywhere on the page counted the same as the
+    /// country field itself. Require the name to account for a real share of the
+    /// line it sits on, and fall back to the whole page when that finds nothing.
+    private func detectCountries(in lines: [String], fullText: String) -> Set<String> {
+        func detected(_ isFieldLike: Bool) -> Set<String> {
+            Set(entries.compactMap { entry -> String? in
+                let names = countryNames(for: entry.country)
+                guard names.contains(where: { name in
+                    lines.contains { line in
+                        containsPhrase(name, in: line)
+                            && (!isFieldLike || name.count * 2 + 24 >= line.count)
+                    }
+                }) else { return nil }
+                return entry.country
+            })
+        }
+        let fieldLike = detected(true)
+        if !fieldLike.isEmpty { return fieldLike }
+        return Set(entries.compactMap { entry in
+            countryNames(for: entry.country).contains(where: { containsPhrase($0, in: fullText) }) ? entry.country : nil
+        })
+    }
+
+    /// A country name printed only inside a larger place name that belongs to a
+    /// different state is not that country. "United Kingdom of Great Britain and
+    /// Northern Ireland" names one country, and reading "Ireland" out of it put
+    /// every UK Apostille under the wrong authority.
+    private var shadowingPhrases: [String: [String]] {
+        ["ireland": ["northern ireland"]]
+    }
+
     private func containsPhrase(_ phrase: String, in text: String) -> Bool {
-        " \(text) ".contains(" \(phrase) ")
+        var padded = " \(text) "
+        for shadow in shadowingPhrases[phrase] ?? [] {
+            padded = padded.replacingOccurrences(of: " \(shadow) ", with: " ")
+        }
+        return padded.contains(" \(phrase) ")
     }
 
     private var authorityAliases: [String: [String]] {

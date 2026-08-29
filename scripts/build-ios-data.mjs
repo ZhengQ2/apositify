@@ -10,7 +10,14 @@ function inferredStandardItem(label) {
   const isDate = /(date|fecha|emission|issue|dated)/.test(value)
   if (isDate && !/(signature|underlying|source document)/.test(value)) return 6
   const specialCode = /(security|verification|access|keycode|sticker|application|barcode|reference|crc|control|clave|codigo|code)/.test(value)
-  if (!specialCode && /(apostille number|apostille no|certificate number|document number|number|\bid\b)/.test(value)) return 8
+  // Authorities label item 8 in their own language. Matching only the English
+  // word left Spanish, French, Portuguese and German fields with no item at
+  // all, so the number printed on the certificate could never reach them.
+  // "Notarial Certificate No." numbers the underlying document, not the
+  // Apostille, so its item 8 belongs to a different piece of paper.
+  if (/(notarial|notary|underlying|source document)/.test(value)) return null
+  const numberWord = /(number|numero|numéro|numer|nummer|\bno\b|\bnum\b)/
+  if (!specialCode && (/(apostille number|apostille no|certificate number|document number|\bid\b)/.test(value) || numberWord.test(value))) return 8
   return null
 }
 
@@ -34,6 +41,11 @@ function genericAliases(label, standardItem) {
   if (value.includes('application')) return ['Application number', 'Application No.', 'Request number', 'Número de solicitud']
   if (value.includes('barcode')) return ['Barcode number', 'Número del código de barras']
   if (value.includes('keycode')) return ['Keycode', 'Key code', 'Security key']
+  // Costa Rica prints its apostille code as "Código: NCDXATKNWGC". A label that
+  // says only "code" still needs the word the certificate actually prints. The
+  // bare English "Code" is deliberately not an alias: bilingual certificates
+  // print it as a sub-label — "(Code – Code:)" — with no value after it.
+  if (value.includes('code') || value.includes('codigo')) return ['Código', 'Codigo']
   return []
 }
 

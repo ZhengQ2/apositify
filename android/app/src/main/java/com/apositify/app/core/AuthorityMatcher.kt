@@ -11,7 +11,8 @@ class AuthorityMatcher(private val entries: List<RegisterEntry>) {
         val itemSeven = ApostilleParser.numberedItems(recognition.lines)[7]?.let(::normalize).orEmpty()
         val tokens = text.split(' ').toSet()
         val itemTokens = itemSeven.split(' ').toSet()
-        val countries = entries.map { it.country }.distinct().filter { countryNames(it).any { name -> phrase(name, text) } }.toSet()
+        val lines = recognition.lines.map { normalize(it.text) }
+        val countries = detectCountries(lines, text)
 
         return entries.mapNotNull { entry ->
             val countryHit = entry.country in countries
@@ -44,7 +45,7 @@ class AuthorityMatcher(private val entries: List<RegisterEntry>) {
         "China" -> listOf("china", "中国", "中國")
         "Türkiye" -> listOf("turkiye", "turkey", "türkiye")
         "United States of America" -> listOf("united states of america", "united states", "usa")
-        "Russian Federation" -> listOf("russian federation", "russia", "россия")
+        "Russian Federation" -> listOf("russian federation", "russia", "российская федерация", "россия")
         else -> emptyList()
     }).map(::normalize).distinct()
 
@@ -55,7 +56,34 @@ class AuthorityMatcher(private val entries: List<RegisterEntry>) {
 
     private fun normalize(value: String) = Normalizer.normalize(value, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")
         .lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), " ").replace(Regex("\\s+"), " ").trim()
-    private fun phrase(needle: String, haystack: String) = " $haystack ".contains(" $needle ")
+    /// An Apostille prints its country as a field value, not inside a sentence.
+    /// A Hong Kong certificate whose attached notarial page happened to mention
+    /// exporting goods "to India" was read as an Indian Apostille, because a
+    /// country name anywhere on the page counted the same as the country field.
+    /// Require the name to account for a real share of the line it sits on, and
+    /// fall back to the whole page when that finds nothing.
+    private fun detectCountries(lines: List<String>, text: String): Set<String> {
+        val distinctCountries = entries.map { it.country }.distinct()
+        val fieldLike = distinctCountries.filter { country ->
+            countryNames(country).any { name ->
+                lines.any { line -> phrase(name, line) && name.length * 2 + 24 >= line.length }
+            }
+        }.toSet()
+        if (fieldLike.isNotEmpty()) return fieldLike
+        return distinctCountries.filter { countryNames(it).any { name -> phrase(name, text) } }.toSet()
+    }
+
+    /// A country name printed only inside a larger place name belonging to a
+    /// different state is not that country. "United Kingdom of Great Britain and
+    /// Northern Ireland" names one country, and reading "Ireland" out of it put
+    /// every UK Apostille under the wrong authority.
+    private val shadowingPhrases = mapOf("ireland" to listOf("northern ireland"))
+
+    private fun phrase(needle: String, haystack: String): Boolean {
+        var padded = " $haystack "
+        shadowingPhrases[needle].orEmpty().forEach { padded = padded.replace(" $it ", " ") }
+        return padded.contains(" $needle ")
+    }
 
     private val aliases = mapOf(
         "united-kingdom-foreign-and-commonwealth-office" to listOf("legalisation office", "legalization office", "foreign commonwealth and development office", "fcdo"),

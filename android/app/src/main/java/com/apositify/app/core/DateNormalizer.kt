@@ -38,8 +38,16 @@ object DateNormalizer {
             return validIso(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
         }
 
-        val cleaned = value.replace(Regex("(?i)\\bde\\b"), " ").replace(Regex("\\s+"), " ").trim()
-        val patterns = listOf("d MMMM uuuu", "d MMM uuuu", "MMMM d, uuuu", "MMM d, uuuu")
+        // Japan prints "Jul. 10.2026": the month is abbreviated with a period
+        // and the same period separates day from year. Numeric forms have
+        // already returned above, so loosening the separators here is safe.
+        val cleaned = value.replace(Regex("(?i)\\bde\\b"), " ")
+            .replace(Regex("(?<=\\p{L})[.,]"), " ")
+            .replace(Regex("(?<=\\d)[.,](?=\\d{4})"), " ")
+            .replace(Regex("\\s+"), " ").trim()
+        val patterns = listOf(
+            "d MMMM uuuu", "d MMM uuuu", "MMMM d, uuuu", "MMM d, uuuu", "MMMM d uuuu", "MMM d uuuu",
+        )
         val locales = listOf(
             Locale.ENGLISH, Locale.FRENCH, Locale.forLanguageTag("es"),
             Locale.GERMAN, Locale.ITALIAN, Locale.forLanguageTag("pt"),

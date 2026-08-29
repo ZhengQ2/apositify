@@ -491,3 +491,139 @@ expect(
 )
 
 print("Apositify iOS core tests passed")
+
+// MARK: - Regressions found by sweeping the whole specimen corpus
+//
+// Every case below is the OCR text a real specimen actually produced, on an
+// iPhone or a Pixel, reduced to the lines that mattered.
+
+func fields(_ authorityId: String, _ texts: [String]) -> [ExtractedField] {
+    let entry = catalog.entries.first { $0.id == authorityId }!
+    return ApostilleParser.extractFields(for: entry, from: RecognitionResult(lines: texts.map { line($0) }))
+}
+
+func field(_ authorityId: String, _ id: String, _ texts: [String]) -> ExtractedField {
+    fields(authorityId, texts).first { $0.id == id }!
+}
+
+// A Xiaohongshu watermark across the top of a photographed Japanese Apostille
+// put three reference-shaped strings above the certificate number. The review
+// shortlist was trimmed before the item resolver's own choice was ranked into
+// it, so the printed number was dropped from the suggestions altogether.
+let japanNumber = field("japan-ministry-of-foreign-affairs", "field-0", [
+    "13小红薯69F7FF90",
+    "令和8年 7",
+    "東京都千代田区丸の内三丁目3番1号",
+    "8. No.",
+    "26028925"
+])
+expect(
+    japanNumber.suggestedValues.first == "26028925",
+    "the printed certificate number must lead the review shortlist, not be trimmed out of it"
+)
+
+// Japan prints its issue date as "Jul. 10.2026" — no space before the year.
+let japanDate = field("japan-ministry-of-foreign-affairs", "field-1", [
+    "6.", "Jul. 10.2026", "8. No.", "26028925"
+])
+expect(japanDate.isoDate == "2026-07-10", "a month name joined to its year by a period must still parse")
+
+// 12/07/2019 is either 12 July or 7 December and the certificate does not say.
+// Refusing to guess is right; returning nothing left the user with a blank
+// field and no sign of what had been read.
+let costaRicaDate = field("costa-rica-ministry-of-foreign-affairs-and-worship", "apostilleDate", [
+    "1. País: Costa Rica", "6. El: 12/07/2019", "8. No.: 589210"
+])
+expect(costaRicaDate.value.isEmpty, "an ambiguous numeric date must not be confirmed")
+expect(
+    Set(costaRicaDate.suggestedValues) == Set(["2019-07-12", "2019-12-07"]),
+    "both readings of an ambiguous numeric date must be offered for review"
+)
+
+// Costa Rica's verifier wants the code printed at the top right, which is not
+// item 8. Its label is Spanish, so an English-only alias never found it.
+let costaRicaCode = field("costa-rica-ministry-of-foreign-affairs-and-worship", "apostilleCode", [
+    "Código: NCDXATKNWGC", "(Code – Code:)", "8. No.: 589210"
+])
+expect(costaRicaCode.value == "NCDXATKNWGC", "a Spanish-labelled apostille code must be extracted")
+
+// Chile prints "Fecha Emisión [ 28-10-2016 ]". The brackets and the repeated
+// label are not part of what its verifier accepts.
+let chileDate = field(
+    "chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service",
+    "field-1",
+    ["1. País", "CHILE", "Número Apostilla [ EAC42604 ]", "Fecha Emisión [ 28-10-2016 ]"]
+)
+expect(chileDate.value == "28-10-2016", "a labelled date must be narrowed to the date itself, got '\(chileDate.value)'")
+
+// Chile labels item 8 in Spanish. With no standard item the printed number
+// could never reach the field at all.
+let chileNumber = field(
+    "chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service",
+    "field-0",
+    ["8. Bajo el número", "EAC42604", "Ley N° 19.799", "Ley N° 20.711"]
+)
+expect(
+    chileNumber.value == "EAC42604" || chileNumber.suggestedValues.first == "EAC42604",
+    "a Spanish-labelled apostille number must reach its field, got '\(chileNumber.value)' \(chileNumber.suggestedValues)"
+)
+
+// A legalisation sticker prints a fee beside the reference. "GBP40.00" is
+// shaped like a reference and was confirmed as the certificate number.
+let ukNumber = field("united-kingdom-foreign-and-commonwealth-office", "field-1", [
+    "8. Number", "APO-: XXXXXXXXXXX", "Price: GBP40.00"
+])
+expect(ukNumber.value != "GBP40.00", "a currency amount must never be submitted as a certificate number")
+
+// Hong Kong's Year field took the next word out of "…in the Year Two Thousand
+// and Twenty-six", and its Reference Code took a fragment of Japanese.
+let hongKongYear = field(
+    "china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court",
+    "field-1",
+    ["affixed my Seal of Office this 12th", "day of February in the Year Two", "Thousand and Twenty-six."]
+)
+expect(hongKongYear.value.isEmpty, "a Year field must not be filled with the word after the label, got '\(hongKongYear.value)'")
+
+func topAuthority(_ texts: [String]) -> RegisterEntry? {
+    AuthorityMatcher(entries: catalog.entries)
+        .matches(for: RecognitionResult(lines: texts.map { line($0) }))
+        .first?.entry
+}
+
+// "United Kingdom of Great Britain and Northern Ireland" names one country.
+// Reading "Ireland" out of it put every UK Apostille under the wrong state.
+let unitedKingdom = topAuthority([
+    "1. Country:",
+    "United Kingdom of Great Britain and Northern Ireland",
+    "7. by Her Majesty's Principal Secretary of State for",
+    "Foreign, Commonwealth and Development Affairs",
+    "By: Legalisation Office (Foreign, Commonwealth & Development Office)"
+])
+expect(
+    unitedKingdom?.country == "United Kingdom",
+    "Northern Ireland must not be read as Ireland, got \(unitedKingdom?.country ?? "none")"
+)
+
+// Russia prints its own name in Cyrillic and nothing matched it.
+let russia = topAuthority([
+    "1. Страна:", "Российская Федерация", "6. Дата 29.02.2024",
+    "7. учреждение Начальник отдела международной правовой помощи и проставления апостиля"
+])
+expect(
+    russia?.country == "Russian Federation",
+    "the Russian Federation must match its own printed name, got \(russia?.country ?? "none")"
+)
+
+// An Apostille prints its country as a field value. A Hong Kong certificate
+// whose attached notarial page mentioned exporting goods "to India" was read
+// as an Indian Apostille.
+let hongKong = topAuthority([
+    "1. Letter of Consent for Importing Carbendazim Technical 98 % w/w min to India",
+    "1. Country: Hong Kong, China",
+    "5. at High Court",
+    "7. by Simon KWANG Registrar, High Court"
+])
+expect(
+    hongKong?.id == "china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court",
+    "a country named inside a sentence must not outrank the country field, got \(hongKong?.id ?? "none")"
+)

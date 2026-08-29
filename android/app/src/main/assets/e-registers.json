@@ -129,7 +129,9 @@
             "label": "Dependency Code (-APN- prefix)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Dependency Code (-APN- prefix)"
+              "Dependency Code (-APN- prefix)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -201,7 +203,9 @@
             "label": "Document tracking code (16 digits)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Document tracking code (16 digits)"
+              "Document tracking code (16 digits)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -618,7 +622,9 @@
             "label": "Code",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Code"
+              "Code",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -654,7 +660,9 @@
             "label": "Apostille Code",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Apostille Code"
+              "Apostille Code",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -664,7 +672,9 @@
             "label": "CAPTCHA code shown on page",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "CAPTCHA code shown on page"
+              "CAPTCHA code shown on page",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "portal"
@@ -987,10 +997,21 @@
             "label": "Numéro de l'apostille",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Numéro de l'apostille"
+              "Numéro de l'apostille",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-1",
@@ -1057,10 +1078,22 @@
             "label": "Número de Legalización/Apostille",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Número de Legalización/Apostille"
+              "Número de Legalización/Apostille",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-1",
@@ -1104,7 +1137,9 @@
             "label": "CAPTCHA code shown on page",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "CAPTCHA code shown on page"
+              "CAPTCHA code shown on page",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "portal"
@@ -1453,7 +1488,9 @@
             "label": "Apostille code",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Apostille code"
+              "Apostille code",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -2156,7 +2193,9 @@
             "label": "Código de Apostilla (Apostille code)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Código de Apostilla (Apostille code)"
+              "Código de Apostilla (Apostille code)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -2721,7 +2760,9 @@
             "label": "Código de documento (Document code)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Código de documento (Document code)"
+              "Código de documento (Document code)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -2798,7 +2839,9 @@
             "label": "Clave (Code)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Clave (Code)"
+              "Clave (Code)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -2824,7 +2867,9 @@
             "label": "Apostille code",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Apostille code"
+              "Apostille code",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document",
@@ -3316,10 +3361,22 @@
             "label": "Número de Apostilla/Certificación de Firma",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Número de Apostilla/Certificación de Firma"
+              "Número de Apostilla/Certificación de Firma",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-2",
@@ -3377,7 +3434,9 @@
             "label": "Serial Code (e.g. 26C, 25A, 24A)",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Serial Code (e.g. 26C, 25A, 24A)"
+              "Serial Code (e.g. 26C, 25A, 24A)",
+              "Código",
+              "Codigo"
             ],
             "browserSelectors": [],
             "captureSource": "document"
@@ -3808,10 +3867,21 @@
             "label": "Número de Apostilla",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Número de Apostilla"
+              "Número de Apostilla",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-2",
@@ -4948,10 +5018,21 @@
             "label": "Número de Apostilla",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Número de Apostilla"
+              "Número de Apostilla",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-1",
@@ -5070,10 +5151,22 @@
             "label": "Número de Legalización/Apostilla",
             "placeholder": "Exactly as printed",
             "aliases": [
-              "Número de Legalización/Apostilla"
+              "Número de Legalización/Apostilla",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
             ],
             "browserSelectors": [],
-            "captureSource": "document"
+            "captureSource": "document",
+            "standardItem": 8
           },
           {
             "id": "field-1",

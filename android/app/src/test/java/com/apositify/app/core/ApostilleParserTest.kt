@@ -52,6 +52,26 @@ class ApostilleParserTest {
         assertTrue(field.suggestedValues.size >= 2)
     }
 
+    @Test fun languageCorrectionRejectsZeroPrefixedMonthAsCertificateNumber() {
+        val result = RecognitionResult(listOf(
+            RecognizedLine("Convention of 5 0ctober"),
+            RecognizedLine("ON-26-506237-8785"),
+            RecognizedLine("8. NO sous n°"),
+            RecognizedLine("8. N° / sous n°"),
+        ))
+        val field = ApostilleParser.extractFields(entry(fields = listOf(number)), result).single()
+        assertEquals("ON-26-506237-8785", field.value)
+    }
+
+    @Test fun corruptedBilingualNumberLabelCannotBecomeTheNumber() {
+        val ontarioNumber = number.copy(pattern = "\\b[A-Z]{2}-\\d{2}-\\d{6}-\\d{4}\\b")
+        val field = ApostilleParser.extractFields(entry(fields = listOf(ontarioNumber)), RecognitionResult(listOf(
+            RecognizedLine("8. N°7sous n。"),
+            RecognizedLine("ON-26-506237-8785"),
+        ))).single()
+        assertEquals("ON-26-506237-8785", field.value)
+    }
+
     @Test fun authoritySpecificPatternHandlesNonStandardSticker() {
         val sticker = VerificationField("sticker", "Sticker number", pattern = "\\b\\d{10}\\b", aliases = listOf("Sticker number"))
         val field = ApostilleParser.extractFields(entry(listOf(sticker), "China"), RecognitionResult(listOf(

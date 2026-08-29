@@ -196,7 +196,7 @@ private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit) {
         containerColor = PageBackground,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Apositify", fontWeight = FontWeight.SemiBold) },
+                title = { Text("Apostifi", fontWeight = FontWeight.SemiBold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PageBackground),
             )
         },
@@ -278,7 +278,7 @@ private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 Text("Private by design", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Text(
-                    "Recognition happens on this device. Scans are not uploaded or retained by Apositify.",
+                    "Recognition happens on this device. Scans are not uploaded or retained by Apostifi.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.DarkGray,
                 )
@@ -435,7 +435,7 @@ private fun ReviewScreen(
             }
 
             SectionCard("Official verification") {
-                Text("The issuing authority’s website makes the authenticity decision. Apositify only helps route and fill reviewed values.")
+                Text("The issuing authority’s website makes the authenticity decision. Apostifi only helps route and fill reviewed values.")
                 if (route == VerificationRoute.Unavailable) {
                     Text("No official online verifier is recorded for this authority.", color = Color(0xFF9B5D00))
                 } else {
@@ -485,7 +485,7 @@ private fun ReviewScreen(
 @Composable private fun InsecureWarning(cancel: () -> Unit, proceed: () -> Unit) = AlertDialog(
     onDismissRequest = cancel,
     title = { Text("This verifier is not secure") },
-    text = { Text("This authority only provides an unencrypted HTTP page. Apositify will open it outside the branded verifier and will not send or autofill certificate values.") },
+    text = { Text("This authority only provides an unencrypted HTTP page. Apostifi will open it outside the branded verifier and will not send or autofill certificate values.") },
     confirmButton = { TextButton(onClick = proceed) { Text("Open externally") } },
     dismissButton = { TextButton(onClick = cancel) { Text("Cancel") } },
 )

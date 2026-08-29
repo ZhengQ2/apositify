@@ -3,6 +3,15 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// Real-device photo fixtures intentionally live under the repository's
+// ignored specimens/ directory. Local test builds package them when present;
+// remote checkouts still compile and the fixture-dependent tests skip.
+val prepareLocalRecognitionTestAssets by tasks.registering(Sync::class) {
+    from(rootProject.file("../specimens/device-test-local"))
+    into(layout.buildDirectory.dir("generated/localRecognitionTestAssets"))
+}
+val localRecognitionTestAssetsDirectory = layout.buildDirectory.dir("generated/localRecognitionTestAssets").get().asFile
+
 android {
     namespace = "com.apositify.app"
     compileSdk = 37
@@ -27,6 +36,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     packaging.resources.excludes += setOf("/META-INF/{AL2.0,LGPL2.1}")
+
+    sourceSets.getByName("androidTest").assets.directories.add(localRecognitionTestAssetsDirectory.absolutePath)
+}
+
+tasks.matching { it.name == "mergeDebugAndroidTestAssets" }.configureEach {
+    dependsOn(prepareLocalRecognitionTestAssets)
 }
 
 dependencies {

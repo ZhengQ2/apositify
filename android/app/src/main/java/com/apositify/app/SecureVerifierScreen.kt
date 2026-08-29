@@ -336,7 +336,7 @@ fun SecureVerifierScreen(
         AlertDialog(
             onDismissRequest = { external = null },
             title = { Text("Leave the official verifier?") },
-            text = { Text("This link goes to ${uri.host ?: "another app"}, which is outside the approved authority hosts. It will open externally without Apositify branding or autofill.") },
+            text = { Text("This link goes to ${uri.host ?: "another app"}, which is outside the approved authority hosts. It will open externally without Apostifi branding or autofill.") },
             confirmButton = { TextButton(onClick = {
                 external = null
                 context.openExternally(uri.toString())

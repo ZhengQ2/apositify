@@ -221,8 +221,23 @@ object ApostilleParser {
         val cleaned = clean(value).trim('.', ':', '/', '|', '-', ' ')
         if (cleaned.length !in 4..48 || !cleaned.any(Char::isDigit) || cleaned.split(Regex("\\s+")).size > 3) return false
         if (DateNormalizer.isoDate(cleaned) != null) return false
+        // A slash between the bilingual labels is often read as 1 or 7,
+        // producing strings such as "N°7sous n。". This is still template
+        // text, not a reference, even though it now contains a digit.
+        if (Regex("(?i)^n[º°o.]?\\s*[17il|/]?\\s*sous\\s+n[º°o。.]*$").matches(cleaned)) return false
+        // Android OCR occasionally substitutes zero for the initial O in a
+        // month name (notably "0ctober"). iOS language correction fixes that
+        // before parsing; do the equivalent semantic correction here so a
+        // Convention date cannot become a second, ambiguous item-8 reference.
+        val correctedWord = normalize(cleaned).replace('0', 'o')
+        if (correctedWord in monthWords) return false
         return cleaned.count(Char::isLetterOrDigit) >= 4 && !(cleaned.all(Char::isDigit) && cleaned.length < 5)
     }
+
+    private val monthWords = setOf(
+        "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december",
+        "janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre",
+    )
 
     private val labelPatterns = mapOf(
         1 to "country|pays|pa[ií]s|land|paese|χώρα|[üu]lke|[țt]ara|страна|държава|الدولة|文书出具国|國家|国家|국가",

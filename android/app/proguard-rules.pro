@@ -1,1 +1,1 @@
-# Apositify currently relies on the default Android shrinker rules.
+# Apostifi currently relies on the default Android shrinker rules.

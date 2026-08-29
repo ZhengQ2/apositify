@@ -1,6 +1,6 @@
-# Apositify for Android
+# Apostifi for Android
 
-This directory contains the native Android implementation of Apositify. It uses
+This directory contains the native Android implementation of Apostifi. It uses
 Kotlin, Jetpack Compose, and bundled ML Kit models. The app accepts exactly one
 camera or gallery image per verification, scans allowlisted QR routes first, and
 falls back to on-device multilingual OCR and user review.
@@ -46,4 +46,4 @@ snapshot differs from the generated iOS/shared catalog.
   again immediately before browser autofill.
 - Only HTTPS authority hosts appear inside the branded verifier. HTTP and
   off-domain destinations open externally after a warning, without autofill.
-- No document image or recognized text is uploaded by Apositify.
+- No document image or recognized text is uploaded by Apostifi.

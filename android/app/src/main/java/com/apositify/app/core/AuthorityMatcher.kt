@@ -34,7 +34,11 @@ class AuthorityMatcher(private val entries: List<RegisterEntry>) {
         }.sortedWith(compareByDescending<AuthorityMatch> { it.score }.thenBy { it.entry.authority }).take(limit)
     }
 
-    private fun countryNames(country: String): List<String> = listOf(country) + when (country) {
+    // The parenthesis matters: `.map` used to bind to the `when` block alone,
+    // leaving the plain country name un-normalised and therefore unable to match
+    // the normalised scan text. Only countries with a hand-written lowercase
+    // alias below worked; the rest never matched at all.
+    private fun countryNames(country: String): List<String> = (listOf(country) + when (country) {
         "Korea, Republic of" -> listOf("republic of korea", "south korea", "대한민국")
         "Moldova, Republic of" -> listOf("republic of moldova", "moldova")
         "China" -> listOf("china", "中国", "中國")
@@ -42,7 +46,7 @@ class AuthorityMatcher(private val entries: List<RegisterEntry>) {
         "United States of America" -> listOf("united states of america", "united states", "usa")
         "Russian Federation" -> listOf("russian federation", "russia", "россия")
         else -> emptyList()
-    }.map(::normalize)
+    }).map(::normalize).distinct()
 
     private fun significant(value: String): List<String> {
         val ignored = setOf("and", "of", "the", "for", "to", "de", "la", "le", "du", "des", "et", "ministry", "minister", "department", "office", "authority")

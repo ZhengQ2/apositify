@@ -62,11 +62,10 @@ final class DeviceSpecimenTests: XCTestCase {
         XCTAssertEqual(costaRica?.country, "Costa Rica")
         let extracted = try await fields("costa-rica.png", "costa-rica-ministry-of-foreign-affairs-and-worship")
         XCTAssertEqual(extracted["apostilleCode"]?.value, "NCDXATKNWGC")
-        // 12/07/2019 is 12 July or 7 December. Neither may be confirmed, and
-        // both must be offered rather than the field coming back empty.
-        let date = try XCTUnwrap(extracted["apostilleDate"])
-        XCTAssertEqual(date.value, "")
-        XCTAssertEqual(Set(date.suggestedValues), Set(["2019-07-12", "2019-12-07"]))
+        // Costa Rica's is the one field in the catalogue that must submit ISO,
+        // so 12/07/2019 genuinely has to be interpreted. Costa Rica writes
+        // dates day-first and nothing on the page contradicts that.
+        XCTAssertEqual(extracted["apostilleDate"]?.value, "2019-07-12")
     }
 
     func testChileSubmitsValuesWithoutTheirPrintedWrappers() async throws {

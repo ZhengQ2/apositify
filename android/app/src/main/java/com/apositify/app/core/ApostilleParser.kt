@@ -16,14 +16,15 @@ object ApostilleParser {
     fun extractFields(entry: RegisterEntry, recognition: RecognitionResult): List<ExtractedField> {
         val items = resolvedItems(recognition.lines)
         return entry.verification?.fields.orEmpty().map { field ->
-            val candidates = if (field.captureSource == "portal") emptyList() else resolve(field, entry, recognition.lines, items)
+            val order = numericDateOrder(field, entry.country, recognition.lines)
+            val candidates = if (field.captureSource == "portal") emptyList() else resolve(field, entry, recognition.lines, items, order)
             val confirmed = candidates.singleOrNull()?.takeIf { isDeterministic(field, recognition.lines, candidates) }
             ExtractedField(
                 id = field.id,
                 label = field.label,
-                value = confirmed?.let { format(it.value, field, entry.country) }.orEmpty(),
+                value = confirmed?.let { format(it.value, field, order) }.orEmpty(),
                 sourceText = confirmed?.source,
-                suggestedValues = if (confirmed == null) candidates.map { format(it.value, field, entry.country) }.distinct().take(3) else emptyList(),
+                suggestedValues = if (confirmed == null) candidates.map { format(it.value, field, order) }.distinct().take(3) else emptyList(),
                 aliases = field.aliases,
                 browserSelectors = field.browserSelectors,
                 captureSource = field.captureSource,
@@ -36,6 +37,7 @@ object ApostilleParser {
         entry: RegisterEntry,
         lines: List<RecognizedLine>,
         items: Map<Int, Candidate>,
+        order: DateNormalizer.NumericOrder,
     ): List<Candidate> {
         field.pattern?.let { pattern ->
             val matches = patternCandidates(pattern, lines)
@@ -44,14 +46,14 @@ object ApostilleParser {
 
         val anchors = anchors(lines).filter { it.item == field.standardItem }
         val inline = anchors.mapNotNull { anchor ->
-            anchor.inline.takeIf { it.isNotBlank() && semantic(field, it, entry.country) }?.let { Candidate(it, anchor.line.text) }
+            anchor.inline.takeIf { it.isNotBlank() && semantic(field, it, order) }?.let { Candidate(it, anchor.line.text) }
         }
         if (inline.isNotEmpty()) return unique(inline)
 
-        inlineLabeled(field, lines, entry.country)?.let { return listOf(it) }
+        inlineLabeled(field, lines, order)?.let { return listOf(it) }
 
         if (field.standardItem == 6) {
-            val dates = dateCandidates(lines, entry.country)
+            val dates = dateCandidates(lines, field, order)
             if (dates.size == 1 && (anchors.isNotEmpty() || hasIssueDateSignal(dates[0].source))) return dates
             return prefer(items[6], dates)
         }
@@ -155,6 +157,57 @@ object ApostilleParser {
         return result
     }
 
+    /// How to read a numeric date on this scan, taking the strongest evidence
+    /// available. Nationality is the last resort, not the first: the
+    /// certificate usually declares its own order, and where it does not,
+    /// another date printed on the same page often settles it.
+    private fun numericDateOrder(
+        field: VerificationField,
+        country: String,
+        lines: List<RecognizedLine>,
+    ): DateNormalizer.NumericOrder =
+        declaredDateOrder(field) ?: pageDateOrder(lines) ?: DateNormalizer.orderFor(country)
+
+    /// Four authorities print their own date order inside the field label —
+    /// "Date (DD.MM.YYYY)", "Date Printed (MM-DD-YYYY)". That is the issuing
+    /// authority stating the format of its own certificate, which beats any
+    /// assumption made from the country it sits in.
+    private fun declaredDateOrder(field: VerificationField): DateNormalizer.NumericOrder? {
+        if (field.format == "date-dotted") return DateNormalizer.NumericOrder.DAY_FIRST
+        val mask = Regex("\\([DMY][DMY./\\- ]*\\)").find(field.label)?.value ?: return null
+        val day = mask.indexOf('D')
+        val month = mask.indexOf('M')
+        if (day < 0 || month < 0) return null
+        return if (day < month) DateNormalizer.NumericOrder.DAY_FIRST else DateNormalizer.NumericOrder.MONTH_FIRST
+    }
+
+    /// One page is printed by one authority in one order, so a date elsewhere
+    /// on it whose day exceeds 12 settles how to read the ambiguous one.
+    private fun pageDateOrder(lines: List<RecognizedLine>): DateNormalizer.NumericOrder? {
+        val orders = mutableSetOf<DateNormalizer.NumericOrder>()
+        val regex = Regex("(?<!\\d)(\\d{1,2})[-./](\\d{1,2})[-./]\\d{2,4}(?!\\d)")
+        for (line in lines.filterNot { conventionReference(it.text) }) {
+            for (match in regex.findAll(line.text)) {
+                val first = match.groupValues[1].toIntOrNull() ?: continue
+                val second = match.groupValues[2].toIntOrNull() ?: continue
+                if (first > 12 && second in 1..12) orders += DateNormalizer.NumericOrder.DAY_FIRST
+                if (second > 12 && first in 1..12) orders += DateNormalizer.NumericOrder.MONTH_FIRST
+            }
+        }
+        return orders.singleOrNull()
+    }
+
+    /// A field that submits the date exactly as printed never needs to know
+    /// which number is the day. Only a declared output format — or filling a
+    /// browser date input — requires the date to be interpreted at all.
+    private fun requiresDateInterpretation(field: VerificationField) =
+        field.format == "date-iso" || field.format == "date-dotted"
+
+    /// Whether the text is a date at all, under either reading of it.
+    private fun isDateShaped(value: String) =
+        DateNormalizer.isoDate(value, DateNormalizer.NumericOrder.DAY_FIRST) != null ||
+            DateNormalizer.isoDate(value, DateNormalizer.NumericOrder.MONTH_FIRST) != null
+
     /// Shapes a printed date can take, in every language the corpus prints.
     /// Loose on purpose: each match is gated on parsing as a real date.
     private val datePatterns = listOf(
@@ -169,16 +222,36 @@ object ApostilleParser {
     )
 
     /// The date inside a longer labelled phrase.
-    private fun dateSubstring(value: String, country: String): String? =
-        datePatterns.firstNotNullOfOrNull { regex ->
-            regex.find(value)?.value?.takeIf { DateNormalizer.isoDate(it, country) != null }
-        }
+    private fun dateSubstring(
+        value: String,
+        field: VerificationField,
+        order: DateNormalizer.NumericOrder,
+    ): String? = datePatterns.firstNotNullOfOrNull { regex ->
+        regex.find(value)?.value?.takeIf { usableDate(it, field, order) }
+    }
 
-    private fun dateCandidates(lines: List<RecognizedLine>, country: String): List<Candidate> {
-        val seenIso = mutableSetOf<String>()
+    /// Submitting the printed text needs the date recognised, not interpreted.
+    /// Requiring an interpretation blanked the field on roughly two scans in
+    /// five — every date whose day is 12 or lower — to settle a question the
+    /// verifier's form never asks.
+    private fun usableDate(value: String, field: VerificationField, order: DateNormalizer.NumericOrder) =
+        DateNormalizer.isoDate(value, order) != null ||
+            (!requiresDateInterpretation(field) && isDateShaped(value))
+
+    private fun dateCandidates(
+        lines: List<RecognizedLine>,
+        field: VerificationField,
+        order: DateNormalizer.NumericOrder,
+    ): List<Candidate> {
+        val seen = mutableSetOf<String>()
         return lines.filterNot { conventionReference(it.text) }.flatMap { line ->
             datePatterns.flatMap { regex -> regex.findAll(line.text).mapNotNull { match ->
-                DateNormalizer.isoDate(match.value, country)?.takeIf(seenIso::add)?.let { Candidate(match.value, line.text) }
+                if (!usableDate(match.value, field, order)) return@mapNotNull null
+                // Different languages can print the same date on one line.
+                // Collapse those by meaning where we have it, spelling otherwise.
+                val key = DateNormalizer.isoDate(match.value, order) ?: normalize(match.value)
+                if (!seen.add(key)) return@mapNotNull null
+                Candidate(match.value, line.text)
             }.toList() }
         }
     }
@@ -195,15 +268,19 @@ object ApostilleParser {
         })
     }
 
-    private fun inlineLabeled(field: VerificationField, lines: List<RecognizedLine>, country: String): Candidate? {
+    private fun inlineLabeled(
+        field: VerificationField,
+        lines: List<RecognizedLine>,
+        order: DateNormalizer.NumericOrder,
+    ): Candidate? {
         for (line in lines) for (alias in field.aliases.sortedByDescending(String::length)) {
             val index = line.text.indexOf(alias, ignoreCase = true)
             if (index < 0) continue
             val value = clean(line.text.substring(index + alias.length).trim(' ', ':', '/', '-', '–', '—'))
-            if (value.isNotBlank() && semantic(field, value, country) && suitsLabel(value, field)) {
+            if (value.isNotBlank() && semantic(field, value, order) && suitsLabel(value, field)) {
                 // Chile prints "Fecha Emisión [ 28-10-2016 ]". The brackets and
                 // the repeated label are not part of what its verifier accepts.
-                val narrowed = if (field.standardItem == 6) dateSubstring(value, country) else null
+                val narrowed = if (field.standardItem == 6) dateSubstring(value, field, order) else null
                 return Candidate(narrowed ?: value, line.text)
             }
         }
@@ -254,8 +331,8 @@ object ApostilleParser {
         return !asksForDigits || value.any(Char::isDigit)
     }
 
-    private fun semantic(field: VerificationField, value: String, country: String): Boolean = when (field.standardItem) {
-        6 -> DateNormalizer.isoDate(value, country) != null
+    private fun semantic(field: VerificationField, value: String, order: DateNormalizer.NumericOrder): Boolean = when (field.standardItem) {
+        6 -> usableDate(value, field, order)
         8 -> plausibleReference(value)
         else -> true
     }
@@ -263,7 +340,9 @@ object ApostilleParser {
     private fun plausibleReference(value: String): Boolean {
         val cleaned = clean(value).trim('.', ':', '/', '|', '-', ' ')
         if (cleaned.length !in 4..48 || !cleaned.any(Char::isDigit) || cleaned.split(Regex("\\s+")).size > 3) return false
-        if (DateNormalizer.isoDate(cleaned) != null) return false
+        // An ambiguous numeric date is still a date. It must never be offered
+        // as a certificate number just because it could not be interpreted.
+        if (isDateShaped(cleaned)) return false
         // A slash between the bilingual labels is often read as 1 or 7,
         // producing strings such as "N°7sous n。". This is still template
         // text, not a reference, even though it now contains a digit.
@@ -332,5 +411,6 @@ object ApostilleParser {
     private fun distinct(values: List<Candidate>): List<Candidate> = values.distinctBy { normalize(it.value) }
     private fun unique(values: List<Candidate>): List<Candidate> = distinct(values).take(REVIEW_SHORTLIST)
     private const val REVIEW_SHORTLIST = 3
-    private fun format(value: String, field: VerificationField, country: String) = DateNormalizer.formatted(clean(value), field.format, country)
+    private fun format(value: String, field: VerificationField, order: DateNormalizer.NumericOrder) =
+        DateNormalizer.formatted(clean(value), field.format, order)
 }

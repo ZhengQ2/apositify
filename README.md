@@ -66,6 +66,14 @@ directory. See `ios/ApositifySampleTests/README.md` for fixture and privacy rule
 The country-by-country primary-source review is recorded in
 `docs/OFFICIAL_EREGISTRY_SPECIMEN_AUDIT.md`.
 
+## Reading dates
+
+A numeric date such as `12/07/2019` has two readings, and about two dates in
+five are ambiguous this way. Most fields submit the date exactly as printed and
+so never need it interpreted; where interpretation is required, the order comes
+from the certificate itself before the country it was issued in. See
+[docs/NUMERIC_DATE_ORDER.md](docs/NUMERIC_DATE_ORDER.md).
+
 ## Information still needed
 
 If a future PDF extraction still has rows with `source_link_missing` or `hybrid_link_missing`, enrich `src/data/eAPP_implementation_chart_full.json` with the official URL and rerun `npm run clean:data`.

@@ -7,14 +7,24 @@ import java.time.format.ResolverStyle
 import java.util.Locale
 
 object DateNormalizer {
-    enum class NumericOrder { DAY_FIRST, MONTH_FIRST }
+    enum class NumericOrder { DAY_FIRST, MONTH_FIRST, UNKNOWN }
 
+    /// Day-first is right almost everywhere. The United States is month-first,
+    /// and three jurisdictions use both orders in everyday writing, so their
+    /// nationality decides nothing and the date must not be interpreted from
+    /// it. (The Philippines prints no date on its Apostille; Israel and Saudi
+    /// Arabia do. Saudi certificates may also carry a Hijri date, which no
+    /// day/month order can rescue.)
     fun orderFor(country: String): NumericOrder = when (country) {
         "United States of America" -> NumericOrder.MONTH_FIRST
+        "Philippines", "Saudi Arabia", "Israel" -> NumericOrder.UNKNOWN
         else -> NumericOrder.DAY_FIRST
     }
 
-    fun isoDate(raw: String, country: String? = null): String? {
+    fun isoDate(raw: String, country: String? = null): String? =
+        isoDate(raw, country?.let(::orderFor) ?: NumericOrder.UNKNOWN)
+
+    fun isoDate(raw: String, order: NumericOrder): String? {
         val value = raw.trim().replace(Regex("(?i)(\\d)(st|nd|rd|th)\\b"), "$1")
         Regex("^(\\d{4})[-./](\\d{1,2})[-./](\\d{1,2})$").matchEntire(value)?.let {
             return validIso(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
@@ -24,8 +34,7 @@ object DateNormalizer {
             val second = it.groupValues[2].toInt()
             val yearValue = it.groupValues[3].toInt()
             val year = if (yearValue < 100) 2000 + yearValue else yearValue
-            val order = country?.let(::orderFor)
-            if (first <= 12 && second <= 12 && order == null) return null
+            if (first <= 12 && second <= 12 && order == NumericOrder.UNKNOWN) return null
             val (day, month) = when {
                 first > 12 -> first to second
                 second > 12 -> second to first
@@ -60,8 +69,8 @@ object DateNormalizer {
         return null
     }
 
-    fun formatted(raw: String, format: String?, country: String): String {
-        val iso = isoDate(raw, country) ?: return raw.trim()
+    fun formatted(raw: String, format: String?, order: NumericOrder): String {
+        val iso = isoDate(raw, order) ?: return raw.trim()
         val date = LocalDate.parse(iso)
         return when (format) {
             "date-iso" -> iso

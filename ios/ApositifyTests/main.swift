@@ -528,16 +528,22 @@ let japanDate = field("japan-ministry-of-foreign-affairs", "field-1", [
 ])
 expect(japanDate.isoDate == "2026-07-10", "a month name joined to its year by a period must still parse")
 
-// 12/07/2019 is either 12 July or 7 December and the certificate does not say.
-// Refusing to guess is right; returning nothing left the user with a blank
-// field and no sign of what had been read.
+// Costa Rica is the one authority whose field must submit ISO, so 12/07/2019
+// genuinely has to be interpreted. Costa Rica writes dates day-first, and
+// nothing on the page contradicts that, so it resolves rather than asking.
 let costaRicaDate = field("costa-rica-ministry-of-foreign-affairs-and-worship", "apostilleDate", [
     "1. País: Costa Rica", "6. El: 12/07/2019", "8. No.: 589210"
 ])
-expect(costaRicaDate.value.isEmpty, "an ambiguous numeric date must not be confirmed")
+expect(costaRicaDate.value == "2019-07-12", "a day-first country resolves its own numeric date, got '\(costaRicaDate.value)'")
+
+// Where both orders are in everyday use the country says nothing, and a field
+// that must submit ISO cannot invent an answer. Israel is one of the three.
+let israelDate = field("israel-ministry-of-justice", "field-1", [
+    "1. Country: Israel", "6. the 12/07/2019"
+])
 expect(
-    Set(costaRicaDate.suggestedValues) == Set(["2019-07-12", "2019-12-07"]),
-    "both readings of an ambiguous numeric date must be offered for review"
+    israelDate.value == "12/07/2019",
+    "a field that submits the printed text needs the date read, not interpreted, got '\(israelDate.value)'"
 )
 
 // Costa Rica's verifier wants the code printed at the top right, which is not
@@ -634,3 +640,40 @@ let brazilCode = field("brazil-national-council-of-justice", "field-0", [
     "9. Selo / Carimbo", "(Code)", "(Codet"
 ])
 expect(brazilCode.value.isEmpty, "a value that only repeats its own label must be rejected, got '\(brazilCode.value)'")
+
+// The certificate's own declared order outranks any assumption from the
+// country it was issued in. Washington State prints "(MM-DD-YYYY)" in the
+// field label, so 05/09/2022 is 9 May, not 5 September.
+let washington = field("united-states-of-america-washington-secretary-of-state", "field-0", [
+    "1. Country: United States of America", "6. Date Printed 05/09/2022"
+])
+expect(washington.isoDate == "2022-05-09", "a label-declared order must be honoured, got \(washington.isoDate ?? "none")")
+
+// Azerbaijan declares day-first in its label, against the same printed digits.
+let azerbaijan = field("azerbaijan-ministry-of-justice", "field-1", [
+    "1. Country: Azerbaijan", "6. Date 05/09/2022"
+])
+expect(azerbaijan.isoDate == "2022-09-05", "a day-first label must be honoured, got \(azerbaijan.isoDate ?? "none")")
+
+// One page is printed by one authority in one order, so a date elsewhere on it
+// whose day exceeds 12 settles how to read the ambiguous one. Here the page
+// evidence contradicts the country default and must win.
+let pageEvidence = field("united-states-of-america-california-secretary-of-state", "field-1", [
+    "1. Country: United States of America",
+    "Signed on 25/12/2021",
+    "6. Issue Date: 05/09/2022"
+])
+expect(
+    pageEvidence.isoDate == "2022-09-05",
+    "an unambiguous date on the same page must set the order, got \(pageEvidence.isoDate ?? "none")"
+)
+
+// An ambiguous numeric date is still a date. It must never be offered as a
+// certificate number just because it could not be interpreted.
+let numberBesideDate = field("israel-ministry-of-justice", "field-0", [
+    "6. the 12/07/2019", "8. No. IL-4471-22"
+])
+expect(
+    !numberBesideDate.suggestedValues.contains("12/07/2019") && numberBesideDate.value != "12/07/2019",
+    "a date must never be offered as a certificate number, got '\(numberBesideDate.value)' \(numberBesideDate.suggestedValues)"
+)

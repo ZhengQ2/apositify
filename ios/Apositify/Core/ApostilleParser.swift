@@ -57,8 +57,9 @@ struct ApostilleParser {
         let items = resolvedItems(in: recognition.lines)
 
         return fields.map { field in
+            let order = numericDateOrder(for: field, country: entry.country, lines: recognition.lines)
             let resolution = field.captureSource == .document
-                ? resolve(field: field, lines: recognition.lines, items: items)
+                ? resolve(field: field, lines: recognition.lines, items: items, order: order)
                 : FieldResolution(confirmed: nil, alternatives: [])
             let extracted = resolution.confirmed
             let value = extracted?.value ?? ""
@@ -68,7 +69,9 @@ struct ApostilleParser {
                 value: value,
                 confidence: extracted?.confidence ?? 0,
                 sourceText: extracted?.source,
-                isoDate: field.standardItem == 6 ? isoDate(from: value, expectedFormat: field.format) : nil,
+                isoDate: field.standardItem == 6
+                    ? isoDate(from: value, expectedFormat: field.format, order: order)
+                    : nil,
                 suggestedValues: resolution.alternatives.map(\.value),
                 aliases: field.aliases,
                 browserSelectors: field.browserSelectors,
@@ -83,18 +86,19 @@ struct ApostilleParser {
     private static func resolve(
         field: VerificationField,
         lines: [RecognizedLine],
-        items: [Int: Candidate]
+        items: [Int: Candidate],
+        order: NumericDateOrder
     ) -> FieldResolution {
         guard field.standardItem == 6 || field.standardItem == 8 else {
             return FieldResolution(
-                confirmed: candidate(for: field, lines: lines, items: items),
+                confirmed: candidate(for: field, lines: lines, items: items, order: order),
                 alternatives: []
             )
         }
 
         if let pattern = field.pattern {
             let matches = uniqueCandidates(
-                candidatesMatching(pattern: pattern, in: lines).map { format($0, for: field) }
+                candidatesMatching(pattern: pattern, in: lines).map { format($0, for: field, order: order) }
             )
             if matches.count == 1 { return FieldResolution(confirmed: matches[0], alternatives: []) }
             if matches.count > 1 { return FieldResolution(confirmed: nil, alternatives: matches) }
@@ -104,14 +108,14 @@ struct ApostilleParser {
         let inline = uniqueCandidates(anchors.compactMap { anchor -> Candidate? in
             guard !anchor.inlineValue.isEmpty else { return nil }
             let candidate: Candidate = (anchor.inlineValue, anchor.line.confidence, anchor.line.text)
-            guard isSemanticallyValid(candidate.value, for: field) else { return nil }
-            return format(candidate, for: field)
+            guard isSemanticallyValid(candidate.value, for: field, order: order) else { return nil }
+            return format(candidate, for: field, order: order)
         })
         if inline.count == 1 { return FieldResolution(confirmed: inline[0], alternatives: []) }
         if inline.count > 1 { return FieldResolution(confirmed: nil, alternatives: inline) }
 
         let semantic = field.standardItem == 6
-            ? dateCandidates(in: lines, for: field)
+            ? dateCandidates(in: lines, for: field, order: order)
             : referenceCandidates(in: lines, for: field)
         // Rank before trimming to the review shortlist. Candidates arrive in
         // reading order, so trimming first silently dropped the value the item
@@ -140,8 +144,8 @@ struct ApostilleParser {
 
         // A value explicitly labelled in the same OCR observation is also
         // deterministic even when Vision missed the printed item number.
-        if let labeled = inlineLabeledValue(for: field, in: lines) {
-            return FieldResolution(confirmed: format(labeled, for: field), alternatives: [])
+        if let labeled = inlineLabeledValue(for: field, in: lines, order: order) {
+            return FieldResolution(confirmed: format(labeled, for: field, order: order), alternatives: [])
         }
 
         if candidates.count == 1, field.standardItem == 6,
@@ -173,7 +177,11 @@ struct ApostilleParser {
         return fields.map { field in
             guard configuration[field.id]?.standardItem == 6 else { return field }
             var refreshed = field
-            refreshed.isoDate = isoDate(from: refreshed.value, expectedFormat: configuration[field.id]?.format)
+            refreshed.isoDate = isoDate(
+                from: refreshed.value,
+                expectedFormat: configuration[field.id]?.format,
+                order: countryDateOrder(for: entry.country)
+            )
             return refreshed
         }
     }
@@ -348,26 +356,40 @@ struct ApostilleParser {
     /// The date inside a longer labelled phrase. Chile prints
     /// "Fecha Emisión [ 28-10-2016 ]"; the brackets and the repeated label are
     /// not part of what its verifier accepts.
-    private static func dateSubstring(in value: String, for field: VerificationField) -> String? {
+    private static func dateSubstring(
+        in value: String,
+        for field: VerificationField,
+        order: NumericDateOrder = .unknown
+    ) -> String? {
         for pattern in datePatterns {
             guard let range = value.range(of: pattern, options: [.regularExpression, .caseInsensitive]) else { continue }
             let candidate = String(value[range])
-            if parseDate(candidate, expectedFormat: field.format) != nil { return candidate }
+            if parseDate(candidate, expectedFormat: field.format, order: order) != nil { return candidate }
+            if !requiresDateInterpretation(field), isDateShaped(candidate) { return candidate }
         }
         return nil
     }
 
-    private static func dateCandidates(in lines: [RecognizedLine], for field: VerificationField) -> [Candidate] {
-        let patterns = datePatterns
+    private static func dateCandidates(
+        in lines: [RecognizedLine],
+        for field: VerificationField,
+        order: NumericDateOrder
+    ) -> [Candidate] {
         var candidates: [Candidate] = []
         for line in lines where !isConventionReference(line.text) {
-            for pattern in patterns {
+            for pattern in datePatterns {
                 guard let expression = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { continue }
                 for match in expression.matches(in: line.text, range: NSRange(line.text.startIndex..., in: line.text)) {
                     guard let range = Range(match.range, in: line.text) else { continue }
                     let raw = String(line.text[range])
-                    guard parseDate(raw, expectedFormat: field.format) != nil else { continue }
-                    candidates.append(format((raw, line.confidence, line.text), for: field))
+                    // Submitting the printed text needs the date recognised, not
+                    // interpreted. Requiring an interpretation blanked the field
+                    // on roughly two scans in five — every date whose day is 12
+                    // or lower — to settle a question the form never asks.
+                    let usable = parseDate(raw, expectedFormat: field.format, order: order) != nil
+                        || (!requiresDateInterpretation(field) && isDateShaped(raw))
+                    guard usable else { continue }
+                    candidates.append(format((raw, line.confidence, line.text), for: field, order: order))
                 }
             }
         }
@@ -376,7 +398,8 @@ struct ApostilleParser {
         // those by their ISO meaning rather than their spelling.
         var seen = Set<String>()
         return candidates.filter { candidate in
-            let key = isoDate(from: candidate.value, expectedFormat: field.format) ?? normalize(candidate.value)
+            let key = isoDate(from: candidate.value, expectedFormat: field.format, order: order)
+                ?? normalize(candidate.value)
             return seen.insert(key).inserted
         }
     }
@@ -393,10 +416,7 @@ struct ApostilleParser {
             guard let match = firstMatch(#"(?<!\d)(\d{1,2})[-\./](\d{1,2})[-\./](\d{4})(?!\d)"#, in: line.text),
                   let first = Int(match[1]), let second = Int(match[2]), let year = Int(match[3]),
                   (1...12).contains(first), (1...12).contains(second) else { continue }
-            guard field.format == "date-iso" else {
-                result.append((match[0], line.confidence, line.text))
-                continue
-            }
+            guard requiresDateInterpretation(field) else { continue }
             // Day-first is the prevailing convention on Apostilles, so it leads.
             result.append((String(format: "%04d-%02d-%02d", year, second, first), line.confidence, line.text))
             result.append((String(format: "%04d-%02d-%02d", year, first, second), line.confidence, line.text))
@@ -449,9 +469,14 @@ struct ApostilleParser {
         return !asksForDigits || value.range(of: #"\d"#, options: .regularExpression) != nil
     }
 
-    private static func isSemanticallyValid(_ value: String, for field: VerificationField) -> Bool {
+    private static func isSemanticallyValid(
+        _ value: String,
+        for field: VerificationField,
+        order: NumericDateOrder = .unknown
+    ) -> Bool {
         if field.standardItem == 6 {
-            return parseDate(value, expectedFormat: field.format) != nil
+            return parseDate(value, expectedFormat: field.format, order: order) != nil
+                || (!requiresDateInterpretation(field) && isDateShaped(value))
         }
         return isPlausibleReference(value)
     }
@@ -460,7 +485,7 @@ struct ApostilleParser {
         let cleaned = clean(value).trimmingCharacters(in: CharacterSet(charactersIn: ".:/|·•–—- "))
         guard (4...48).contains(cleaned.count),
               cleaned.range(of: #"\d"#, options: .regularExpression) != nil,
-              parseDate(cleaned) == nil else { return false }
+              !isDateShaped(cleaned) else { return false }
         // Legalisation stickers print a fee beside the reference. "GBP40.00" is
         // shaped like a reference and sat alone on the page often enough to be
         // confirmed as the certificate number and sent to the verifier.
@@ -479,7 +504,11 @@ struct ApostilleParser {
     /// Unlike `valueBesideLabel`, this deliberately does not look on adjacent
     /// lines or use geometry. Only text following an exact label in the same
     /// Vision observation is strong enough to confirm automatically.
-    private static func inlineLabeledValue(for field: VerificationField, in lines: [RecognizedLine]) -> Candidate? {
+    private static func inlineLabeledValue(
+        for field: VerificationField,
+        in lines: [RecognizedLine],
+        order: NumericDateOrder = .unknown
+    ) -> Candidate? {
         let aliases = field.aliases.sorted { $0.count > $1.count }
         for line in lines {
             if field.standardItem == 6, isUnderlyingDocumentDate(line.text) { continue }
@@ -487,8 +516,8 @@ struct ApostilleParser {
                 guard let range = line.text.range(of: alias, options: [.caseInsensitive, .diacriticInsensitive]) else { continue }
                 let suffix = clean(String(line.text[range.upperBound...])
                     .trimmingCharacters(in: CharacterSet(charactersIn: ":/·•–—- ")))
-                guard !suffix.isEmpty, isSemanticallyValid(suffix, for: field) else { continue }
-                if field.standardItem == 6, let narrowed = dateSubstring(in: suffix, for: field) {
+                guard !suffix.isEmpty, isSemanticallyValid(suffix, for: field, order: order) else { continue }
+                if field.standardItem == 6, let narrowed = dateSubstring(in: suffix, for: field, order: order) {
                     return (narrowed, line.confidence, line.text)
                 }
                 return (suffix, line.confidence, line.text)
@@ -515,7 +544,8 @@ struct ApostilleParser {
     private static func candidate(
         for field: VerificationField,
         lines: [RecognizedLine],
-        items: [Int: Candidate]
+        items: [Int: Candidate],
+        order: NumericDateOrder = .unknown
     ) -> Candidate? {
         if let item = field.standardItem, let resolved = items[item] {
             // Where an authority documents the shape of its reference, the
@@ -820,13 +850,17 @@ struct ApostilleParser {
         return nil
     }
 
-    private static func format(_ candidate: Candidate, for field: VerificationField) -> Candidate {
+    private static func format(
+        _ candidate: Candidate,
+        for field: VerificationField,
+        order: NumericDateOrder = .unknown
+    ) -> Candidate {
         var value = clean(candidate.value)
-        if field.format == "date-iso", let iso = isoDate(from: value, expectedFormat: field.format) {
+        if field.format == "date-iso", let iso = isoDate(from: value, expectedFormat: field.format, order: order) {
             value = iso
         } else if field.format == "date-dotted",
                   !hasWrongNumericSeparators(value, expected: "."),
-                  let date = parseDate(value, expectedFormat: field.format) {
+                  let date = parseDate(value, expectedFormat: field.format, order: order) {
             value = dateString(date, format: "dd.MM.yyyy")
         } else if let format = field.format, format.hasPrefix("mask:") {
             value = self.value(conforming: value, to: String(format.dropFirst("mask:".count)))
@@ -861,18 +895,30 @@ struct ApostilleParser {
         isoDate(from: value, expectedFormat: nil)
     }
 
-    private static func isoDate(from value: String, expectedFormat: String?) -> String? {
-        parseDate(value, expectedFormat: expectedFormat).map { dateString($0, format: "yyyy-MM-dd") }
+    private static func isoDate(
+        from value: String,
+        expectedFormat: String?,
+        order: NumericDateOrder = .unknown
+    ) -> String? {
+        parseDate(value, expectedFormat: expectedFormat, order: order).map { dateString($0, format: "yyyy-MM-dd") }
     }
 
-    private static func parseDate(_ value: String, expectedFormat: String? = nil) -> Date? {
+    private static func parseDate(
+        _ value: String,
+        expectedFormat: String? = nil,
+        order: NumericDateOrder = .unknown
+    ) -> Date? {
         let cleaned = clean(value)
             .trimmingCharacters(in: CharacterSet(charactersIn: ".:/|·•–—- "))
             .replacingOccurrences(of: #"(?<=\d)(st|nd|rd|th)\b"#, with: "", options: [.regularExpression, .caseInsensitive])
         let authorityDefinesDayFirst = expectedFormat == "date-dotted"
             && !hasWrongNumericSeparators(cleaned, expected: ".")
-        if isAmbiguousNumericDate(cleaned), !authorityDefinesDayFirst {
-            return nil
+        if isAmbiguousNumericDate(cleaned) {
+            let resolved = authorityDefinesDayFirst ? .dayFirst : order
+            switch resolved {
+            case .unknown: return nil
+            case .dayFirst, .monthFirst: return numericDate(in: cleaned, dayFirst: resolved == .dayFirst)
+            }
         }
         let monthAliases = [
             "يناير": "January", "فبراير": "February", "مارس": "March", "أبريل": "April",
@@ -944,12 +990,115 @@ struct ApostilleParser {
         }
     }()
 
+    /// Which of the two leading numbers in a date like 12/07/2019 is the day.
+    enum NumericDateOrder {
+        case dayFirst
+        case monthFirst
+        case unknown
+    }
+
+    /// How to read a numeric date on this scan, taking the strongest evidence
+    /// available. Nationality is the last resort, not the first: the
+    /// certificate usually declares its own order, and where it does not,
+    /// another date printed on the same page often settles it.
+    private static func numericDateOrder(
+        for field: VerificationField,
+        country: String,
+        lines: [RecognizedLine]
+    ) -> NumericDateOrder {
+        if let declared = declaredDateOrder(for: field) { return declared }
+        if let evident = pageDateOrder(in: lines) { return evident }
+        return countryDateOrder(for: country)
+    }
+
+    /// Four authorities print their own date order inside the field label —
+    /// "Date (DD.MM.YYYY)", "Date Printed (MM-DD-YYYY)". That is the issuing
+    /// authority stating the format of its own certificate, which beats any
+    /// assumption made from the country it sits in.
+    private static func declaredDateOrder(for field: VerificationField) -> NumericDateOrder? {
+        if field.format == "date-dotted" { return .dayFirst }
+        guard let range = field.label.range(of: #"\([DMY][DMY./\- ]*\)"#, options: .regularExpression) else {
+            return nil
+        }
+        let mask = field.label[range]
+        guard let day = mask.firstIndex(of: "D"), let month = mask.firstIndex(of: "M") else { return nil }
+        return day < month ? .dayFirst : .monthFirst
+    }
+
+    /// One page is printed by one authority in one order. A date elsewhere on
+    /// it whose day exceeds 12 therefore settles how to read the ambiguous one.
+    private static func pageDateOrder(in lines: [RecognizedLine]) -> NumericDateOrder? {
+        var orders = Set<String>()
+        for line in lines where !isConventionReference(line.text) {
+            for numbers in allMatches(#"(?<!\d)(\d{1,2})[-\./](\d{1,2})[-\./]\d{2,4}(?!\d)"#, in: line.text) {
+                guard let first = Int(numbers[1]), let second = Int(numbers[2]) else { continue }
+                if first > 12, (1...12).contains(second) { orders.insert("day") }
+                if second > 12, (1...12).contains(first) { orders.insert("month") }
+            }
+        }
+        guard orders.count == 1 else { return nil }
+        return orders.contains("day") ? .dayFirst : .monthFirst
+    }
+
+    /// Day-first is right almost everywhere. The United States is month-first,
+    /// and three jurisdictions use both orders in everyday writing, so their
+    /// nationality decides nothing and the value must not be interpreted from
+    /// it. (The Philippines prints no date on its Apostille; Israel and Saudi
+    /// Arabia do. Saudi certificates may also carry a Hijri date, which no
+    /// day/month order can rescue.)
+    private static func countryDateOrder(for country: String) -> NumericDateOrder {
+        switch country {
+        case "United States of America": return .monthFirst
+        case "Philippines", "Saudi Arabia", "Israel": return .unknown
+        default: return .dayFirst
+        }
+    }
+
+    /// A field that submits the date exactly as printed never needs to know
+    /// which number is the day. Only a declared output format — or filling a
+    /// browser date input — requires the date to be interpreted at all.
+    private static func requiresDateInterpretation(_ field: VerificationField) -> Bool {
+        field.format == "date-iso" || field.format == "date-dotted"
+    }
+
+    /// Whether the text is a date at all, under either reading of it.
+    private static func isDateShaped(_ value: String) -> Bool {
+        parseDate(value, order: .dayFirst) != nil || parseDate(value, order: .monthFirst) != nil
+    }
+
+    private static func allMatches(_ pattern: String, in text: String) -> [[String]] {
+        guard let expression = try? NSRegularExpression(pattern: pattern) else { return [] }
+        return expression.matches(in: text, range: NSRange(text.startIndex..., in: text)).map { match in
+            (0..<match.numberOfRanges).map { index in
+                Range(match.range(at: index), in: text).map { String(text[$0]) } ?? ""
+            }
+        }
+    }
+
     /// Without authority metadata, `04/05/2026` could be either 4 May or
     /// April 5. Do not manufacture an ISO value that silently chooses one.
     private static func isAmbiguousNumericDate(_ value: String) -> Bool {
         guard let match = firstMatch(#"(?<!\d)(\d{1,2})[-\./](\d{1,2})[-\./]\d{4}(?!\d)"#, in: value),
               let first = Int(match[1]), let second = Int(match[2]) else { return false }
         return (1...12).contains(first) && (1...12).contains(second)
+    }
+
+    /// Builds the date directly once the order is known. Leaving an ambiguous
+    /// value to the locale formatters would let whichever one matched first
+    /// decide, which is not the same thing as the order we resolved.
+    private static func numericDate(in value: String, dayFirst: Bool) -> Date? {
+        guard let match = firstMatch(#"(?<!\d)(\d{1,2})[-\./](\d{1,2})[-\./](\d{2,4})(?!\d)"#, in: value),
+              let first = Int(match[1]), let second = Int(match[2]), let printedYear = Int(match[3]) else {
+            return nil
+        }
+        let year = printedYear < 100 ? 2000 + printedYear : printedYear
+        var components = DateComponents()
+        components.year = year
+        components.month = dayFirst ? second : first
+        components.day = dayFirst ? first : second
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
+        return calendar.date(from: components)
     }
 
     private static func hasWrongNumericSeparators(_ value: String, expected separator: Character) -> Bool {

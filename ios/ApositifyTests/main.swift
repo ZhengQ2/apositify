@@ -627,3 +627,10 @@ expect(
     hongKong?.id == "china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court",
     "a country named inside a sentence must not outrank the country field, got \(hongKong?.id ?? "none")"
 )
+
+// Brazil's Code field was filled with "(Codet" — Vision's reading of the
+// printed "(Code)" label beneath it.
+let brazilCode = field("brazil-national-council-of-justice", "field-0", [
+    "9. Selo / Carimbo", "(Code)", "(Codet"
+])
+expect(brazilCode.value.isEmpty, "a value that only repeats its own label must be rejected, got '\(brazilCode.value)'")

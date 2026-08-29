@@ -242,6 +242,14 @@ object ApostilleParser {
         val label = field.label
         if (!Regex("(?i)number|numero|numéro|\\bno\\.|\\bcode\\b|c[oó]digo|clave|year|a[ñn]o|reference").containsMatchIn(label)) return true
         if (!Regex("[A-Za-z0-9]{2,}").containsMatchIn(value)) return false
+        // Brazil's Code field was filled with "(Codet" — OCR's reading of the
+        // printed "(Code)" label beneath it. A value that is its own label plus
+        // a stray character or two is the template, not the certificate's.
+        val comparableValue = normalize(value).filterNot(Char::isWhitespace)
+        val comparableLabel = normalize(label).filterNot(Char::isWhitespace)
+        if (comparableLabel.isNotEmpty() && comparableValue.contains(comparableLabel) &&
+            comparableValue.length - comparableLabel.length < 3
+        ) return false
         val asksForDigits = Regex("(?i)number|numero|numéro|\\bno\\.|year|a[ñn]o").containsMatchIn(label)
         return !asksForDigits || value.any(Char::isDigit)
     }

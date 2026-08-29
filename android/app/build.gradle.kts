@@ -14,6 +14,9 @@ val prepareLocalRecognitionTestAssets by tasks.registering(Sync::class) {
     from(rootProject.file("../specimens")) {
         include("*.png", "*.jpg", "*.jpeg", "*.JPG", "*.heic", "*.webp")
     }
+    // Specimens whose real reference is redacted, with a known value written
+    // onto item 8 by `npm run prepare:redaction-fixtures`.
+    from(rootProject.file("../specimens/redaction-filled"))
     into(layout.buildDirectory.dir("generated/localRecognitionTestAssets"))
 }
 val localRecognitionTestAssetsDirectory = layout.buildDirectory.dir("generated/localRecognitionTestAssets").get().asFile

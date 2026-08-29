@@ -433,6 +433,15 @@ struct ApostilleParser {
         ) != nil
         guard asksForToken else { return true }
         guard value.range(of: #"[A-Za-z0-9]{2,}"#, options: .regularExpression) != nil else { return false }
+        // Brazil's Code field was filled with "(Codet" — Vision's reading of the
+        // printed "(Code)" label beneath it. A value that is its own label plus
+        // a stray character or two is the template, not the certificate's.
+        let comparableValue = normalize(value).filter { !$0.isWhitespace }
+        let comparableLabel = normalize(label).filter { !$0.isWhitespace }
+        if !comparableLabel.isEmpty, comparableValue.contains(comparableLabel),
+           comparableValue.count - comparableLabel.count < 3 {
+            return false
+        }
         let asksForDigits = label.range(
             of: #"number|numero|numéro|\bno\.|year|a[ñn]o"#,
             options: [.regularExpression, .caseInsensitive]

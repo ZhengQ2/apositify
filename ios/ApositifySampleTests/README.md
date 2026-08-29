@@ -35,6 +35,32 @@ Official images are never committed. Expectations use formats rather than
 printing live lookup credentials. An official sample that cannot be downloaded,
 rendered, or read to its declared minimum anchor count is reported as `SKIP`.
 
+## On-device suite
+
+`ApositifyDeviceTests` runs the same corpus through the app's own
+`ApostilleRecognizer` on a physically attached iPhone. Apple Vision on the
+device is not the Vision that runs on a Mac — different OS, different models —
+so this suite cannot be replaced by the host-side one. It asserts the values
+printed on certificates that were read and confirmed by eye, and logs a line
+per specimen so a regression in one without expectations is still visible.
+
+Several specimens have item 8 blacked out or filled with placeholder Xs, so a
+blank field there proves nothing about the parser. `npm run
+prepare:redaction-fixtures` renders a known value onto the item's own row,
+positioned from the OCR geometry of its numbered label, and the tests assert
+that exact value comes back.
+
+Specimen photographs are private and are never committed. Both device suites
+skip when they are absent.
+
+```sh
+npm run prepare:redaction-fixtures   # optional, needs the private specimens
+npm run test:ios-device              # requires an unlocked device in developer mode
+```
+
+The Android equivalent is `AllSpecimensRecognitionTest`, which sweeps the same
+corpus through ML Kit on a connected device.
+
 ## Run
 
 ```sh

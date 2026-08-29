@@ -3,7 +3,7 @@ dist
 .env
 .DS_Store
 public/qr-test
-specimens/
+/specimens/
 android/.gradle/
 android/.idea/
 android/**/build/
@@ -13,3 +13,7 @@ android/local.properties
 Apositify-Android-source.zip
 Apostifi-Android-source.zip
 ios/**/xcuserdata/
+
+# Specimen photographs are private; the iOS device target is populated locally.
+ios/ApositifyDeviceTests/Specimens/*
+!ios/ApositifyDeviceTests/Specimens/.gitkeep

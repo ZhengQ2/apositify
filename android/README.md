@@ -47,3 +47,13 @@ snapshot differs from the generated iOS/shared catalog.
 - Only HTTPS authority hosts appear inside the branded verifier. HTTP and
   off-domain destinations open externally after a warning, without autofill.
 - No document image or recognized text is uploaded by Apostifi.
+
+`AllSpecimensRecognitionTest` sweeps the local specimen corpus through ML Kit on
+a connected device and logs what the review screen would show for each one.
+Specimen photographs are private and are never committed, so the sweep skips on
+a fresh checkout. Run it with:
+
+```sh
+./gradlew connectedDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=com.apositify.app.AllSpecimensRecognitionTest
+```

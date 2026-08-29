@@ -76,6 +76,16 @@ class SpecimenRegressionTest {
         assertEquals("", field.value)
     }
 
+    @Test fun aValueThatOnlyRepeatsItsOwnLabelIsRejected() {
+        // Brazil's Code field was filled with "(Codet" — OCR's reading of the
+        // printed "(Code)" label beneath it.
+        val code = VerificationField("code", "Code", aliases = listOf("Code"))
+        val field = ApostilleParser.extractFields(entry(listOf(code), country = "Brazil"), scan(
+            "9. Selo / Carimbo", "(Code)", "(Codet",
+        )).single()
+        assertEquals("", field.value)
+    }
+
     private val authorities = listOf(
         RegisterEntry(id = "uk", country = "United Kingdom", authority = "Foreign and Commonwealth Office"),
         RegisterEntry(id = "ireland", country = "Ireland", authority = "Department of Foreign Affairs"),

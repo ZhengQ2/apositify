@@ -1,0 +1,2 @@
+Populated by `npm run prepare:ios-device-specimens`. Specimen photographs are
+private and are never committed; the tests skip when this directory is empty.

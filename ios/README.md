@@ -6,6 +6,14 @@ recognizes multilingual text locally with Apple Vision as a fallback. It matches
 issuing authority against the repository's e-Register directory, and prepares the
 fields required by the authority's official verifier.
 
+## Tests
+
+`npm run test:ios-core` and `npm run test:ios-samples` compile the Core sources
+for macOS and run them against synthetic and official samples.
+`npm run test:ios-device` runs the private specimen corpus through the app's own
+recognizer on an attached iPhone, which is the only place the device's Vision
+models are exercised. See `ApositifySampleTests/README.md`.
+
 ## Open and run
 
 1. Run `npm run build:ios-data` from the repository root after changing the web

@@ -4,3 +4,10 @@ dist
 .DS_Store
 public/qr-test
 specimens/
+android/.gradle/
+android/.idea/
+android/**/build/
+android/local.properties
+*.apk
+*.aab
+Apositify-Android-source.zip

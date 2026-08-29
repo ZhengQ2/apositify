@@ -33,6 +33,14 @@ Run `npm run build:ios-data` after changing the shared register or verification-
 metadata, then open `ios/Apositify.xcodeproj` in Xcode 16 or later. See
 `ios/README.md` for the verification and prefill boundaries.
 
+## Native Android app
+
+The Kotlin/Jetpack Compose Android app lives in `android/`. It follows the same
+one-photo, QR-first, multilingual OCR fallback, ambiguity review, and secure
+verifier boundaries as iOS. Run `npm run build:android-data` after shared catalog
+changes, then open the `android/` directory in Android Studio. Setup and test
+instructions are in `android/README.md`.
+
 ## Build
 
 ```bash
@@ -44,9 +52,19 @@ npm run preview
 
 ```bash
 npm test
+npm run test:all
 ```
 
 Run `npm run clean:data` after editing the raw JSON, then run `npm test`. The validation script checks required fields, stable IDs, expected coverage totals, QR-only rows, manual-contact rows, URL presence for online/hybrid rows, and ensures missing-link rows do not expose placeholder URLs.
+
+`npm run test:all` also runs the native parser tests and the Apple Vision sample
+suite. Artificial multilingual Apostilles are rendered and OCRed on every run.
+Official HCCH and authority samples can be cached locally with
+`npm run fetch:ios-samples`; unreadable or unavailable official samples are
+reported as skips and the documents remain under the gitignored `specimens/`
+directory. See `ios/ApositifySampleTests/README.md` for fixture and privacy rules.
+The country-by-country primary-source review is recorded in
+`docs/OFFICIAL_EREGISTRY_SPECIMEN_AUDIT.md`.
 
 ## Information still needed
 

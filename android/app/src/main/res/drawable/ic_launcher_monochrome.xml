@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed icons are tinted a single colour, so the multi-colour foreground
+     would collapse into a solid blob. This is the same mark as a silhouette. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="512" android:viewportHeight="512">
+    <group>
+        <path android:pathData="M150,206 V172 a22,22 0 0 1 22,-22 H206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M306,150 H340 a22,22 0 0 1 22,22 V206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M150,306 V340 a22,22 0 0 0 22,22 H206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M306,362 H340 a22,22 0 0 0 22,-22 V306"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+    </group>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M208,178 H292 L316,202 V322 a12,12 0 0 1 -12,12 H208 a12,12 0 0 1 -12,-12 V190 a12,12 0 0 1 12,-12 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M300,278 a34,34 0 1 1 0,68 a34,34 0 1 1 0,-68 Z" />
+</vector>

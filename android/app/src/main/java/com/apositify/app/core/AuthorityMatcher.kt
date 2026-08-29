@@ -1,0 +1,59 @@
+package com.apositify.app.core
+
+import com.apositify.app.model.AuthorityMatch
+import com.apositify.app.model.RecognitionResult
+import com.apositify.app.model.RegisterEntry
+import java.text.Normalizer
+
+class AuthorityMatcher(private val entries: List<RegisterEntry>) {
+    fun matches(recognition: RecognitionResult, limit: Int = 5): List<AuthorityMatch> {
+        val text = normalize(recognition.fullText)
+        val itemSeven = ApostilleParser.numberedItems(recognition.lines)[7]?.let(::normalize).orEmpty()
+        val tokens = text.split(' ').toSet()
+        val itemTokens = itemSeven.split(' ').toSet()
+        val countries = entries.map { it.country }.distinct().filter { countryNames(it).any { name -> phrase(name, text) } }.toSet()
+
+        return entries.mapNotNull { entry ->
+            val countryHit = entry.country in countries
+            val authorityTokens = significant(entry.authority)
+            val hits = authorityTokens.count { it in tokens }
+            val itemHits = authorityTokens.count { it in itemTokens }
+            val aliasHit = aliases[entry.id].orEmpty().any { phrase(normalize(it), text) }
+            var score = if (countryHit) 0.66 else 0.0
+            if (authorityTokens.isNotEmpty()) {
+                score += 0.24 * hits / authorityTokens.size
+                score += 0.10 * itemHits / authorityTokens.size
+            }
+            if (aliasHit) score += 0.28
+            if (countryHit && entries.count { it.country == entry.country } == 1) score = maxOf(score, 0.91)
+            if (score < 0.20) null else AuthorityMatch(
+                entry, minOf(score, 1.0),
+                if (countryHit && hits > 0) "Country and issuing authority appear in the scan"
+                else if (countryHit) "Country appears in the scan" else "Issuing authority words appear in the scan",
+            )
+        }.sortedWith(compareByDescending<AuthorityMatch> { it.score }.thenBy { it.entry.authority }).take(limit)
+    }
+
+    private fun countryNames(country: String): List<String> = listOf(country) + when (country) {
+        "Korea, Republic of" -> listOf("republic of korea", "south korea", "대한민국")
+        "Moldova, Republic of" -> listOf("republic of moldova", "moldova")
+        "China" -> listOf("china", "中国", "中國")
+        "Türkiye" -> listOf("turkiye", "turkey", "türkiye")
+        "United States of America" -> listOf("united states of america", "united states", "usa")
+        "Russian Federation" -> listOf("russian federation", "russia", "россия")
+        else -> emptyList()
+    }.map(::normalize)
+
+    private fun significant(value: String): List<String> {
+        val ignored = setOf("and", "of", "the", "for", "to", "de", "la", "le", "du", "des", "et", "ministry", "minister", "department", "office", "authority")
+        return normalize(value).split(' ').filter { it.length > 2 && it !in ignored }
+    }
+
+    private fun normalize(value: String) = Normalizer.normalize(value, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")
+        .lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), " ").replace(Regex("\\s+"), " ").trim()
+    private fun phrase(needle: String, haystack: String) = " $haystack ".contains(" $needle ")
+
+    private val aliases = mapOf(
+        "united-kingdom-foreign-and-commonwealth-office" to listOf("legalisation office", "legalization office", "foreign commonwealth and development office", "fcdo"),
+    )
+}

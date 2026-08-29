@@ -1,0 +1,5121 @@
+{
+  "schemaVersion": 1,
+  "sourceUrl": "https://assets.hcch.net/docs/e8e7549d-e34a-452f-9fa3-cf2241aa4197.pdf",
+  "entries": [
+    {
+      "id": "andorra-ministry-of-foreign-affairs",
+      "country": "Andorra",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://isi.govern.ad/CGI-BIN/lansaweb?webapp=POEX0010+webrtn=inici+ml=LANSA:XHTML+partition=H3W+language=CAT",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleNumber",
+            "label": "Apostille or legalization number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille or legalization number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "apostilleDate",
+            "label": "Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "deepLink": {
+          "method": "post",
+          "url": "https://isi.govern.ad/CGI-BIN/lansaweb?webapp=POEX0010+webrtn=consulta+ml=LANSA:XHTML+partition=H3W+language=CAT",
+          "extraParams": {
+            "IDIOMA": "1",
+            "_SERVICENAME": "POEX0010_inici",
+            "_WEBAPP": "POEX0010",
+            "_WEBROUTINE": "consulta",
+            "_PARTITION": "H3W",
+            "_LANGUAGE": "CAT",
+            "_LW3TRCID": "false"
+          },
+          "paramOrder": [
+            "PONUMREG",
+            "PODTENTRS"
+          ]
+        }
+      }
+    },
+    {
+      "id": "argentina-ministry-of-foreign-affairs-and-worship",
+      "country": "Argentina",
+      "authority": "Ministry of Foreign Affairs and Worship",
+      "registerUrl": "https://www.argentina.gob.ar/legalizacion-internacional/en",
+      "verificationMode": "online",
+      "notes": "There are two e-Registers: the first for Apostilles issued between 17 November 2017 and 14 April 2019; the second for Apostilles issued from 15 April 2019.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Year",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Year"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Number (CE- prefix)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Number (CE- prefix)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-2",
+            "label": "Dependency Code (-APN- prefix)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Dependency Code (-APN- prefix)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-3",
+            "label": "Order Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Order Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Argentina has two separate e-Registers depending on issue date: 17 Nov 2017–14 Apr 2019 (Order Number, Year, Security Code) or from 15 Apr 2019 (fields above). Check the date on your Apostille first."
+      }
+    },
+    {
+      "id": "armenia-ministry-of-justice",
+      "country": "Armenia",
+      "authority": "Ministry of Justice",
+      "registerUrl": "https://www.e-verify.am/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "http:",
+              "hostname": "e-verify.am",
+              "port": "",
+              "allowedSearchParams": [
+                "tnum"
+              ],
+              "requiredSearchParams": [
+                "tnum"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": true,
+              "pathnamePattern": "^/$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document tracking code (16 digits)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document tracking code (16 digits)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "This is a general government document validity checker, not apostille-specific."
+      }
+    },
+    {
+      "id": "australia-department-of-foreign-affairs-and-trade",
+      "country": "Australia",
+      "authority": "Department of Foreign Affairs and Trade",
+      "registerUrl": "https://orao.dfat.gov.au/pages/verifyapostille.aspx",
+      "verificationMode": "online",
+      "notes": "Only Apostilles issued on or after 14 December 2015 can be verified on the e-Register. For verification of Apostilles issued before this date please email legalisations.australia@dfat.gov.au.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille number (format AAAA-A1-1111)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number (format AAAA-A1-1111)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date of issue",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of issue",
+              "Date",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "austria-federal-ministry-for-europe-integration-and-foreign-affairs",
+      "country": "Austria",
+      "authority": "Federal Ministry for Europe, Integration and Foreign Affairs",
+      "registerUrl": "https://signaturpruefung.egiz.gv.at/signature-verification/file-upload",
+      "verificationMode": "online",
+      "notes": "Use the RTR signature-verification service to upload the original e-Apostille PDF and verify its digital signature.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "upload",
+        "fields": [],
+        "note": "Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won't work. Paper apostilles have no separate e-Register for this authority."
+      }
+    },
+    {
+      "id": "azerbaijan-ministry-of-justice",
+      "country": "Azerbaijan",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://apostille.justice.gov.az/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date (DD.MM.YYYY)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date (DD.MM.YYYY)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "bahrain-ministry-of-foreign-affairs",
+      "country": "Bahrain",
+      "authority": "Ministry of Foreign Affairs",
+      "verificationMode": "qr_only",
+      "notes": "No specific link is available as the e-Register operates by using Quick Response (QR) codes to generate unique URLs.",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "normalizeSchemelessTo": "https:",
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "www.mofa.gov.bh",
+              "port": "",
+              "allowedSearchParams": [
+                "id"
+              ],
+              "requiredSearchParams": [
+                "id"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/legalization/?$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bangladesh-ministry-of-foreign-affairs-of-the-government-of-bangladesh",
+      "country": "Bangladesh",
+      "authority": "Ministry of Foreign Affairs of the Government of Bangladesh",
+      "registerUrl": "https://mofa-servicedirectory.apostille.mygov.bd/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "upload",
+        "fields": [],
+        "note": "Upload the original e-Apostille PDF to verify its digital signature — a photo or scan of a paper apostille has no signature to check and won't work (the site only accepts PDF uploads). Paper apostilles have no separate e-Register for this authority."
+      }
+    },
+    {
+      "id": "belgium-federal-public-service-foreign-affairs-foreign-trade-and-development-cooperation",
+      "country": "Belgium",
+      "authority": "Federal Public Service: Foreign Affairs, Foreign Trade and Development Cooperation",
+      "registerUrl": "http://legalweb.diplomatie.be/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Reference number (Legalisation: 12 digits; Dossier: 9 digits; Investigation: E + 8 digits)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Reference number (Legalisation: 12 digits; Dossier: 9 digits; Investigation: E + 8 digits)",
+              "Reference number",
+              "Reference code",
+              "Reference No.",
+              "Numéro de référence",
+              "Código de referencia"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Reference date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Reference date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "bolivia-ministry-of-foreign-affairs",
+      "country": "Bolivia",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://www.rree.gob.bo/VerificaApostilla/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Fecha de apostillado (Date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de apostillado (Date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Número de apostilla (Number)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de apostilla (Number)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-2",
+            "label": "Código de seguridad (Security code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de seguridad (Security code)",
+              "Security code",
+              "Código de seguridad",
+              "Code de sécurité",
+              "Sicherheitscode",
+              "安全码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "brazil-national-council-of-justice",
+      "country": "Brazil",
+      "authority": "National Council of Justice",
+      "registerUrl": "https://apostil.cnj.jus.br/pt/validation",
+      "verificationMode": "online",
+      "notes": "Choose the official verification portal based on the Apostille issue date.",
+      "registerLinks": [
+        {
+          "label": "Validate in APOSTIL",
+          "url": "https://apostil.cnj.jus.br/pt/validation"
+        },
+        {
+          "label": "Validate in legacy SEI Apostila",
+          "url": "https://apostila.cnj.jus.br/seiapostila/controlador_externo.php?acao=documento_conferir&acao_origem=documento_conferir&lang=pt_BR&id_orgao_acesso_externo=0"
+        }
+      ],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "apostil.org.br",
+              "port": "",
+              "allowedSearchParams": [
+                "number",
+                "crc"
+              ],
+              "requiredSearchParams": [
+                "number",
+                "crc"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/v/?$"
+            }
+          ]
+        },
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "www.cnj.jus.br",
+              "port": "",
+              "allowedSearchParams": [
+                "acao",
+                "id_orgao_acesso_externo",
+                "cv",
+                "crc"
+              ],
+              "requiredSearchParams": [
+                "cv",
+                "crc"
+              ],
+              "staticSearchParams": {
+                "acao": "documento_conferir",
+                "id_orgao_acesso_externo": "0"
+              },
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/seiapostila/controlador_externo\\.php$"
+            }
+          ]
+        }
+      ],
+      "registerGuide": {
+        "title": "Which link should I use?",
+        "steps": [
+          "Choose legacy SEI Apostila for an Apostille issued before 3 August 2020.",
+          "Choose APOSTIL for an Apostille issued on or after 3 August 2020."
+        ]
+      },
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Code"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "CRC",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "CRC"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Site uses Cloudflare bot-protection; you may need to complete a challenge."
+      }
+    },
+    {
+      "id": "bulgaria-ministry-of-justice",
+      "country": "Bulgaria",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://apostil.mjs.bg/ApostilleEN.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Code"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "CAPTCHA code shown on page",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "CAPTCHA code shown on page"
+            ],
+            "browserSelectors": [],
+            "captureSource": "portal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bulgaria-ministry-of-foreign-affairs",
+      "country": "Bulgaria",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "http://apostille.mfa.bg/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleId",
+            "label": "Apostille ID",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille ID",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "deepLink": {
+          "method": "post",
+          "url": "https://apostille.mfa.bg/MFAL/apostille_index.nsf/apostilleCheck.lss",
+          "extraParams": {
+            "Open": ""
+          },
+          "paramOrder": [
+            "id"
+          ]
+        }
+      }
+    },
+    {
+      "id": "bulgaria-national-center-for-information-and-documentation",
+      "country": "Bulgaria",
+      "authority": "National Center for Information and Documentation",
+      "registerUrl": "https://apostille.bg/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "document_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "apostille.nacid.bg",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/api/Public/ElectronicApostille/[A-Z0-9]{8,20}$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Verification code (13 characters, from the apostille)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Verification code (13 characters, from the apostille)",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bulgaria-regional-administrations",
+      "country": "Bulgaria",
+      "authority": "Regional Administrations",
+      "registerUrl": "https://apostille.gov.bg/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleId",
+            "label": "Apostille ID",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille ID",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "deepLink": {
+          "method": "post",
+          "url": "https://apostille.gov.bg/apostille/check",
+          "extraParams": {},
+          "paramOrder": [
+            "apostilleID"
+          ]
+        }
+      }
+    },
+    {
+      "id": "canada-the-department-of-foreign-affairs-trade-and-development-of-canada",
+      "country": "Canada",
+      "authority": "The Department of Foreign Affairs, Trade and Development of Canada",
+      "registerUrl": "https://apostille-gac.powerappsportals.com/en/eregister-eregistre/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate number (item 8)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate number (item 8)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Certified-on date (item 6)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certified-on date (item 6)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "This federal e-Register does not cover Ontario or Quebec apostilles."
+      }
+    },
+    {
+      "id": "canada-ministry-of-the-attorney-general-of-the-province-of-british-columbia",
+      "country": "Canada",
+      "authority": "Ministry of the Attorney General of the province of British Columbia",
+      "registerUrl": "https://apostille-gac.powerappsportals.com/en/eregister-eregistre/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "canada-ministry-of-justice-of-the-province-of-alberta",
+      "country": "Canada",
+      "authority": "Ministry of Justice of the province of Alberta",
+      "registerUrl": "https://apostille-gac.powerappsportals.com/en/eregister-eregistre/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "canada-ministry-of-justice-and-attorney-general-of-the-province-saskatchewan",
+      "country": "Canada",
+      "authority": "Ministry of Justice and Attorney General of the province Saskatchewan",
+      "registerUrl": "https://apostille-gac.powerappsportals.com/en/eregister-eregistre/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "canada-ministry-of-public-and-business-service-delivery-and-procurement-of-the-province-of-ontario",
+      "country": "Canada",
+      "authority": "Ministry of Public and Business Service Delivery and Procurement of the province of Ontario",
+      "registerUrl": "https://www.officialdocuments.mgcs.gov.on.ca/en-US/validity-check/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number (format 11-AA-AAAA-AAAA)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number (format 11-AA-AAAA-AAAA)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers apostilles issued on or after 11 January 2024."
+      }
+    },
+    {
+      "id": "canada-minister-of-justice-of-the-province-of-quebec",
+      "country": "Canada",
+      "authority": "Minister of Justice of the province of Quebec",
+      "registerUrl": "https://registreapostilles.gouv.qc.ca/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Numéro de l'apostille",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Numéro de l'apostille"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Date d'émission",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date d'émission",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers apostilles issued on or after 11 January 2024."
+      }
+    },
+    {
+      "id": "chile-relevant-authorities-of-the-ministries-of-justice-education-health-foreign-affairs-and-the-civil-and-identification-registration-service",
+      "country": "Chile",
+      "authority": "Relevant authorities of the Ministries of Justice, Education, Health, Foreign Affairs and the Civil and Identification Registration Service",
+      "registerUrl": "https://consulta.apostilla.gob.cl/consulta",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "consulta.apostilla.gob.cl",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/QR/[A-Za-z0-9%+/=_-]+$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Número de Legalización/Apostille",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de Legalización/Apostille"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Fecha",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-2",
+            "label": "Código de verificación",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de verificación",
+              "Verification code",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-3",
+            "label": "CAPTCHA code shown on page",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "CAPTCHA code shown on page"
+            ],
+            "browserSelectors": [],
+            "captureSource": "portal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "china-china-mainland-ministry-of-foreign-affairs",
+      "country": "China",
+      "authority": "China (Mainland): Ministry of Foreign Affairs",
+      "registerUrl": "https://consular.mfa.gov.cn/VERIFY/#/hcRzYyAdSgcx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 2,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "consular.mfa.gov.cn",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": true,
+              "requireFragment": true,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/VERIFY/?$",
+              "fragmentPattern": "^#/[A-Za-z0-9_-]{6,64}\\?content=[0-9]{12}(?:&paperNo=E[0-9]{8})?&checkCode=[A-Za-z0-9+/=_-]{20,256}$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleNumber",
+            "label": "Legalization/Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Legalization/Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号",
+              "Legalization No.",
+              "领事认证号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8,
+            "pattern": "[0-9]{12}"
+          },
+          {
+            "id": "stickerNumber",
+            "label": "Sticker Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Sticker Number",
+              "Sticker number",
+              "Sticker No.",
+              "Sticker code",
+              "贴纸编号",
+              "贴纸号码",
+              "스티커 번호",
+              "Sticker Code"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "pattern": "E\\d{8}"
+          }
+        ],
+        "note": "Apostilles/legalizations issued before 7 November 2023 require scanning the QR code on a mobile device instead."
+      }
+    },
+    {
+      "id": "china-hong-kong-sar-the-registrar-the-senior-deputy-registrar-and-the-deputy-registrar-of-the-high-court",
+      "country": "China",
+      "authority": "Hong Kong SAR: The Registrar, the Senior Deputy Registrar, and the Deputy Registrar of the High Court",
+      "registerUrl": "https://e-services.judiciary.hk/apoereg/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "portal_or_token",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "www.e-services.judiciary.hk",
+              "port": "",
+              "allowedSearchParams": [
+                "apc",
+                "afc",
+                "aToken"
+              ],
+              "requiredSearchParams": [
+                "aToken"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/judservice-web/?$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille No.",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille No.",
+              "Apostille number",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Year",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Year"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Reference Code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Reference Code",
+              "Reference number",
+              "Reference code",
+              "Reference No.",
+              "Numéro de référence",
+              "Código de referencia"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Only covers apostilles issued on or after 1 September 2014. A CAPTCHA must be solved on the official site."
+      }
+    },
+    {
+      "id": "china-macao-sar-director-of-the-legal-affairs-bureau",
+      "country": "China",
+      "authority": "Macao SAR: Director of the Legal Affairs Bureau",
+      "registerUrl": "https://eservice.dsaj.gov.mo/dsajservice/Haia/pages/verify.htm",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille No. (e.g. 12345/2023)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille No. (e.g. 12345/2023)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue date (DDMMYYYY)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue date (DDMMYYYY)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site requires solving an image CAPTCHA and may take a few seconds to load."
+      }
+    },
+    {
+      "id": "colombia-ministry-of-foreign-affairs",
+      "country": "Colombia",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://tramites.cancilleria.gov.co/ciudadano/consulta/documento.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "tramites.cancilleria.gov.co",
+              "port": "",
+              "allowedSearchParams": [
+                "cod",
+                "fecha"
+              ],
+              "requiredSearchParams": [
+                "cod"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/Ciudadano/ConsultaApostilla/consulta\\.aspx$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille/Legalization Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille/Legalization Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Fecha de Expedición (Issue date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de Expedición (Issue date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "costa-rica-ministry-of-foreign-affairs-and-worship",
+      "country": "Costa Rica",
+      "authority": "Ministry of Foreign Affairs and Worship",
+      "registerUrl": "https://www.rree.go.cr/?sec=servicios&cat=autenticaciones&cont=726",
+      "verificationMode": "online",
+      "notes": "Use Costa Rica's Consultar Apostilla page. It asks for Código de la apostilla and Fecha de la apostilla.",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "embedded_fields",
+          "specimenCount": 1,
+          "allowedUrls": []
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleCode",
+            "label": "Apostille code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille code"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "apostilleDate",
+            "label": "Apostille date",
+            "placeholder": "YYYY-MM-DD",
+            "aliases": [
+              "Apostille date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6,
+            "format": "date-iso"
+          }
+        ],
+        "deepLink": {
+          "method": "post",
+          "url": "https://www.rree.go.cr/?sec=servicios&cat=autenticaciones&cont=726",
+          "extraParams": {},
+          "paramOrder": [
+            "clave",
+            "fecha_inicio"
+          ]
+        }
+      }
+    },
+    {
+      "id": "cyprus-ministry-of-justice-and-public-order",
+      "country": "Cyprus",
+      "authority": "Ministry of Justice and Public Order",
+      "registerUrl": "https://apostille-validation.mjpo.gov.cy/",
+      "verificationMode": "online",
+      "notes": "Apostilles issued before 1 June 2020 may be verified by contacting the Competent Authority at registry@mjpo.gov.cy.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "District",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "District"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Location",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Location"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Certificate Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-3",
+            "label": "Certificate Year",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Year"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-4",
+            "label": "Random Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Random Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Only covers apostilles issued on or after 1 June 2020."
+      }
+    },
+    {
+      "id": "denmark-ministry-of-foreign-affairs",
+      "country": "Denmark",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://dys.um.dk/ver",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille/stamp number (item 8)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille/stamp number (item 8)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "dominican-republic-ministry-of-foreign-affairs",
+      "country": "Dominican Republic",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://servicios.mirex.gob.do/legalizacion-apostilla/consultar-certificacion",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Date (item 6)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date (item 6)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Number (item 8)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Number (item 8)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-2",
+            "label": "Verification code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ecuador-ministry-of-foreign-affairs-and-human-mobility",
+      "country": "Ecuador",
+      "authority": "Ministry of Foreign Affairs and Human Mobility",
+      "registerUrl": "https://serviciosciudadanos.cancilleria.gob.ec/",
+      "verificationMode": "online",
+      "notes": "The e-Apostille is sent to the applicant’s email, along with a QR code that, when scanned, directs the user to the official link for verifying the issued Apostille.",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "serviciosciudadanos.cancilleria.gob.ec",
+              "port": "",
+              "allowedSearchParams": [
+                "validaDocumento"
+              ],
+              "requiredSearchParams": [
+                "validaDocumento"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/ValidacionApostillaURL/DatosApostillaURL$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Número (Number)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número (Number)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Fecha de Emisión (Issuance date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de Emisión (Issuance date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site requires solving an image CAPTCHA."
+      }
+    },
+    {
+      "id": "el-salvador-ministry-of-foreign-affairs",
+      "country": "El Salvador",
+      "authority": "Ministry of Foreign Affairs",
+      "verificationMode": "qr_only",
+      "notes": "QR-code verification only",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "estonia-chamber-of-notaries",
+      "country": "Estonia",
+      "authority": "Chamber of Notaries",
+      "registerUrl": "https://apostill.notar.ee/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Date of issue of the apostille",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of issue of the apostille",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille registration number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille registration number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "france-regional-councils-and-interdepartmental-chambers-of-notaries",
+      "country": "France",
+      "authority": "Regional Councils and Interdepartmental Chambers of Notaries",
+      "registerUrl": "https://apostille-index.notaires.fr/home",
+      "verificationMode": "online",
+      "notes": "Apostilles issued by other Competent Authorities are issued in paper format and are not included in the e-Register.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date of issue",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of issue",
+              "Date",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Apostilles issued by authorities other than Notaires are on paper only and are not in this e-Register."
+      }
+    },
+    {
+      "id": "georgia-ministry-of-justice",
+      "country": "Georgia",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://apostille.cra.ge/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate Number (15 digits)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Number (15 digits)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site requires solving a reCAPTCHA."
+      }
+    },
+    {
+      "id": "georgia-ministry-of-internal-affairs",
+      "country": "Georgia",
+      "authority": "Ministry of Internal Affairs",
+      "registerUrl": "https://www.sa.gov.ge/apostile",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "greece-ministry-of-digital-governance",
+      "country": "Greece",
+      "authority": "Ministry of Digital Governance",
+      "registerUrl": "https://e-apostille.gov.gr/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Electronic apostille number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Electronic apostille number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Alternatively, scan the QR code printed on the e-Apostille."
+      }
+    },
+    {
+      "id": "guatemala-ministry-of-foreign-affairs",
+      "country": "Guatemala",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://apostilla.minex.gob.gt/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "apostilla.minex.gob.gt",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/public/verificar/apostilla/[0-9]{6,20}/[A-Za-z0-9]{4,16}$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Código de Verificación (Verification code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de Verificación (Verification code)",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Código de Apostilla (Apostille code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de Apostilla (Apostille code)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "The official site sits behind a Cloudflare check page — allow a few seconds for it to pass before the form appears."
+      }
+    },
+    {
+      "id": "india-ministry-of-external-affairs",
+      "country": "India",
+      "authority": "Ministry of External Affairs",
+      "registerUrl": "https://esanad.nic.in/eregister",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille/Attestation Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille/Attestation Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "The official site requires solving a CAPTCHA."
+      }
+    },
+    {
+      "id": "indonesia-ministry-of-law-and-human-rights",
+      "country": "Indonesia",
+      "authority": "Ministry of Law and Human Rights",
+      "registerUrl": "https://apostille.ahu.go.id/verifikasi?lang=en",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Sticker/Certificate Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Sticker/Certificate Number",
+              "Sticker number",
+              "Sticker No.",
+              "Sticker code",
+              "贴纸编号",
+              "贴纸号码",
+              "스티커 번호"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Issued Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issued Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "ireland-department-of-foreign-affairs",
+      "country": "Ireland",
+      "authority": "Department of Foreign Affairs",
+      "registerUrl": "http://www.authentications.dfat.ie/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Type (Apostille or Authentication)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Type (Apostille or Authentication)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Date of Issue",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of Issue",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-2",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "israel-ministry-of-justice",
+      "country": "Israel",
+      "authority": "Ministry of Justice",
+      "registerUrl": "https://eregister.justice.gov.il/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date issued",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date issued",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "japan-ministry-of-foreign-affairs",
+      "country": "Japan",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://www.ezairyu.mofa.go.jp/eregister/eregi/authcheck",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "portal_or_token",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "www.ezairyu.mofa.go.jp",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/eregister/eregi/authcheck/?$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-2",
+            "label": "Access Code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Access Code",
+              "Access code",
+              "Code d’accès",
+              "Código de acceso",
+              "访问码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Only apostilles with a QR code issued on or after 1 June 2026 are verifiable here."
+      }
+    },
+    {
+      "id": "kazakhstan-relevant-authorities-of-several-ministries-and-services",
+      "country": "Kazakhstan",
+      "authority": "Relevant authorities of several Ministries and services",
+      "registerUrl": "https://egov.kz/cms/ru/services/apostil/apostil",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Application number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Application number",
+              "Application No.",
+              "Request number",
+              "Número de solicitud"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Security code (from the stamp)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Security code (from the stamp)",
+              "Security code",
+              "Código de seguridad",
+              "Code de sécurité",
+              "Sicherheitscode",
+              "安全码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Requires creating/using an egov.kz account to reach the actual form."
+      }
+    },
+    {
+      "id": "korea-republic-of-ministry-of-foreign-affairs-ministry-of-justice",
+      "country": "Korea, Republic of",
+      "authority": "Ministry of Foreign Affairs; Ministry of Justice",
+      "registerUrl": "https://www.apostille.go.kr/index.do",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate issue number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate issue number",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Certificate issue date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate issue date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site may require an account login; a guest option may also be available."
+      }
+    },
+    {
+      "id": "kosovo-ministry-of-foreign-affairs-department-for-consular-affairs-ministry-of-internal-affairs-civil-registration-agency",
+      "country": "Kosovo",
+      "authority": "Ministry of Foreign Affairs (Department for Consular Affairs); Ministry of Internal Affairs (Civil Registration Agency)",
+      "registerUrl": "https://eapp.rks-gov.net/Default.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Type of seal (MIA Apostille / Verifying / MFA Apostille / Legalizing)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Type of seal (MIA Apostille / Verifying / MFA Apostille / Legalizing)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Reference number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Reference number",
+              "Reference code",
+              "Reference No.",
+              "Numéro de référence",
+              "Código de referencia"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "The official site also asks for your own name, workplace, email, country and reason for verifying, in addition to the certificate reference."
+      }
+    },
+    {
+      "id": "latvia-council-of-sworn-notaries",
+      "country": "Latvia",
+      "authority": "Council of Sworn Notaries",
+      "registerUrl": "https://www.latvijasnotars.lv/apostille/verify",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "luxembourg-ministry-of-foreign-affairs",
+      "country": "Luxembourg",
+      "authority": "Ministry of Foreign Affairs",
+      "verificationMode": "qr_only",
+      "notes": "QR-code verification only",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "mexico-baja-california-sur",
+      "country": "Mexico",
+      "authority": "Baja California Sur",
+      "verificationMode": "manual_contact",
+      "notes": "No working online lookup tool is available. Contact the Coordination of Certifications/Legalizations, Anuencias and Apostille directly (apostillabcs@gmail.com / age@bcs.gob.mx / tel. 612-122-0482) to verify.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "mexico-federal-district-legal-department",
+      "country": "Mexico",
+      "authority": "Federal District – Legal Department",
+      "registerUrl": "http://dicoppu-portal.segob.gob.mx/registro/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "mexico-jalisco-secretary-of-government",
+      "country": "Mexico",
+      "authority": "Jalisco – Secretary of Government",
+      "registerUrl": "https://serviciossgg.jalisco.gob.mx/certificaciones/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Código de documento (Document code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de documento (Document code)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mexico-ministry-of-interior",
+      "country": "Mexico",
+      "authority": "Ministry of Interior",
+      "registerUrl": "http://dicoppu-portal.segob.gob.mx/registro/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "document_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "http:",
+              "hostname": "consultasislac.segob.gob.mx",
+              "port": "",
+              "allowedSearchParams": [
+                "a",
+                "b"
+              ],
+              "requiredSearchParams": [
+                "b"
+              ],
+              "staticSearchParams": {
+                "a": "1"
+              },
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": true,
+              "pathnamePattern": "^/csislac/qr\\.do$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Fecha (Date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha (Date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Clave (Code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Clave (Code)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "The official site requires solving an image-based verification code."
+      }
+    },
+    {
+      "id": "moldova-republic-of-ministry-of-justice",
+      "country": "Moldova, Republic of",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://apostila.gov.md/en/start/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleCode",
+            "label": "Apostille code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille code"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "format": "non-arij-apostille-code"
+          },
+          {
+            "id": "securityCode",
+            "label": "Security code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Security code",
+              "Código de seguridad",
+              "Code de sécurité",
+              "Sicherheitscode",
+              "安全码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Apostille numbers with an \"ARIJ\" prefix use a separate MPass-gated system (eservicii.gov.md). This direct flow applies only to other apostille codes.",
+        "deepLink": {
+          "method": "post",
+          "url": "https://apostila.gov.md/apostila/site/search",
+          "extraParams": {},
+          "paramOrder": [
+            "apostila_code",
+            "security_code"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mongolia-ministry-of-foreign-affairs",
+      "country": "Mongolia",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://e-mongolia.mn/check",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Reference/Statement Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Reference/Statement Number",
+              "Reference number",
+              "Reference code",
+              "Reference No.",
+              "Numéro de référence",
+              "Código de referencia"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "This is e-Mongolia’s general document checker rather than an apostille-specific tool. Requires solving a CAPTCHA."
+      }
+    },
+    {
+      "id": "morocco-ministry-of-justice",
+      "country": "Morocco",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://www.apostille.ma/fr/verifierApostille.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Signature Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Signature Date"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Number of pages",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Number of pages",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-3",
+            "label": "Signature date of the underlying document",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Signature date of the underlying document"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "The official site requires solving a CAPTCHA."
+      }
+    },
+    {
+      "id": "new-zealand-department-of-internal-affairs",
+      "country": "New Zealand",
+      "authority": "Department of Internal Affairs",
+      "registerUrl": "http://www.dia.govt.nz/apostille",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number (e.g. 12345.1)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number (e.g. 12345.1)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "nicaragua-ministry-of-foreign-affairs",
+      "country": "Nicaragua",
+      "authority": "Ministry of Foreign Affairs",
+      "verificationMode": "manual_contact",
+      "notes": "No public e-Register verification tool is available. The cited Cancillería sites are appointment systems for requesting a new apostille, not for verifying an existing one. Contact the Cancillería directly (tel. 2244-8008) to verify.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "pakistan-ministry-of-foreign-affairs",
+      "country": "Pakistan",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://apostille.mofa.gov.pk/",
+      "verificationMode": "hybrid",
+      "notes": "Official e-Register link available; QR-code verification is also listed",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "apostille.mofa.gov.pk",
+              "port": "",
+              "allowedSearchParams": [
+                "apostille_number",
+                "day",
+                "month",
+                "year"
+              ],
+              "requiredSearchParams": [
+                "apostille_number"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/verify-attestation-by-qr/?$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "panama-organo-judicial",
+      "country": "Panama",
+      "authority": "Órgano Judicial",
+      "verificationMode": "qr_only",
+      "notes": "QR-code verification only",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "panama-ministry-of-foreign-affairs",
+      "country": "Panama",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://apostillaelectronica.mire.gob.pa/validation",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "http:",
+              "hostname": "sigob.mire.gob.pa",
+              "port": "",
+              "allowedSearchParams": [
+                "args"
+              ],
+              "requiredSearchParams": [
+                "args"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": true,
+              "pathnamePattern": "^/reportes/MIA/PA/autenticaciones/apostille\\.aspx$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille-Certification Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille-Certification Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "paraguay-ministry-of-foreign-affairs",
+      "country": "Paraguay",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "http://www.mre.gov.py/intranet/Legalizaciones/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Fecha de Expedición (Issue date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de Expedición (Issue date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Número del código de barras (Barcode number)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número del código de barras (Barcode number)",
+              "Barcode number",
+              "Número del código de barras"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "peru-ministry-of-foreign-affairs",
+      "country": "Peru",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://apostillaconsulta.rree.gob.pe/consulta/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Fecha (Date)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha (Date)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Número de Apostilla/Certificación de Firma",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de Apostilla/Certificación de Firma"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Código de Seguridad (from an image, on the official site)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de Seguridad (from an image, on the official site)",
+              "Security code",
+              "Código de seguridad",
+              "Code de sécurité",
+              "Sicherheitscode",
+              "安全码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "portal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "philippines-department-of-foreign-affairs",
+      "country": "Philippines",
+      "authority": "Department of Foreign Affairs",
+      "registerUrl": "https://e-registry.apostille.gov.ph/",
+      "verificationMode": "online",
+      "notes": "e-Apostilles issued for (i) Philippine Statistics Authority electronic Certificates (PSA eCertificates), covering civil registry documents; (ii) Commission on Higher Education electronic Certification, Authentication, and Verification (CHED eCAVs), covering academic documents; as well as (iii) Apostilles issued on other types of public documents executed from the beginning of December 2022 onwards may be verified on the e-Register. All other Apostilles may be verified by contacting the Competent Authority at oca.verification@dfa.gov.ph.",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "portal_or_token",
+          "specimenCount": 1,
+          "normalizeSchemelessTo": "https:",
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "e-registry.apostille.gov.ph",
+              "port": "",
+              "allowedSearchParams": [],
+              "requiredSearchParams": [],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/$"
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Serial Code (e.g. 26C, 25A, 24A)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Serial Code (e.g. 26C, 25A, 24A)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Serial Number (7 digits, without the \"S.N.\" prefix)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Serial Number (7 digits, without the \"S.N.\" prefix)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-2",
+            "label": "Keycode",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Keycode",
+              "Key code",
+              "Security key"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Apostilles without a keycode, or issued before late 2022, cannot be verified here — email the Authentication Division instead."
+      }
+    },
+    {
+      "id": "romania-offices-of-the-prefect",
+      "country": "Romania",
+      "authority": "Offices of the Prefect",
+      "registerUrl": "http://www.apostila.mai.gov.ro/en",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number (format JJ/XXXX)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number (format JJ/XXXX)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date of the Apostille",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of the Apostille",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers apostilles issued since 1 November 2004."
+      }
+    },
+    {
+      "id": "russian-federation-ministry-of-justice",
+      "country": "Russian Federation",
+      "authority": "Ministry of Justice",
+      "verificationMode": "qr_only",
+      "notes": "QR-code verification only",
+      "registerLinks": [],
+      "qrRoutes": [
+        {
+          "function": "verification_url",
+          "specimenCount": 1,
+          "allowedUrls": [
+            {
+              "protocol": "https:",
+              "hostname": "minjust.gov.ru",
+              "port": "",
+              "allowedSearchParams": [
+                "aposId"
+              ],
+              "requiredSearchParams": [
+                "aposId"
+              ],
+              "staticSearchParams": {},
+              "allowSubdomains": false,
+              "allowFragment": false,
+              "requireFragment": false,
+              "insecureAccepted": false,
+              "pathnamePattern": "^/ru/pages/apostil-ispf/?$"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rwanda-ministry-of-foreign-affairs-and-international-cooperation",
+      "country": "Rwanda",
+      "authority": "Ministry of Foreign Affairs and International Cooperation",
+      "verificationMode": "qr_only",
+      "notes": "No working online lookup tool is available. Verification is via the QR code printed on the Apostille.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "saint-kitts-and-nevis-ministry-of-foreign-affairs",
+      "country": "Saint Kitts and Nevis",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://www.foreign.gov.kn/apostille-verified/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "saudi-arabia-ministry-of-foreign-affairs",
+      "country": "Saudi Arabia",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://ratification.mofa.gov.sa/ApostilleRatification/Search",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Certificate Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "singapore-singapore-academy-of-law",
+      "country": "Singapore",
+      "authority": "Singapore Academy of Law",
+      "registerUrl": "https://legalisation.sal.sg/AuthenticationCert/Search",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleCertificateNumber",
+            "label": "Apostille Certificate No.",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Certificate No.",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号",
+              "Certificate No.",
+              "Number",
+              "No."
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8,
+            "pattern": "[A-Z]{2}[0-9OQDISBLZ]{3}[A-Z][0-9OQDISBLZ]{3}[A-Z]",
+            "format": "mask:AA999A999A"
+          },
+          {
+            "id": "notarialCertificateNumber",
+            "label": "Notarial Certificate No.",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Notarial Certificate No."
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "apostilleVerificationCode",
+            "label": "Apostille Verification Code",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Verification Code",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Apostilles issued before 16 September 2021 use a different certificate/verification-code pair — check the date on your Apostille."
+      }
+    },
+    {
+      "id": "slovenia-11-district-courts",
+      "country": "Slovenia",
+      "authority": "11 District Courts",
+      "registerUrl": "https://evlozisce.sodisce.si/overitve/ei01/create.jsf",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate ID",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate ID",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue date",
+              "Date",
+              "Date of issue",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site requires solving an image CAPTCHA on a session-bound form."
+      }
+    },
+    {
+      "id": "spain-44-judicial-and-administrative-competent-authorities",
+      "country": "Spain",
+      "authority": "44 judicial and administrative Competent Authorities",
+      "registerUrl": "https://eregister.justicia.es/eRegister-webapp/eRegister/verificarApostilla-flow?execution=e1s1",
+      "verificationMode": "online",
+      "notes": "Murcia implemented the e-Apostille component in November 2008 and national implementation was completed in May 2011. A central e-Register is used by all Competent Authorities under the purview of the Ministry of Justice.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Código de Verificación (Verification code)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de Verificación (Verification code)",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Número de Apostilla",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de Apostilla"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Fecha de Emisión (DD/MM/YYYY)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de Emisión (DD/MM/YYYY)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site uses a text-based CAPTCHA."
+      }
+    },
+    {
+      "id": "tajikistan-ministry-of-foreign-affairs-ministry-of-justice",
+      "country": "Tajikistan",
+      "authority": "Ministry of Foreign Affairs; Ministry of Justice",
+      "registerUrl": "http://www.apostille.tj/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date of the Apostille",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of the Apostille",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site requires solving an image CAPTCHA."
+      }
+    },
+    {
+      "id": "turkiye-supervisory-competent-authorities-ministry-of-justice-ministry-of-internal-affairs",
+      "country": "Türkiye",
+      "authority": "Supervisory Competent Authorities: Ministry of Justice; Ministry of Internal Affairs",
+      "registerUrl": "https://www.eapostil.gov.tr/basvuruIslemleri/belgeDogrulama",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "upload",
+        "fields": [],
+        "note": "Upload the exact original e-Apostille PDF file — the site compares its file hash against the one it issued, so even a photo, scan, or re-saved copy won't match. Paper apostilles have no separate e-Register for this authority."
+      }
+    },
+    {
+      "id": "ukraine-ministry-of-education-and-science",
+      "country": "Ukraine",
+      "authority": "Ministry of Education and Science",
+      "registerUrl": "http://enic.in.ua/index.php/en/aporegen",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "apostilleNumber",
+            "label": "Apostille number (item 8)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number (item 8)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "applicationNumber",
+            "label": "Application number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Application number",
+              "Application No.",
+              "Request number",
+              "Número de solicitud"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "apostilleDate",
+            "label": "Apostille date (item 6)",
+            "placeholder": "DD.MM.YYYY",
+            "aliases": [
+              "Apostille date (item 6)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6,
+            "format": "date-dotted"
+          }
+        ],
+        "note": "Covers apostilles from 18 January 2013 onward.",
+        "deepLink": {
+          "method": "get",
+          "url": "https://enic.in.ua/index.php/en/aporegen",
+          "extraParams": {
+            "task": "searchApo"
+          },
+          "paramOrder": [
+            "apoNum",
+            "reqNum",
+            "apoDate"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ukraine-ministry-of-justice",
+      "country": "Ukraine",
+      "authority": "Ministry of Justice",
+      "registerUrl": "http://apostille.minjust.gov.ua/en/index",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille number (item 8)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number (item 8)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille issue date (item 6)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille issue date (item 6)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-2",
+            "label": "Control/verification code (newer apostilles only)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Control/verification code (newer apostilles only)",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-kingdom-foreign-and-commonwealth-office",
+      "country": "United Kingdom",
+      "authority": "Foreign and Commonwealth Office",
+      "registerUrl": "https://www.gov.uk/verify-apostille",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille issue date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille issue date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Apostille number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-kingdom-cayman-islands-passport-and-corporate-services-office",
+      "country": "United Kingdom",
+      "authority": "Cayman Islands: Passport & Corporate Services Office",
+      "registerUrl": "https://online.gov.ky/cigapps/cig/r/apostille-verification/home",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-states-of-america-arkansas-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Arkansas – Secretary of State",
+      "registerUrl": "http://bcs.sos.arkansas.gov/AuthenticationSearch/ApostilleCertificateSearch",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "united-states-of-america-california-secretary-of-state",
+      "country": "United States of America",
+      "authority": "California – Secretary of State",
+      "registerUrl": "https://apostille-search.sos.ca.gov/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers apostilles issued in the last 5 years."
+      }
+    },
+    {
+      "id": "united-states-of-america-colorado-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Colorado – Secretary of State",
+      "registerUrl": "https://www.coloradosos.gov/auth/VerifyApostilleSearch.do",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue date",
+              "Date",
+              "Date of issue",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Covers apostilles issued on or after 4/5/2011."
+      }
+    },
+    {
+      "id": "united-states-of-america-connecticut-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Connecticut – Secretary of State",
+      "verificationMode": "manual_contact",
+      "notes": "The state of Connecticut commenced an e-Apostille pilot programme on 19 September 2023. The pilot programme ended on 30 September 2025. Apostilles issued in the state of Connecticut may be verified by contacting the Competent Authority in Connecticut at 860-509-6002 or through email to bsd@ct.gov. e-Apostilles issued as part of Connecticut’s pilot programme are legitimate and validly issued e-Apostilles.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "united-states-of-america-delaware-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Delaware – Secretary of State",
+      "registerUrl": "https://icis.corp.delaware.gov/Ecorp/ValidateCert/ValidateCertificate.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Corporation Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Corporation Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Authentication Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Authentication Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Only valid within 1 year of issuance."
+      }
+    },
+    {
+      "id": "united-states-of-america-kentucky-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Kentucky – Secretary of State",
+      "registerUrl": "https://web.sos.ky.gov/apostille/verification.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille ID (first 12 digits of the apostille number)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille ID (first 12 digits of the apostille number)",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-states-of-america-minnesota-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Minnesota – Secretary of State",
+      "registerUrl": "https://apostille.sos.state.mn.us/Search",
+      "verificationMode": "online",
+      "notes": "The state of Minnesota commenced an e-Apostille pilot programme on 15 March 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Minnesota’s pilot programme are legitimate and validly issued e-Apostilles.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "File Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "File Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers records from 5/15/2018 onward."
+      }
+    },
+    {
+      "id": "united-states-of-america-montana-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Montana – Secretary of State",
+      "registerUrl": "https://biz.sosmt.gov/apostille",
+      "verificationMode": "online",
+      "notes": "The state of Montana offers both e-Apostilles and Apostille verification via e-Register.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille/Authentication Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille/Authentication Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-states-of-america-nevada-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Nevada – Secretary of State",
+      "registerUrl": "https://esos.nv.gov/AuthenticationSearch/Index",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille or Certification # (starts with \"N\")",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille or Certification # (starts with \"N\")"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-states-of-america-new-york-secretary-of-state",
+      "country": "United States of America",
+      "authority": "New York – Secretary of State",
+      "registerUrl": "https://appext20.dos.ny.gov/apostille_verify_public/ApostilleVerify.aspx",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Issue Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issue Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "Only covers apostilles issued on or after 4/9/2013."
+      }
+    },
+    {
+      "id": "united-states-of-america-north-carolina-secretary-of-state",
+      "country": "United States of America",
+      "authority": "North Carolina – Secretary of State",
+      "registerUrl": "https://www.sosnc.gov/divisions/authentications",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate Type (Apostille / Authentication / Authority)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Type (Apostille / Authentication / Authority)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Certificate Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-2",
+            "label": "Issued Date",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Issued Date",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "united-states-of-america-rhode-island-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Rhode Island – Secretary of State",
+      "verificationMode": "manual_contact",
+      "notes": "Rhode Island's e-Apostille pilot ended on 30 September 2025. Apostilles issued during the pilot remain valid, but no public online verifier is currently available. Contact the RI Department of State directly (401-222-3040) to verify.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "united-states-of-america-tennessee-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Tennessee – Secretary of State",
+      "registerUrl": "https://tncab.tnsos.gov/portal/apostille-search",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Only covers filings on or after 3/24/2014."
+      }
+    },
+    {
+      "id": "united-states-of-america-texas-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Texas – Secretary of State",
+      "registerUrl": "https://webservices.sos.state.tx.us/certificationsA/index.aspx",
+      "verificationMode": "online",
+      "notes": "Use the Texas Secretary of State's apostille verifier to validate by certificate number.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Certificate Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Certificate Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Applies to certificates issued on or after 31 October 1994."
+      }
+    },
+    {
+      "id": "united-states-of-america-utah-office-of-lieutenant-governor",
+      "country": "United States of America",
+      "authority": "Utah – Office of Lieutenant Governor",
+      "verificationMode": "manual_contact",
+      "notes": "The state of Utah entered into a e-Apostille pilot programme that commenced on 19 September 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Utah’s pilot programme are legitimate and validly issued e-Apostilles.",
+      "registerLinks": [],
+      "qrRoutes": []
+    },
+    {
+      "id": "united-states-of-america-washington-secretary-of-state",
+      "country": "United States of America",
+      "authority": "Washington – Secretary of State",
+      "registerUrl": "https://www.sos.wa.gov/corporations-charities/apostilles-program/apostille-and-certificate-authenticity-search",
+      "verificationMode": "online",
+      "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Date Printed (MM-DD-YYYY)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date Printed (MM-DD-YYYY)",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-1",
+            "label": "Document Number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document Number",
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          }
+        ],
+        "note": "Only covers documents completed by the Washington Secretary of State."
+      }
+    },
+    {
+      "id": "united-states-of-america-west-virginia-secretary-of-state",
+      "country": "United States of America",
+      "authority": "West Virginia – Secretary of State",
+      "registerUrl": "https://apps.sos.wv.gov/business/apostilles/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Document Code, OR Apostille/Certificate Number + Date Printed",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Document Code, OR Apostille/Certificate Number + Date Printed",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "uruguay-ministry-of-foreign-affairs",
+      "country": "Uruguay",
+      "authority": "Ministry of Foreign Affairs",
+      "registerUrl": "https://sistemas.mrree.gub.uy/consultaapostillaweb/servlet/accesowebverapostillaredireccion",
+      "verificationMode": "online",
+      "notes": "Since 18/09/2023, Uruguay has implemented the e-Apostille component of the e-APP for public documents. The procedure is carried out through the website of the Ministry of Foreign Affairs, which is the Competent Authority responsible for the issuance of Apostille on public documents, via the following link: https://www.gub.uy/tramites/apostilla-yo-legalizacion-documentos-publicos-uruguayos-extranjeros-produzcan-efectos-exterior-republica.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Número de Apostilla",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de Apostilla"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Fecha Apostilla",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha Apostilla",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          },
+          {
+            "id": "field-2",
+            "label": "Titular Documento Público (holder's name)",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Titular Documento Público (holder's name)"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          }
+        ],
+        "note": "Apostilles dated before 18/09/2023 need only the number."
+      }
+    },
+    {
+      "id": "uzbekistan-ministry-of-foreign-affairs-ministry-of-justice-supreme-court-and-other-authorities",
+      "country": "Uzbekistan",
+      "authority": "Ministry of Foreign Affairs, Ministry of Justice, Supreme Court and other authorities",
+      "registerUrl": "https://apostille.davxizmat.uz/",
+      "verificationMode": "online",
+      "notes": "Official e-Register link available",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Apostille number",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Apostille number",
+              "Apostille No.",
+              "Certificate number",
+              "Número de Apostilla",
+              "Numéro de l'apostille",
+              "Apostillenummer",
+              "Numero di apostille",
+              "Número da apostila",
+              "Номер апостиля",
+              "附加证明书编号",
+              "アポスティーユ番号"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 8
+          },
+          {
+            "id": "field-1",
+            "label": "Date of Apostille affixing",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Date of Apostille affixing",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "venezuela-ministry-of-people-s-power-of-foreign-affairs",
+      "country": "Venezuela",
+      "authority": "Ministry of People’s Power of Foreign Affairs",
+      "registerUrl": "http://consultalegalizacionve.mppre.gob.ve/",
+      "verificationMode": "online",
+      "notes": "There are three e-Registers: the first for Apostilles issued before 23 May 2018, the second for Apostilles issued between 24 May 2018 and 1 May 2019, and the third for Apostilles issued from 2 May 2019. e-Apostilles issued only for Criminal Record Certification and Data Certification for Consular Effects.",
+      "registerLinks": [],
+      "qrRoutes": [],
+      "verification": {
+        "kind": "fields",
+        "fields": [
+          {
+            "id": "field-0",
+            "label": "Número de Legalización/Apostilla",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Número de Legalización/Apostilla"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-1",
+            "label": "Código de Verificación",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Código de Verificación",
+              "Verification code",
+              "Código de verificación",
+              "Code de vérification",
+              "验证码"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document"
+          },
+          {
+            "id": "field-2",
+            "label": "Fecha de Emisión",
+            "placeholder": "Exactly as printed",
+            "aliases": [
+              "Fecha de Emisión",
+              "Date",
+              "Date of issue",
+              "Issue date",
+              "Issuance date",
+              "Dated",
+              "Fecha",
+              "Fecha de emisión",
+              "Date d'émission",
+              "Ausstellungsdatum",
+              "Data di emissione",
+              "Data de emissão",
+              "Дата выдачи",
+              "签发日期",
+              "発行日"
+            ],
+            "browserSelectors": [],
+            "captureSource": "document",
+            "standardItem": 6
+          }
+        ],
+        "note": "The official site uses a Google reCAPTCHA."
+      }
+    }
+  ]
+}

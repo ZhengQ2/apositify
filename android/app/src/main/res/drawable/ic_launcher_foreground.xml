@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shares its geometry with public/logo.svg and the iOS app icon. Everything
+     sits inside the adaptive-icon safe zone (a 312px circle centred on 256 in
+     this 512 viewport) so no launcher mask clips the seal or the check. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="512" android:viewportHeight="512">
+
+    <!-- Scan brackets -->
+    <group>
+        <path android:pathData="M150,206 V172 a22,22 0 0 1 22,-22 H206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M306,150 H340 a22,22 0 0 1 22,22 V206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M150,306 V340 a22,22 0 0 0 22,22 H206"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+        <path android:pathData="M306,362 H340 a22,22 0 0 0 22,-22 V306"
+            android:strokeColor="#FFFFFF" android:strokeWidth="14" android:strokeLineCap="round" />
+    </group>
+
+    <!-- Certificate with a folded corner -->
+    <path android:pathData="M208,178 H292 L316,202 V322 a12,12 0 0 1 -12,12 H208 a12,12 0 0 1 -12,-12 V190 a12,12 0 0 1 12,-12 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="256" android:startY="178" android:endX="256" android:endY="334">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="1" android:color="#FFEFF4FB" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#C9DCF2" android:pathData="M292,178 L316,202 H298 a6,6 0 0 1 -6,-6 Z" />
+
+    <!-- Ruled lines -->
+    <path android:fillColor="#7297CC" android:pathData="M220.5,210 h49 a4.5,4.5 0 0 1 0,9 h-49 a4.5,4.5 0 0 1 0,-9 Z" />
+    <path android:fillColor="#7297CC" android:pathData="M220.5,234 h71 a4.5,4.5 0 0 1 0,9 h-71 a4.5,4.5 0 0 1 0,-9 Z" />
+    <path android:fillColor="#7297CC" android:pathData="M220.5,258 h71 a4.5,4.5 0 0 1 0,9 h-71 a4.5,4.5 0 0 1 0,-9 Z" />
+    <path android:fillColor="#7297CC" android:pathData="M220.5,282 h41 a4.5,4.5 0 0 1 0,9 h-41 a4.5,4.5 0 0 1 0,-9 Z" />
+
+    <!-- Embossed seal -->
+    <path android:fillColor="#E4EDF9" android:strokeColor="#A9C3E2" android:strokeWidth="3"
+        android:pathData="M226,293 a17,17 0 1 1 0,34 a17,17 0 1 1 0,-34 Z" />
+    <path android:fillColor="#A9C3E2" android:pathData="M226,302 a8,8 0 1 1 0,16 a8,8 0 1 1 0,-16 Z" />
+
+    <!-- The authority's verdict -->
+    <path android:fillColor="#FFFFFF" android:pathData="M300,278 a34,34 0 1 1 0,68 a34,34 0 1 1 0,-68 Z" />
+    <path android:fillColor="#1DC3A4" android:pathData="M300,283 a29,29 0 1 1 0,58 a29,29 0 1 1 0,-58 Z" />
+    <path android:pathData="M287,312 l9,9 l18,-19"
+        android:strokeColor="#FFFFFF" android:strokeWidth="8"
+        android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

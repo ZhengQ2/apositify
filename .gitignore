@@ -11,3 +11,5 @@ android/local.properties
 *.apk
 *.aab
 Apositify-Android-source.zip
+Apostifi-Android-source.zip
+ios/**/xcuserdata/

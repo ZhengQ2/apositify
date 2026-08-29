@@ -1,0 +1,62 @@
+# Apostille sample regression suite
+
+This suite exercises the same Apple Vision OCR, authority matching, field
+parsing, localized date handling, and specimen-verified QR routing used by the
+iOS app.
+
+## Test sets
+
+- `sample-fixtures.json` contains redacted artificial certificates. They are
+  rendered to images at test time, then read through Apple Vision. These are
+  required regression tests, except where a fixture sets `"optional": true`
+  because Apple Vision may have no recognizer for its script; those skip
+  instead of failing, and the same parsing is asserted without OCR in
+  `ApositifyTests`.
+- `official-samples.json` records public PDF or image source URLs, page numbers
+  where applicable, languages, and non-sensitive expectations for samples
+  published by the HCCH and issuing authorities. The source files themselves are downloaded to
+  `specimens/official-test-cache`, which is gitignored.
+
+The official set includes multilingual HCCH models and issuer-published filled
+specimens or blank models. Filled samples assert standard item numbers and dates
+where the source is readable enough, as well as OCR readability and authority
+matching. A sample may also set `"qrMustNotRoute": true`, which requires that a
+QR is decoded and that no decoded payload routes — the Philippine specimen's
+published code points at the DFA staging host, outside the authority's
+documented route.
+
+Every fixture is also re-run under reversed, interleaved and rotated line
+order, and must extract identical values each time. Line order is the one input
+that moves between scans of the same page — a slightly different angle
+re-orders a two-column certificate — so anything that depends on it is
+intermittent in the user's hands rather than broken in the suite.
+
+Official images are never committed. Expectations use formats rather than
+printing live lookup credentials. An official sample that cannot be downloaded,
+rendered, or read to its declared minimum anchor count is reported as `SKIP`.
+
+## Run
+
+```sh
+npm run test:ios-samples
+```
+
+This always runs the artificial fixtures. Official samples run when present in
+the local cache and otherwise skip.
+
+To populate or refresh the official sample cache:
+
+```sh
+npm run fetch:ios-samples
+npm run test:ios-samples
+```
+
+To run every web, data, iOS core, and OCR regression:
+
+```sh
+npm run test:all
+```
+
+Apple Vision can be unavailable inside a restricted CI sandbox. A
+`CVPixelBuffer` service failure is reported as a skip; malformed required
+fixtures and ordinary OCR/parser regressions still fail.

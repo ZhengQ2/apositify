@@ -23,6 +23,16 @@ npm install
 npm run dev
 ```
 
+## Native iOS app
+
+The SwiftUI iOS app lives in `ios/`. It captures one document photo, checks for a
+specimen-verified QR route first, then uses multilingual Apple Vision text recognition
+entirely on-device as a fallback. It matches the issuing authority against
+the same 97-entry directory, and hands reviewed values to the official verifier.
+Run `npm run build:ios-data` after changing the shared register or verification-field
+metadata, then open `ios/Apositify.xcodeproj` in Xcode 16 or later. See
+`ios/README.md` for the verification and prefill boundaries.
+
 ## Build
 
 ```bash

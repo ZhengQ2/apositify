@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "samples": [
+    {
+      "id": "hcch-en-fr",
+      "description": "Official HCCH fillable English-French model",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=3198",
+      "pdfUrl": "https://assets.hcch.net/docs/b5faea22-f1db-4d7d-ad37-3b9a272301e3.pdf",
+      "page": 1,
+      "languages": ["en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Country", "Pays", "Signature"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-en-fr-es",
+      "description": "Official HCCH fillable English-French-Spanish model",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=3198",
+      "pdfUrl": "https://assets.hcch.net/docs/e3d340d2-83a1-476a-bf8f-c60c3126d762.pdf",
+      "page": 1,
+      "languages": ["en-US", "fr-FR", "es-ES"],
+      "anchors": ["APOSTILLE", "Country", "Pays", "País", "Firma"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-ar-en-fr",
+      "description": "Official HCCH static Arabic-English-French model",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=3198",
+      "pdfUrl": "https://assets.hcch.net/docs/4cc01ea1-c78a-49f6-a2c2-5b400d7ae66b.pdf",
+      "page": 1,
+      "languages": ["ar-SA", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Country", "Pays", "Signature"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-de-en-fr",
+      "description": "Official HCCH static German-English-French model",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=3198",
+      "pdfUrl": "https://assets.hcch.net/docs/18227207-faef-4708-98e9-bb67d3681b88.pdf",
+      "page": 1,
+      "languages": ["de-DE", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Land", "Country", "Unterschrift"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-fr-en-es",
+      "description": "Official HCCH fillable French-English-Spanish model, which leads each item with the French label",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=5190",
+      "pdfUrl": "https://assets.hcch.net/docs/15481273-3e3a-42a9-a9dc-26f0fc6d9dee.pdf",
+      "page": 1,
+      "languages": ["fr-FR", "en-US", "es-ES"],
+      "anchors": ["APOSTILLE", "Pays", "Country", "País", "Signature"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-es-en-fr",
+      "description": "Official HCCH fillable Spanish-English-French model, which leads each item with the Spanish label",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=5190",
+      "pdfUrl": "https://assets.hcch.net/docs/6c60ec22-b2ed-413e-b0f8-7848f31c4397.pdf",
+      "page": 1,
+      "languages": ["es-ES", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "País", "Country", "Pays", "Firma"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "hcch-en-fr-de",
+      "description": "Official HCCH fillable English-French-German model",
+      "sourcePageUrl": "https://www.hcch.net/en/publications-and-studies/details4/?pid=5190",
+      "pdfUrl": "https://assets.hcch.net/docs/e96e4ad1-f73c-4407-8c49-5a6ae7e5a098.pdf",
+      "page": 1,
+      "languages": ["en-US", "fr-FR", "de-DE"],
+      "anchors": ["APOSTILLE", "Country", "Pays", "Land", "Unterschrift"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "philippines-2024-official",
+      "description": "Official Philippine DFA filled e-Apostille specimen in an HCCH-hosted authority presentation. Its published QR points at the DFA staging host, which is outside the authority's documented route and must stay unroutable.",
+      "sourcePageUrl": "https://www.hcch.net/en/instruments/conventions/specialised-sections/apostille",
+      "pdfUrl": "https://assets.hcch.net/docs/976f8908-34b2-4ae8-9fd6-a69e797f8777.pdf",
+      "page": 2,
+      "languages": ["en-US"],
+      "anchors": ["APOSTILLE", "Philippines", "21A-\\s?0000001", "Philippine Statistics Authority"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "philippines-department-of-foreign-affairs",
+      "qrMustNotRoute": true,
+      "expectedFields": [
+        { "id": "field-2", "pattern": "^[0-9A-F]{14}$" }
+      ]
+    },
+    {
+      "id": "china-2025-official",
+      "description": "Official Mainland China bilingual e-Apostille specimen, last page",
+      "sourcePageUrl": "https://cs.mfa.gov.cn/gyls/szzc/xgxw/202506/t20250617_11650152.shtml",
+      "pdfUrl": "https://cs.mfa.gov.cn/gyls/szzc/xgxw/202506/P020250617541458190587.pdf",
+      "page": 3,
+      "languages": ["zh-Hans", "en-US"],
+      "anchors": ["APOSTILLE", "People.*Republic of China", "2025", "E[0-9]{8}"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "china-china-mainland-ministry-of-foreign-affairs",
+      "qrAuthorityId": "china-china-mainland-ministry-of-foreign-affairs",
+      "expectedFields": [
+        { "id": "apostilleNumber", "pattern": "[0-9]{12}" },
+        { "id": "stickerNumber", "pattern": "^E[0-9]{8}$" }
+      ]
+    },
+    {
+      "id": "singapore-2024-official",
+      "description": "Official Singapore government filled e-Apostille specimen",
+      "sourcePageUrl": "https://www.imda.gov.sg/-/media/imda/files/news-and-events/media-room/media-releases/2024/09/announcement-of-e-apostille-and-gpt-legal/annex-a.pdf",
+      "pdfUrl": "https://www.imda.gov.sg/-/media/imda/files/news-and-events/media-room/media-releases/2024/09/announcement-of-e-apostille-and-gpt-legal/annex-a.pdf",
+      "page": 1,
+      "languages": ["en-US"],
+      "anchors": ["e-Apostille Certificate", "Singapore Academy of Law", "28th Aug 2024", "AC006P004A"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "singapore-singapore-academy-of-law",
+      "expectedItems": [
+        { "item": 6, "isoDate": "2024-08-28" },
+        { "item": 8, "pattern": "AC0[0O]6P004A" }
+      ],
+      "expectedFields": [
+        { "id": "apostilleCertificateNumber", "exact": "AC006P004A" }
+      ]
+    },
+    {
+      "id": "austria-2015-official",
+      "description": "Official Austrian bilingual filled e-Apostille specimen in an HCCH-hosted presentation",
+      "sourcePageUrl": "https://assets.hcch.net/docs/2e3572d7-3c60-45a5-95fb-b6ba2f02e363.pdf",
+      "pdfUrl": "https://assets.hcch.net/docs/2e3572d7-3c60-45a5-95fb-b6ba2f02e363.pdf",
+      "page": 5,
+      "languages": ["de-DE", "en-US"],
+      "anchors": ["Apostille", "REPUBLIC OF AUSTRIA", "09.06.2015", "50014/2015"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "austria-federal-ministry-for-europe-integration-and-foreign-affairs",
+      "expectedItems": [
+        { "item": 6, "exact": "09.06.2015" },
+        { "item": 8, "pattern": "50014.?2015" }
+      ]
+    },
+    {
+      "id": "argentina-2019-official-model",
+      "description": "Official Argentine government filled digital Apostille model",
+      "sourcePageUrl": "https://cancilleria.gob.ar/userfiles/2017/instructivo-legalizaciones-digital.pdf",
+      "pdfUrl": "https://cancilleria.gob.ar/userfiles/2017/instructivo-legalizaciones-digital.pdf",
+      "page": 6,
+      "languages": ["es-ES", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "ARGENTINA", "15.03.2019", "XXXX.2019"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "argentina-ministry-of-foreign-affairs-and-worship"
+    },
+    {
+      "id": "azerbaijan-official-model",
+      "description": "Official Azerbaijani government bilingual blank Apostille model",
+      "sourcePageUrl": "https://mfa.gov.az/files/shares/Consulate/Apostille.pdf",
+      "pdfUrl": "https://mfa.gov.az/files/shares/Consulate/Apostille.pdf",
+      "page": 5,
+      "languages": ["az-Latn", "en-US"],
+      "anchors": ["APOSTILLE", "Republic of Azerbaijan", "AP.*000000", "Consular Department"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "cyprus-2026-official-model",
+      "description": "Official Cyprus Ministry of Justice Apostille model effective 1 February 2026",
+      "sourcePageUrl": "https://apostille-validation.mjpo.gov.cy/Validate/Guidance",
+      "imageUrl": "https://apostille-validation.mjpo.gov.cy/img/apostille-sample-after-2026-02-01.jpg",
+      "languages": ["el-GR", "en-US"],
+      "anchors": ["APOSTILLE", "REPUBLIC OF CYPRUS", "MINISTRY OF JUSTICE", "Convention de La Haye"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "cyprus-ministry-of-justice-and-public-order"
+    },
+    {
+      "id": "kosovo-2016-official-model",
+      "description": "Official Kosovo trilingual Apostille model in Government Regulation 19/2016",
+      "sourcePageUrl": "https://gzk.rks-gov.net/ActDocumentDetail.aspx?ActID=15075",
+      "pdfUrl": "https://kryeministri.rks-gov.net/wp-content/uploads/2022/05/PROJEKTRREGULLORE_PER_LESHIMIN_E_CERTIFIKATES_APOSTILE.pdf",
+      "page": 23,
+      "languages": ["sq-AL", "sr-Latn", "en-US"],
+      "anchors": ["APOSTILLE", "REPUBLIC OF KOSOVO", "This public document", "Certified"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "kosovo-ministry-of-foreign-affairs-department-for-consular-affairs-ministry-of-internal-affairs-civil-registration-agency"
+    },
+    {
+      "id": "paraguay-2013-official-model",
+      "description": "Official Paraguayan trilingual Apostille model annexed to Decree 520/2013",
+      "sourcePageUrl": "https://www.mre.gov.py/wp-content/uploads/normativa-institucional/11_Decreto_N_520-13.Apostilla.pdf",
+      "pdfUrl": "https://www.mre.gov.py/wp-content/uploads/normativa-institucional/11_Decreto_N_520-13.Apostilla.pdf",
+      "page": 3,
+      "languages": ["es-ES", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "REPUBLICA DEL PARAGUAY", "RELACIONES EXTERIORES", "Tipo de Documento"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "paraguay-ministry-of-foreign-affairs"
+    },
+    {
+      "id": "rwanda-official-convention-model",
+      "description": "Official Rwanda gazette trilingual Apostille Convention model",
+      "sourcePageUrl": "https://www.rlrc.gov.rw/index.php?eID=dumpFile&f=107277&t=f&token=8ace0892c3f693f0dc37e509e5cdd2e0a8648cca",
+      "pdfUrl": "https://www.rlrc.gov.rw/index.php?eID=dumpFile&f=107277&t=f&token=8ace0892c3f693f0dc37e509e5cdd2e0a8648cca",
+      "page": 16,
+      "languages": ["rw-RW", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Country", "Pays", "Signature"],
+      "minimumAnchorMatches": 3
+    },
+    {
+      "id": "texas-2023-official-sample",
+      "description": "Official Texas Secretary of State filled universal Apostille sample",
+      "sourcePageUrl": "https://www.sos.state.tx.us/statdoc/apostilleforms.shtml",
+      "pdfUrl": "https://www.sos.state.tx.us/statdoc/SampleDoc.pdf",
+      "page": 1,
+      "languages": ["en-US", "fr-FR", "es-ES"],
+      "anchors": ["APOSTILLE", "State of Texas", "17th day of January 2023", "10000680"],
+      "minimumAnchorMatches": 3,
+      "authorityId": "united-states-of-america-texas-secretary-of-state"
+    }
+  ]
+}

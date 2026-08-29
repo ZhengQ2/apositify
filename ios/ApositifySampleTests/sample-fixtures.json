@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "samples": [
+    {
+      "id": "china-official-derived",
+      "description": "Synthetic, redacted reconstruction of the bilingual layout in China's official 2025 e-Apostille specimen.",
+      "authorityId": "china-china-mainland-ministry-of-foreign-affairs",
+      "languages": ["zh-Hans", "en-US"],
+      "anchors": ["APOSTILLE", "People.*Republic of China", "250000149018", "E00268460"],
+      "lines": [
+        "附加证明书  APOSTILLE",
+        "(Convention de La Haye du 5 octobre 1961)",
+        "E00268460",
+        "1. 文书出具国: 中华人民共和国",
+        "Country: People's Republic of China",
+        "2. 签署人: Wang Example",
+        "3. 签署人身份: Authorized Official",
+        "4. 印鉴名称: Example Trade Council",
+        "5. 签发地: Beijing",
+        "6. 签发日期",
+        "2025年04月17日  April 17,2025",
+        "7. 签发人: Department of Consular Affairs",
+        "8. 附加证明书编号",
+        "认字第250000149018号",
+        "9. 签发机关印鉴",
+        "10. 签名"
+      ],
+      "expectedFields": [
+        { "id": "apostilleNumber", "contains": "250000149018" },
+        { "id": "stickerNumber", "exact": "E00268460" }
+      ]
+    },
+    {
+      "id": "hcch-english-french-spanish",
+      "description": "Filled artificial certificate based on the official HCCH trilingual model.",
+      "authorityId": "united-kingdom-foreign-and-commonwealth-office",
+      "languages": ["en-US", "fr-FR", "es-ES"],
+      "anchors": ["APOSTILLE", "United Kingdom", "18 juillet 2026", "UK-260042"],
+      "lines": [
+        "APOSTILLE",
+        "(Convention de La Haye du 5 octobre 1961)",
+        "1. Country / Pays / País: United Kingdom",
+        "This public document / Le présent acte public / El presente documento público",
+        "2. has been signed by / a été signé par / ha sido firmado por: Alex Example",
+        "3. acting in the capacity of / agissant en qualité de: Registrar",
+        "4. bears the seal / stamp of / est revêtu du sceau: Example Office",
+        "Certified / Attesté / Certificado",
+        "5. at / à / en: London",
+        "6. the / le / el día",
+        "18 juillet 2026",
+        "7. by / par / por: Legalisation Office",
+        "8. No / sous no / bajo el número",
+        "UK-260042",
+        "9. Seal / stamp / Sceau / Sello",
+        "10. Signature / Firma"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "18 juillet 2026", "isoDate": "2026-07-18" },
+        { "id": "field-1", "exact": "UK-260042" }
+      ]
+    },
+    {
+      "id": "german-localized-date",
+      "description": "Filled artificial German-English-French model with a German ordinal date.",
+      "authorityId": "australia-department-of-foreign-affairs-and-trade",
+      "languages": ["de-DE", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Australien", "28.*August 2026", "AUSG-A1-1234"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Land / Country / Pays: Australien",
+        "2. ist unterschrieben von: Erika Beispiel",
+        "3. in seiner Eigenschaft als: Notarin",
+        "4. trägt Siegel oder Stempel: Beispielamt",
+        "Bestätigt / Certified / Attesté",
+        "5. in: Berlin",
+        "6. am: 28. August 2026",
+        "7. durch: Department of Foreign Affairs and Trade",
+        "8. unter Nr.: AUSG-A1-1234",
+        "9. Siegel / Stempel",
+        "10. Unterschrift"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "AUSG-A1-1234" },
+        { "id": "field-1", "exact": "28. August 2026", "isoDate": "2026-08-28" }
+      ]
+    },
+    {
+      "id": "arabic-localized-date",
+      "description": "Filled artificial Arabic-English-French model using an Arabic month name.",
+      "authorityId": "pakistan-ministry-of-foreign-affairs",
+      "languages": ["ar-SA", "en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Pakistan", "2026", "PK-AR-884422"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. الدولة / Country / Pays: Pakistan",
+        "2. تم توقيعه من قبل / has been signed by: Example Person",
+        "3. تم التصرف بالصفة / acting in the capacity of: Registrar",
+        "4. طابع أو ختم / bears the seal or stamp of: Example Authority",
+        "موثق / Certified / Attesté",
+        "5. في / at: Islamabad",
+        "6. بالتاريخ / the: 18 يوليو 2026",
+        "7. بواسطة / by: Ministry of Foreign Affairs",
+        "8. رقم / No: PK-AR-884422",
+        "9. ختم / Seal",
+        "10. الإمضاء / Signature"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "PK-AR-884422" },
+        { "id": "field-1", "contains": "2026", "isoDate": "2026-07-18" }
+      ]
+    },
+    {
+      "id": "spanish-date-particles",
+      "description": "Artificial Spanish certificate using the common 'de' date form.",
+      "authorityId": "pakistan-ministry-of-foreign-affairs",
+      "languages": ["es-ES", "en-US"],
+      "anchors": ["APOSTILLE", "Pakistán", "18 de julio de 2026", "PK-ES-773311"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. País / Country: Pakistán",
+        "2. ha sido firmado por: Persona Ejemplo",
+        "3. quien actúa en calidad de: Registrador",
+        "4. lleva el sello de: Autoridad Ejemplo",
+        "Certificado",
+        "5. en: Islamabad",
+        "6. fecha: 18 de julio de 2026",
+        "7. por: Ministry of Foreign Affairs",
+        "8. número: PK-ES-773311",
+        "9. Sello",
+        "10. Firma"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "PK-ES-773311" },
+        { "id": "field-1", "exact": "18 de julio de 2026", "isoDate": "2026-07-18" }
+      ]
+    },
+    {
+      "id": "item-six-beats-underlying-date",
+      "description": "An unrelated source-document date must not override the certified-on date in item 6.",
+      "authorityId": "united-kingdom-foreign-and-commonwealth-office",
+      "languages": ["en-US"],
+      "anchors": ["APOSTILLE", "United Kingdom", "3 January 2024", "28 August 2026", "UK-889900"],
+      "lines": [
+        "Underlying document date: 3 January 2024",
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Country: United Kingdom",
+        "2. has been signed by: Example Person",
+        "3. acting in the capacity of: Registrar",
+        "4. bears the seal or stamp of: Example Office",
+        "Certified",
+        "5. at: London",
+        "6. dated: 28 August 2026",
+        "7. by: Legalisation Office",
+        "8. No: UK-889900",
+        "9. Seal or stamp",
+        "10. Signature"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "28 August 2026", "isoDate": "2026-08-28" },
+        { "id": "field-1", "exact": "UK-889900" }
+      ]
+    },
+    {
+      "id": "convention-header-is-not-item-six",
+      "description": "Item 6 is missing, as it is when that line is smudged or cropped. The Convention's own '5 octobre 1961' must not be offered as the certified-on date.",
+      "authorityId": "united-kingdom-foreign-and-commonwealth-office",
+      "languages": ["en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "United Kingdom", "1961", "UK-551122"],
+      "lines": [
+        "APOSTILLE",
+        "(Convention de La Haye du 5 octobre 1961)",
+        "1. Country: United Kingdom",
+        "2. has been signed by: Example Person",
+        "3. acting in the capacity of: Registrar",
+        "4. bears the seal or stamp of: Example Office",
+        "5. at: London",
+        "7. by: Legalisation Office",
+        "8. No: UK-551122",
+        "9. Seal or stamp",
+        "10. Signature"
+      ],
+      "expectedFields": [
+        { "id": "field-0", "absent": true },
+        { "id": "field-1", "exact": "UK-551122" }
+      ]
+    },
+    {
+      "id": "template-words-inside-values",
+      "description": "Artificial layout that deliberately puts template-label words inside real values: an 'en' place name, a 'da' authority particle, a Seal-named office and a NO reference prefix.",
+      "languages": ["en-US", "fr-FR", "pt-BR"],
+      "anchors": ["APOSTILLE", "Aix-en-Provence", "Justica da Bahia", "Royal Seal Office"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Country: France",
+        "2. has been signed by: Example Person",
+        "3. acting in the capacity of: Registrar",
+        "4. bears the seal or stamp of: Royal Seal Office",
+        "5. at: Aix-en-Provence",
+        "6. dated: 28 August 2026",
+        "7. by: Tribunal de Justica da Bahia",
+        "8. No: NO-123456",
+        "9. Seal or stamp",
+        "10. Signature"
+      ],
+      "expectedItems": [
+        { "item": 4, "exact": "Royal Seal Office" },
+        { "item": 5, "exact": "Aix-en-Provence" },
+        { "item": 6, "exact": "28 August 2026", "isoDate": "2026-08-28" },
+        { "item": 7, "exact": "Tribunal de Justica da Bahia" },
+        { "item": 8, "exact": "NO-123456" }
+      ]
+    },
+    {
+      "id": "stray-trailing-digit-lines",
+      "description": "Footer text that ends in a separator and a digit. Only right-to-left OCR puts the item number last, so these lines must not open a numbered block.",
+      "authorityId": "united-kingdom-foreign-and-commonwealth-office",
+      "languages": ["en-US"],
+      "anchors": ["APOSTILLE", "United Kingdom", "UK-889900", "ref A-5"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Country: United Kingdom",
+        "2. has been signed by: Example Person",
+        "3. acting in the capacity of: Registrar",
+        "4. bears the seal or stamp of: Example Office",
+        "5. at: London",
+        "6. dated: 28 August 2026",
+        "7. by: Legalisation Office",
+        "8. No: UK-889900",
+        "9. Seal or stamp",
+        "10. Signature",
+        "Registered under file ref A-5",
+        "This certificate only attests the signature."
+      ],
+      "expectedItems": [
+        { "item": 5, "exact": "London" },
+        { "item": 8, "exact": "UK-889900" }
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "28 August 2026", "isoDate": "2026-08-28" },
+        { "id": "field-1", "exact": "UK-889900" }
+      ]
+    },
+    {
+      "id": "bilingual-chained-labels",
+      "description": "Artificial certificate in the English-French layout Canadian provinces issue, where a slash chains the two languages and the last label is followed only by whitespace before the value.",
+      "authorityId": "canada-ministry-of-public-and-business-service-delivery-and-procurement-of-the-province-of-ontario",
+      "languages": ["en-US", "fr-FR"],
+      "anchors": ["APOSTILLE", "Canada", "2026-06-19", "ON-26-000000-0000"],
+      "lines": [
+        "APOSTILLE",
+        "(Convention de La Haye du 5 Octobre 1961)",
+        "1. Country: / Pays :  Canada",
+        "This public document / Le présent acte public",
+        "2. has been signed by / a été signé par  Example Person",
+        "3. acting in the capacity of / agissant en qualité de  Registrar",
+        "4. bears the seal / stamp of / est revêtu du sceau / timbre de  Institution",
+        "Certified / Attesté",
+        "5. at / à  Toronto, Ontario",
+        "6. the / le  2026-06-19",
+        "7. by / par  Manager Official Documents Services",
+        "8. N° / sous n°  ON-26-000000-0000",
+        "9. Seal / stamp / Sceau / timbre :",
+        "10. Signature / Signature :"
+      ],
+      "expectedItems": [
+        { "item": 1, "exact": "Canada" },
+        { "item": 5, "exact": "Toronto, Ontario" },
+        { "item": 6, "exact": "2026-06-19", "isoDate": "2026-06-19" },
+        { "item": 8, "exact": "ON-26-000000-0000" }
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "ON-26-000000-0000" },
+        { "id": "field-1", "exact": "2026-06-19", "isoDate": "2026-06-19" }
+      ]
+    },
+    {
+      "id": "romanian-localized-labels",
+      "description": "Filled artificial Romanian-English model for an authority whose verifier takes both the number and the date.",
+      "authorityId": "romania-offices-of-the-prefect",
+      "languages": ["ro-RO", "en-US"],
+      "anchors": ["APOSTILLE", "Romania", "18 iulie 2026", "RO-2291"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Tara / Country: Romania",
+        "2. a fost semnat de: Persoana Exemplu",
+        "3. in calitate de: Notar",
+        "4. poarta sigiliul: Exemplu Birou",
+        "5. la: Bucuresti",
+        "6. Data: 18 iulie 2026",
+        "7. de catre: Institutia Prefectului",
+        "8. Numarul: RO-2291",
+        "9. Sigiliu",
+        "10. Semnatura"
+      ],
+      "expectedItems": [
+        { "item": 6, "exact": "18 iulie 2026", "isoDate": "2026-07-18" },
+        { "item": 8, "exact": "RO-2291" }
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "RO-2291" },
+        { "id": "field-1", "exact": "18 iulie 2026", "isoDate": "2026-07-18" }
+      ]
+    },
+    {
+      "id": "italian-dutch-localized-labels",
+      "description": "Artificial certificate carrying the Italian and Dutch item 6 and item 8 labels, which are written differently from the trilingual model.",
+      "languages": ["it-IT", "nl-NL", "en-US"],
+      "anchors": ["APOSTILLE", "18 luglio 2026", "IT-5521"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Paese / Land: Italia",
+        "2. e stato firmato da: Persona Esempio",
+        "3. nella qualita di: Notaio",
+        "5. a: Roma",
+        "6. il / op: 18 luglio 2026",
+        "8. numero / onder nr.: IT-5521",
+        "9. Sigillo / Zegel",
+        "10. Firma / Handtekening"
+      ],
+      "expectedItems": [
+        { "item": 6, "exact": "18 luglio 2026", "isoDate": "2026-07-18" },
+        { "item": 8, "exact": "IT-5521" }
+      ]
+    },
+    {
+      "id": "greek-localized-labels",
+      "description": "Filled artificial Greek-English model. Skips where Apple Vision has no Greek recognizer; the same parsing is asserted deterministically in the core suite.",
+      "optional": true,
+      "authorityId": "greece-ministry-of-digital-governance",
+      "languages": ["el-GR", "en-US"],
+      "anchors": ["APOSTILLE", "Greece", "Αριθμός", "18 Ιουλίου 2026", "GR-8842"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Χώρα / Country: Greece",
+        "2. έχει υπογραφεί από: Example Person",
+        "3. με την ιδιότητα: Registrar",
+        "5. στην: Athens",
+        "6. Ημερομηνία: 18 Ιουλίου 2026",
+        "7. από: Ministry of Digital Governance",
+        "8. Αριθμός: GR-8842",
+        "9. Σφραγίδα",
+        "10. Υπογραφή"
+      ],
+      "expectedItems": [
+        { "item": 8, "exact": "GR-8842" }
+      ],
+      "expectedFields": [
+        { "id": "field-0", "exact": "GR-8842" }
+      ]
+    },
+    {
+      "id": "turkish-localized-labels",
+      "description": "Artificial Turkish-English model. Skips where Apple Vision cannot resolve the Turkish diacritics; the same parsing is asserted deterministically in the core suite.",
+      "optional": true,
+      "languages": ["tr-TR", "en-US"],
+      "anchors": ["APOSTILLE", "18 Temmuz 2026", "TR-9910"],
+      "lines": [
+        "APOSTILLE (Convention de La Haye du 5 octobre 1961)",
+        "1. Ulke / Country: Turkiye",
+        "5. Yer: Ankara",
+        "6. Tarih: 18 Temmuz 2026",
+        "8. Numara: TR-9910",
+        "10. Imza"
+      ],
+      "expectedItems": [
+        { "item": 6, "exact": "18 Temmuz 2026", "isoDate": "2026-07-18" },
+        { "item": 8, "exact": "TR-9910" }
+      ]
+    }
+  ]
+}

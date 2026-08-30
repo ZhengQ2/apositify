@@ -2,6 +2,7 @@ node_modules
 dist
 .env
 .DS_Store
+.claude
 public/qr-test
 /specimens/
 android/.gradle/

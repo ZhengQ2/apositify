@@ -57,6 +57,15 @@ app. Comparing only the portals each run could actually reach:
 five authorities fill completely and a third fill nothing.** That is the
 finding: the remaining third is real work, not measurement noise.
 
+### The audit under-reports
+
+The app re-runs its script on every DOM mutation for ten seconds, so a form
+that mounts after the page settles is still filled. The audit injected once,
+and so reported those pages as partial or unmatched. Ontario is the clearest
+case: the audit calls it 1/2, while driving the real app to the live portal
+fills both fields. The audit now injects twice, but every figure here predates
+that and should be read as a floor.
+
 ### Treat per-portal numbers as coarse
 
 The same page reports differently depending on the engine and how long it is

@@ -105,6 +105,12 @@ class PortalAutofillTest {
         Thread.sleep(HYDRATION_MILLIS)
 
         val controls = evaluate(webView!!, COUNT_CONTROLS)?.toIntOrNull() ?: 0
+        // The app re-runs its script on every DOM mutation for ten seconds, so
+        // a form that mounts late is still filled. Injecting once under-reported
+        // exactly those pages — Ontario among them, which the audit called
+        // partial while the app fills it completely. Inject twice to match.
+        evaluate(webView!!, autofillScript(entry, fields))
+        Thread.sleep(HYDRATION_MILLIS)
         evaluate(webView!!, autofillScript(entry, fields))
         val filled = evaluate(webView!!, countFilled(fields))?.toIntOrNull() ?: 0
 

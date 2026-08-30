@@ -24,24 +24,44 @@ and the user types the value — but it fails silently.
 ## Measured coverage
 
 `npm run audit:portals` fetches each authority's page and runs the shipping
-autofill script against the real markup in jsdom. It is a survey, not a gate:
-these are live third-party sites that change, rate-limit and geo-block, so it
-is deliberately not part of `npm test`.
+autofill script against the real markup in jsdom. `PortalAutofillTest`
+(Android) and `PortalAutofillTests` (iOS) do the same thing in a real WebView
+on a connected device, which is the only way to see the portals that render
+their form in JavaScript. All three are surveys, not gates: these are live
+third-party sites that change, rate-limit and geo-block, so failing the build
+on their behaviour would make the suite lie about the app. Nothing is ever
+submitted — the script fills controls and the harness reads them back.
 
-Static-HTML sweep of the 62 HTTPS portals, 30 August 2026:
+Measured 30 August 2026, over the 62 authorities with an HTTPS portal.
 
-| Outcome | Count |
-| --- | --- |
-| Every field filled | 14 |
-| Some fields filled | 6 |
-| Form present, nothing matched | 8 |
-| Form not in static HTML (JS-rendered) | 17 |
-| Unreachable, timeout or HTTP 403 | 17 |
+| Outcome | Static (jsdom) | Android device |
+| --- | --- | --- |
+| Every field filled | 14 | 21 |
+| Some fields filled | 6 | 12 |
+| Form present, nothing matched | 8 | 16 |
+| No controls seen | 17 not in static HTML | 13 |
+| Unreachable / timeout / 403 | 17 | counted as no controls |
 
-So of the 28 portals whose form a static fetch can see, **half fill completely
-and roughly a third fill nothing.** The 17 JS-rendered portals cannot be judged
-this way at all — they need a real browser, which is what
-`PortalAutofillTest` does on a connected Android device.
+A real browser roughly doubles what can be judged, because it renders the
+JavaScript portals a static fetch cannot see. On the device, **a third of
+authorities fill completely and a fifth fill partially**; the remaining
+quarter that match nothing are the work still to do.
+
+### Treat per-portal numbers as coarse
+
+The same page reports differently depending on the engine and how long it is
+given to settle. Costa Rica's portal showed 13 controls under Android's
+WebView, 4 in jsdom, and 3 under an early iOS harness. Aggregates are
+informative; a single authority's row is not evidence on its own without
+looking at the page.
+
+### iOS is not yet measured
+
+The first iOS device run reported 38 authorities as having no controls against
+Android's 13. That was the harness, not the app: a `WKWebView` outside the view
+hierarchy is throttled and may never lay out, so pages were measured before
+they rendered. The harness now borrows the host app's window, but the corrected
+run has not completed on a device, so no iOS figures are published here.
 
 ## What the failures are
 

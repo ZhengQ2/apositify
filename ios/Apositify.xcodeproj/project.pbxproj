@@ -26,6 +26,7 @@
 		100000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000012 /* PrivacyInfo.xcprivacy */; };
 		100000000000000000000012 /* QrRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000013 /* QrRouter.swift */; };
 		100000000000000000000020 /* DeviceSpecimenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000021 /* DeviceSpecimenTests.swift */; };
+		100000000000000000000022 /* PortalAutofillTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000023 /* PortalAutofillTests.swift */; };
 		100000000000000000000021 /* Specimens in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000022 /* Specimens */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		200000000000000000000020 /* ApositifyDeviceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApositifyDeviceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		200000000000000000000021 /* DeviceSpecimenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSpecimenTests.swift; sourceTree = "<group>"; };
 		200000000000000000000022 /* Specimens */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Specimens; sourceTree = "<group>"; };
+		200000000000000000000023 /* PortalAutofillTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalAutofillTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				200000000000000000000021 /* DeviceSpecimenTests.swift */,
+				200000000000000000000023 /* PortalAutofillTests.swift */,
 				200000000000000000000022 /* Specimens */,
 			);
 			path = ApositifyDeviceTests;
@@ -309,6 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				100000000000000000000020 /* DeviceSpecimenTests.swift in Sources */,
+				100000000000000000000022 /* PortalAutofillTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -257,9 +257,19 @@ private struct OfficialWebView: UIViewRepresentable {
     }
 
     private var autofillScript: String? {
-        guard !fields.isEmpty,
-              route.initialURL?.scheme?.lowercased() == "https",
+        guard route.initialURL?.scheme?.lowercased() == "https",
               let host = route.initialURL?.host?.lowercased() else { return nil }
+        return PortalAutofill.script(fields: fields, allowedHost: host)
+    }
+
+}
+
+/// The script the branded verifier injects into an authority's page, lifted
+/// out of the view so the on-device portal audit can exercise the shipping
+/// code rather than a copy of it that could drift from it.
+enum PortalAutofill {
+    static func script(fields: [ExtractedField], allowedHost: String) -> String? {
+        guard !fields.isEmpty else { return nil }
         let payload: [[String: Any]] = fields.map {
             [
                 "id": $0.id,
@@ -272,10 +282,10 @@ private struct OfficialWebView: UIViewRepresentable {
         }
         guard let data = try? JSONSerialization.data(withJSONObject: payload),
               let json = String(data: data, encoding: .utf8) else { return nil }
-        return Self.javascript(fieldsJSON: json, allowedHost: host)
+        return javascript(fieldsJSON: json, allowedHost: allowedHost)
     }
 
-    private static func javascript(fieldsJSON: String, allowedHost: String) -> String {
+    static func javascript(fieldsJSON: String, allowedHost: String) -> String {
         """
         (() => {
           const fields = \(fieldsJSON);

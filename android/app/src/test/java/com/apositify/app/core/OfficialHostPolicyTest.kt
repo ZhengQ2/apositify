@@ -59,7 +59,14 @@ class OfficialHostPolicyTest {
     }
 
     @Test fun stillRefusesPlainHttpWhereverItLeads() {
+        // Bahrain's own site downgrades its https verification link to http.
+        // The page must not be shown with official branding — an unencrypted
+        // verification result can be rewritten by anything on the network —
+        // but the host is the authority's, and the warning has to say which of
+        // the two things is actually wrong.
         val bahrain = policy("www.mofa.gov.bh", listOf("mofa.gov.bh"))
         assertFalse(bahrain.permits(URI("http://www.mofa.gov.bh/legalization")))
+        assertTrue("the host still belongs to the authority", bahrain.allows("www.mofa.gov.bh"))
+        assertFalse("an unrelated host does not", bahrain.allows("example.com"))
     }
 }

@@ -391,10 +391,24 @@ fun SecureVerifierScreen(
     }
 
     external?.let { uri ->
+        // Two different reasons land here and they are not the same warning.
+        // Bahrain's own site downgrades its https verification link to http:
+        // the host is the authority's, so telling the user they are leaving it
+        // is simply wrong. What is actually being refused is the unencrypted
+        // connection, and that is what the message has to say.
+        val sameAuthority = uri.host?.lowercase()?.let(policy::allows) == true
         AlertDialog(
             onDismissRequest = { external = null },
-            title = { Text("Leave the official verifier?") },
-            text = { Text("This link goes to ${uri.host ?: "another app"}, which is outside the approved authority hosts. It will open externally without Apostifi branding or autofill.") },
+            title = { Text(if (sameAuthority) "This page is not encrypted" else "Leave the official verifier?") },
+            text = {
+                Text(
+                    if (sameAuthority) {
+                        "${uri.host} served this page over an unencrypted connection, so its contents can be changed in transit. Apostifi will not show it with official branding or autofill anything into it."
+                    } else {
+                        "This link goes to ${uri.host ?: "another app"}, which is outside the approved authority hosts. It will open externally without Apostifi branding or autofill."
+                    }
+                )
+            },
             confirmButton = { TextButton(onClick = {
                 external = null
                 context.openExternally(uri.toString())

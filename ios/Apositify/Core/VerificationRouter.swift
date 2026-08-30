@@ -50,6 +50,11 @@ struct OfficialHostPolicy: Hashable {
         guard let scheme = url.scheme?.lowercased() else { return false }
         if scheme == "about" { return true }
         guard scheme == "https", let host = url.host?.lowercased() else { return false }
+        return allows(host)
+    }
+
+    /// Whether the host belongs to this authority, regardless of scheme.
+    func allows(_ host: String) -> Bool {
         if allowedHosts.contains(host) { return true }
         return allowedDomains.contains { host == $0 || host.hasSuffix("." + $0) }
     }

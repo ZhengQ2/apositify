@@ -57,12 +57,29 @@ struct WebVerifierView: View {
                 }
             }
         }
-        .alert("Leave the official verifier?", isPresented: blockedExternalURLIsPresented, presenting: blockedExternalURL) { url in
+        // Two different reasons land here and they are not the same warning.
+        // Bahrain's own site downgrades its https verification link to http:
+        // the host is the authority's, so saying the user is leaving it is
+        // simply wrong. What is refused is the unencrypted connection.
+        .alert(
+            blockedIsSameAuthority ? "This page is not encrypted" : "Leave the official verifier?",
+            isPresented: blockedExternalURLIsPresented,
+            presenting: blockedExternalURL
+        ) { url in
             Button("Open in Safari") { UIApplication.shared.open(url) }
             Button("Stay here", role: .cancel) {}
         } message: { url in
-            Text("\(url.host ?? url.absoluteString) is not an approved website for this issuing authority. Apostifi will not show it with official branding.")
+            if blockedIsSameAuthority {
+                Text("\(url.host ?? url.absoluteString) served this page over an unencrypted connection, so its contents can be changed in transit. Apostifi will not show it with official branding or autofill anything into it.")
+            } else {
+                Text("\(url.host ?? url.absoluteString) is not an approved website for this issuing authority. Apostifi will not show it with official branding.")
+            }
         }
+    }
+
+    private var blockedIsSameAuthority: Bool {
+        guard let host = blockedExternalURL?.host?.lowercased() else { return false }
+        return session.hostPolicy.allows(host)
     }
 
     private var blockedExternalURLIsPresented: Binding<Bool> {

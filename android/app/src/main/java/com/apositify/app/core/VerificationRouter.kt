@@ -66,7 +66,11 @@ data class OfficialHostPolicy(
     fun permits(uri: URI): Boolean {
         if (uri.toString() == "about:blank") return true
         if (uri.scheme?.lowercase() != "https") return false
-        val host = uri.host?.lowercase() ?: return false
+        return allows(uri.host?.lowercase() ?: return false)
+    }
+
+    /** Whether the host belongs to this authority, regardless of scheme. */
+    fun allows(host: String): Boolean {
         if (host in allowedHosts) return true
         return allowedDomains.any { host == it || host.endsWith(".$it") }
     }

@@ -14,6 +14,9 @@ struct RegisterEntry: Decodable, Identifiable, Hashable {
     let verificationMode: VerificationMode
     let notes: String
     let registerLinks: [RegisterLink]
+    /// Roots this authority's approved hosts may widen to, so a redirect to a
+    /// sibling subdomain is not treated as leaving the official verifier.
+    let allowedDomains: [String]
     let registerGuide: RegisterGuide?
     let qrRoutes: [QrRoute]
     let verification: VerificationConfig?

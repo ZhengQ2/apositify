@@ -16,6 +16,9 @@ data class RegisterEntry(
     val verificationMode: String = "",
     val notes: String = "",
     val registerLinks: List<RegisterLink> = emptyList(),
+    /// Roots this authority's approved hosts may widen to, so a redirect to a
+    /// sibling subdomain is not treated as leaving the official verifier.
+    val allowedDomains: List<String> = emptyList(),
     val registerGuide: RegisterGuide? = null,
     val qrRoutes: List<QrRoute> = emptyList(),
     val verification: VerificationConfig? = null,

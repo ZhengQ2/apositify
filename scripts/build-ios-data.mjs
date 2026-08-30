@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { eRegisters, sourceUrl } from '../src/data/e-registers.js'
 import { verificationFields } from '../src/data/verification-fields.js'
 import { enabledQrRecordsFor } from '../src/data/qr-codes.js'
+import { getPublicSuffix } from 'tldts'
 
 const normalize = (value) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 
@@ -101,6 +102,41 @@ function normalizeQrRoute(record) {
   }
 }
 
+// A verifier that redirects to its own www or a sibling subdomain has not left
+// the authority — but the app used to treat it as if it had. Each approved host
+// is widened to the subtree it roots, and to the www/apex partner of that root,
+// so www.mofa.gov.bh, mofa.gov.bh and apostille.mofa.gov.bh are one authority.
+//
+// Deliberately narrower than the registrable domain. govern.ad is not a public
+// suffix, so widening Andorra that far would trust every Andorran government
+// site; powerappsportals.com is not one either, and four authorities are hosted
+// there, so it would trust every unrelated tenant. The Public Suffix List is
+// used only to refuse widening to a root that is itself a suffix — a host of
+// gov.uk must never come to mean all of gov.uk.
+function widenableRoot(host) {
+  const root = host.startsWith('www.') ? host.slice(4) : host
+  if (!root.includes('.')) return null
+  if (getPublicSuffix(root) === root) return null
+  return root
+}
+
+function allowedDomainsFor(hosts) {
+  return [...new Set(hosts.map(widenableRoot).filter(Boolean))].sort()
+}
+
+function hostsFor(entry, config, qrRoutes) {
+  const urls = [
+    entry.registerUrl,
+    config?.deepLink?.baseUrl,
+    config?.deepLink?.actionUrl,
+    ...(entry.registerLinks || []).map((link) => link.url)
+  ].filter(Boolean)
+  const hosts = urls
+    .map((url) => { try { return new URL(url).hostname.toLowerCase() } catch { return null } })
+    .filter(Boolean)
+  return [...hosts, ...qrRoutes.flatMap((route) => route.allowedUrls.map((rule) => rule.hostname.toLowerCase()))]
+}
+
 const entries = eRegisters.map((entry) => {
   const config = verificationFields[entry.id]
   const qrRoutes = enabledQrRecordsFor(entry.id).map(normalizeQrRoute)
@@ -113,6 +149,7 @@ const entries = eRegisters.map((entry) => {
     notes: entry.notes,
     registerLinks: entry.registerLinks || [],
     qrRoutes,
+    allowedDomains: allowedDomainsFor(hostsFor(entry, config, qrRoutes)),
     ...(entry.registerGuide ? { registerGuide: entry.registerGuide } : {}),
     ...(config ? {
       verification: {

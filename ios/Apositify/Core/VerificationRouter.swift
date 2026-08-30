@@ -25,6 +25,11 @@ enum VerificationRoute {
 
 struct OfficialHostPolicy: Hashable {
     let allowedHosts: Set<String>
+    /// Roots the approved hosts may widen to, computed against the Public
+    /// Suffix List when the catalog is generated so that a root can never be a
+    /// suffix itself. A verifier that redirects to its own www, or to a sibling
+    /// subdomain, has not left the authority.
+    let allowedDomains: Set<String>
 
     init(entry: RegisterEntry, initialURL: URL?) {
         var hosts = Set<String>()
@@ -38,13 +43,15 @@ struct OfficialHostPolicy: Hashable {
         entry.registerLinks.forEach { include($0.url) }
         entry.qrRoutes.flatMap(\.allowedUrls).forEach { hosts.insert($0.hostname.lowercased()) }
         allowedHosts = hosts
+        allowedDomains = Set(entry.allowedDomains.map { $0.lowercased() })
     }
 
     func permitsMainFrameNavigation(to url: URL) -> Bool {
         guard let scheme = url.scheme?.lowercased() else { return false }
         if scheme == "about" { return true }
         guard scheme == "https", let host = url.host?.lowercased() else { return false }
-        return allowedHosts.contains(host)
+        if allowedHosts.contains(host) { return true }
+        return allowedDomains.contains { host == $0 || host.hasSuffix("." + $0) }
     }
 }
 

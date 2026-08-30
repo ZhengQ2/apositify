@@ -11,6 +11,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "isi.govern.ad"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -93,6 +96,9 @@
       "notes": "There are two e-Registers: the first for Apostilles issued between 17 November 2017 and 14 April 2019; the second for Apostilles issued from 15 April 2019.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "argentina.gob.ar"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -199,6 +205,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "e-verify.am"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -227,6 +236,9 @@
       "notes": "Only Apostilles issued on or after 14 December 2015 can be verified on the e-Register. For verification of Apostilles issued before this date please email legalisations.australia@dfat.gov.au.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "orao.dfat.gov.au"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -288,6 +300,9 @@
       "notes": "Use the RTR signature-verification service to upload the original e-Apostille PDF and verify its digital signature.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "signaturpruefung.egiz.gv.at"
+      ],
       "verification": {
         "kind": "upload",
         "fields": [],
@@ -303,6 +318,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.justice.gov.az"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -388,6 +406,9 @@
             }
           ]
         }
+      ],
+      "allowedDomains": [
+        "mofa.gov.bh"
       ]
     },
     {
@@ -399,6 +420,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "mofa-servicedirectory.apostille.mygov.bd"
+      ],
       "verification": {
         "kind": "upload",
         "fields": [],
@@ -414,6 +438,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "legalweb.diplomatie.be"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -469,6 +496,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "rree.gob.bo"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -611,6 +641,12 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "apostil.cnj.jus.br",
+        "apostil.org.br",
+        "apostila.cnj.jus.br",
+        "cnj.jus.br"
+      ],
       "registerGuide": {
         "title": "Which link should I use?",
         "steps": [
@@ -656,6 +692,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostil.mjs.bg"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -695,6 +734,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.mfa.bg"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -764,6 +806,10 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "apostille.bg",
+        "apostille.nacid.bg"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -793,6 +839,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.gov.bg"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -840,6 +889,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-gac.powerappsportals.com"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -902,7 +954,10 @@
       "verificationMode": "online",
       "notes": "Official e-Register link available",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-gac.powerappsportals.com"
+      ]
     },
     {
       "id": "canada-ministry-of-justice-of-the-province-of-alberta",
@@ -912,7 +967,10 @@
       "verificationMode": "online",
       "notes": "Official e-Register link available",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-gac.powerappsportals.com"
+      ]
     },
     {
       "id": "canada-ministry-of-justice-and-attorney-general-of-the-province-saskatchewan",
@@ -922,7 +980,10 @@
       "verificationMode": "online",
       "notes": "Official e-Register link available",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-gac.powerappsportals.com"
+      ]
     },
     {
       "id": "canada-ministry-of-public-and-business-service-delivery-and-procurement-of-the-province-of-ontario",
@@ -933,6 +994,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "officialdocuments.mgcs.gov.on.ca"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -997,6 +1061,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "registreapostilles.gouv.qc.ca"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1077,6 +1144,9 @@
             }
           ]
         }
+      ],
+      "allowedDomains": [
+        "consulta.apostilla.gob.cl"
       ],
       "verification": {
         "kind": "fields",
@@ -1185,6 +1255,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "consular.mfa.gov.cn"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1270,6 +1343,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "e-services.judiciary.hk"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1332,6 +1408,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "eservice.dsaj.gov.mo"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1420,6 +1499,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "tramites.cancilleria.gov.co"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1488,6 +1570,9 @@
           "allowedUrls": []
         }
       ],
+      "allowedDomains": [
+        "rree.go.cr"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1554,6 +1639,9 @@
       "notes": "Apostilles issued before 1 June 2020 may be verified by contacting the Competent Authority at registry@mjpo.gov.cy.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-validation.mjpo.gov.cy"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1644,6 +1732,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "dys.um.dk"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1705,6 +1796,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "servicios.mirex.gob.do"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1804,6 +1898,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "serviciosciudadanos.cancilleria.gob.ec"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1865,7 +1962,8 @@
       "verificationMode": "qr_only",
       "notes": "QR-code verification only",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "estonia-chamber-of-notaries",
@@ -1876,6 +1974,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostill.notar.ee"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -1938,6 +2039,9 @@
       "notes": "Apostilles issued by other Competent Authorities are issued in paper format and are not included in the e-Register.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-index.notaires.fr"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2000,6 +2104,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.cra.ge"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2063,6 +2170,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "sa.gov.ge"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2125,6 +2235,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "e-apostille.gov.gr"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2183,6 +2296,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "apostilla.minex.gob.gt"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2225,6 +2341,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "esanad.nic.in"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2263,6 +2382,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.ahu.go.id"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2319,6 +2441,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "authentications.dfat.ie"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2391,6 +2516,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "eregister.justice.gov.il"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2472,6 +2600,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "ezairyu.mofa.go.jp"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2549,6 +2680,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "egov.kz"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2593,6 +2727,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.go.kr"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2659,6 +2796,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "eapp.rks-gov.net"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2699,6 +2839,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "latvijasnotars.lv"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2734,7 +2877,8 @@
       "verificationMode": "qr_only",
       "notes": "QR-code verification only",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "mexico-baja-california-sur",
@@ -2743,7 +2887,8 @@
       "verificationMode": "manual_contact",
       "notes": "No working online lookup tool is available. Contact the Coordination of Certifications/Legalizations, Anuencias and Apostille directly (apostillabcs@gmail.com / age@bcs.gob.mx / tel. 612-122-0482) to verify.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "mexico-federal-district-legal-department",
@@ -2753,7 +2898,10 @@
       "verificationMode": "online",
       "notes": "Official e-Register link available",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": [
+        "dicoppu-portal.segob.gob.mx"
+      ]
     },
     {
       "id": "mexico-jalisco-secretary-of-government",
@@ -2764,6 +2912,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "serviciossgg.jalisco.gob.mx"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2818,6 +2969,10 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "consultasislac.segob.gob.mx",
+        "dicoppu-portal.segob.gob.mx"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2871,6 +3026,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostila.gov.md"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2927,6 +3085,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "e-mongolia.mn"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -2958,6 +3119,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.ma"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3038,6 +3202,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "dia.govt.nz"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3098,7 +3265,8 @@
       "verificationMode": "manual_contact",
       "notes": "No public e-Register verification tool is available. The cited Cancillería sites are appointment systems for requesting a new apostille, not for verifying an existing one. Contact the Cancillería directly (tel. 2244-8008) to verify.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "pakistan-ministry-of-foreign-affairs",
@@ -3135,6 +3303,9 @@
             }
           ]
         }
+      ],
+      "allowedDomains": [
+        "apostille.mofa.gov.pk"
       ],
       "verification": {
         "kind": "fields",
@@ -3195,7 +3366,8 @@
       "verificationMode": "qr_only",
       "notes": "QR-code verification only",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "panama-ministry-of-foreign-affairs",
@@ -3229,6 +3401,10 @@
             }
           ]
         }
+      ],
+      "allowedDomains": [
+        "apostillaelectronica.mire.gob.pa",
+        "sigob.mire.gob.pa"
       ],
       "verification": {
         "kind": "fields",
@@ -3292,6 +3468,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "mre.gov.py"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3344,6 +3523,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostillaconsulta.rree.gob.pe"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3442,6 +3624,9 @@
           ]
         }
       ],
+      "allowedDomains": [
+        "e-registry.apostille.gov.ph"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3504,6 +3689,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostila.mai.gov.ro"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3589,6 +3777,9 @@
             }
           ]
         }
+      ],
+      "allowedDomains": [
+        "minjust.gov.ru"
       ]
     },
     {
@@ -3598,7 +3789,8 @@
       "verificationMode": "qr_only",
       "notes": "No working online lookup tool is available. Verification is via the QR code printed on the Apostille.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "saint-kitts-and-nevis-ministry-of-foreign-affairs",
@@ -3609,6 +3801,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "foreign.gov.kn"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3670,6 +3865,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "ratification.mofa.gov.sa"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3732,6 +3930,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "legalisation.sal.sg"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3799,6 +4000,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "evlozisce.sodisce.si"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3861,6 +4065,9 @@
       "notes": "Murcia implemented the e-Apostille component in November 2008 and national implementation was completed in May 2011. A central e-Register is used by all Competent Authorities under the purview of the Ministry of Justice.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "eregister.justicia.es"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -3937,6 +4144,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.tj"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4000,6 +4210,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "eapostil.gov.tr"
+      ],
       "verification": {
         "kind": "upload",
         "fields": [],
@@ -4015,6 +4228,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "enic.in.ua"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4110,6 +4326,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.minjust.gov.ua"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4186,6 +4405,7 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4247,6 +4467,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "online.gov.ky"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4308,7 +4531,10 @@
       "verificationMode": "online",
       "notes": "Official e-Register link available",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": [
+        "bcs.sos.arkansas.gov"
+      ]
     },
     {
       "id": "united-states-of-america-california-secretary-of-state",
@@ -4319,6 +4545,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille-search.sos.ca.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4382,6 +4611,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "coloradosos.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4442,7 +4674,8 @@
       "verificationMode": "manual_contact",
       "notes": "The state of Connecticut commenced an e-Apostille pilot programme on 19 September 2023. The pilot programme ended on 30 September 2025. Apostilles issued in the state of Connecticut may be verified by contacting the Competent Authority in Connecticut at 860-509-6002 or through email to bsd@ct.gov. e-Apostilles issued as part of Connecticut’s pilot programme are legitimate and validly issued e-Apostilles.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "united-states-of-america-delaware-secretary-of-state",
@@ -4453,6 +4686,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "icis.corp.delaware.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4513,6 +4749,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "web.sos.ky.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4550,6 +4789,9 @@
       "notes": "The state of Minnesota commenced an e-Apostille pilot programme on 15 March 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Minnesota’s pilot programme are legitimate and validly issued e-Apostilles.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.sos.state.mn.us"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4613,6 +4855,9 @@
       "notes": "The state of Montana offers both e-Apostilles and Apostille verification via e-Register.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "biz.sosmt.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4650,6 +4895,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "esos.nv.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4700,6 +4948,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "appext20.dos.ny.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4763,6 +5014,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "sosnc.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4833,7 +5087,8 @@
       "verificationMode": "manual_contact",
       "notes": "Rhode Island's e-Apostille pilot ended on 30 September 2025. Apostilles issued during the pilot remain valid, but no public online verifier is currently available. Contact the RI Department of State directly (401-222-3040) to verify.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "united-states-of-america-tennessee-secretary-of-state",
@@ -4844,6 +5099,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "tncab.tnsos.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4882,6 +5140,9 @@
       "notes": "Use the Texas Secretary of State's apostille verifier to validate by certificate number.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "webservices.sos.state.tx.us"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4918,7 +5179,8 @@
       "verificationMode": "manual_contact",
       "notes": "The state of Utah entered into a e-Apostille pilot programme that commenced on 19 September 2023. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Utah’s pilot programme are legitimate and validly issued e-Apostilles.",
       "registerLinks": [],
-      "qrRoutes": []
+      "qrRoutes": [],
+      "allowedDomains": []
     },
     {
       "id": "united-states-of-america-washington-secretary-of-state",
@@ -4929,6 +5191,9 @@
       "notes": "The state of Washington commenced an e-Apostille pilot programme on 12 February 2024. The pilot programme ended on 30 September 2025. e-Apostilles issued as part of Washington’s pilot programme are legitimate and validly issued e-Apostilles.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "sos.wa.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -4992,6 +5257,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apps.sos.wv.gov"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -5032,6 +5300,9 @@
       "notes": "Since 18/09/2023, Uruguay has implemented the e-Apostille component of the e-APP for public documents. The procedure is carried out through the website of the Ministry of Foreign Affairs, which is the Competent Authority responsible for the issuance of Apostille on public documents, via the following link: https://www.gub.uy/tramites/apostilla-yo-legalizacion-documentos-publicos-uruguayos-extranjeros-produzcan-efectos-exterior-republica.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "sistemas.mrree.gub.uy"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -5104,6 +5375,9 @@
       "notes": "Official e-Register link available",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "apostille.davxizmat.uz"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [
@@ -5165,6 +5439,9 @@
       "notes": "There are three e-Registers: the first for Apostilles issued before 23 May 2018, the second for Apostilles issued between 24 May 2018 and 1 May 2019, and the third for Apostilles issued from 2 May 2019. e-Apostilles issued only for Criminal Record Certification and Data Certification for Consular Effects.",
       "registerLinks": [],
       "qrRoutes": [],
+      "allowedDomains": [
+        "consultalegalizacionve.mppre.gob.ve"
+      ],
       "verification": {
         "kind": "fields",
         "fields": [

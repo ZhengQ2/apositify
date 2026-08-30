@@ -677,3 +677,105 @@ expect(
     !numberBesideDate.suggestedValues.contains("12/07/2019") && numberBesideDate.value != "12/07/2019",
     "a date must never be offered as a certificate number, got '\(numberBesideDate.value)' \(numberBesideDate.suggestedValues)"
 )
+
+// MARK: - The directory the app offers when scanning cannot get there
+
+func directoryEntry(_ id: String, _ country: String, _ authority: String) -> RegisterEntry {
+    catalog.entries.first { $0.id == id } ?? catalog.entries[0]
+}
+
+let ontarioId = "canada-ministry-of-public-and-business-service-delivery-and-procurement-of-the-province-of-ontario"
+
+// Sorted by country then authority, so the list reads the same every time.
+let everyAuthority = DirectorySearch.matching("", in: catalog.entries)
+expect(everyAuthority.count == catalog.entries.count, "an empty search lists every authority")
+expect(
+    zip(everyAuthority, everyAuthority.dropFirst()).allSatisfy { ($0.country, $0.authority) <= ($1.country, $1.authority) },
+    "the directory must be ordered by country then authority"
+)
+
+// A user knows their certificate says Ontario, or that it is Canadian.
+expect(
+    DirectorySearch.matching("ontario", in: catalog.entries).map(\.id) == [ontarioId],
+    "an authority must be findable by its own name"
+)
+expect(
+    DirectorySearch.matching("canada", in: catalog.entries).allSatisfy { $0.country == "Canada" },
+    "a country search must return that country's authorities"
+)
+expect(
+    DirectorySearch.matching("  ONTARIO ", in: catalog.entries).map(\.id) == [ontarioId],
+    "search must ignore case and surrounding space"
+)
+expect(
+    DirectorySearch.matching("atlantis", in: catalog.entries).isEmpty,
+    "a search that matches nothing must return nothing rather than everything"
+)
+
+// The six QR-only authorities are the reason the directory offers a scanner:
+// they publish no lookup page for the directory to open.
+let qrOnly = catalog.entries.filter { $0.verificationMode == .qrOnly }
+expect(!qrOnly.isEmpty, "the catalog must still carry QR-only authorities")
+expect(
+    qrOnly.allSatisfy { $0.verification?.deepLink == nil },
+    "a QR-only authority has no deep link to send reviewed values to"
+)
+
+// MARK: - A redirect within the same authority is not leaving it
+
+func hostPolicy(_ host: String, domains: [String]) -> OfficialHostPolicy {
+    let entry = RegisterEntry(
+        id: "test",
+        country: "Test",
+        authority: "Ministry",
+        registerUrl: URL(string: "https://\(host)/verify"),
+        verificationMode: .online,
+        notes: "",
+        registerLinks: [],
+        allowedDomains: domains,
+        registerGuide: nil,
+        qrRoutes: [],
+        verification: nil
+    )
+    return OfficialHostPolicy(entry: entry, initialURL: nil)
+}
+
+let bahrainPolicy = hostPolicy("www.mofa.gov.bh", domains: ["mofa.gov.bh"])
+expect(
+    bahrainPolicy.permitsMainFrameNavigation(to: URL(string: "https://mofa.gov.bh/legalization")!),
+    "the apex of an approved www host is the same authority"
+)
+expect(
+    bahrainPolicy.permitsMainFrameNavigation(to: URL(string: "https://apostille.mofa.gov.bh/check")!),
+    "a sibling subdomain is the same authority"
+)
+// gov.bh spans every Bahraini ministry; widening that far would let an
+// unrelated one wear the official verifier's branding.
+expect(
+    !bahrainPolicy.permitsMainFrameNavigation(to: URL(string: "https://www.moj.gov.bh/apostille")!),
+    "another ministry under the same government is not the same authority"
+)
+expect(
+    !bahrainPolicy.permitsMainFrameNavigation(to: URL(string: "http://www.mofa.gov.bh/legalization")!),
+    "plain HTTP is refused wherever it leads"
+)
+
+// Four authorities are hosted on powerappsportals.com, which is not a public
+// suffix, so the registrable domain would have trusted every tenant on it.
+let sharedHosting = hostPolicy("apostille-gac.powerappsportals.com", domains: ["apostille-gac.powerappsportals.com"])
+expect(
+    sharedHosting.permitsMainFrameNavigation(to: URL(string: "https://apostille-gac.powerappsportals.com/en-US/")!),
+    "the authority's own tenant is permitted"
+)
+expect(
+    !sharedHosting.permitsMainFrameNavigation(to: URL(string: "https://someone-else.powerappsportals.com/")!),
+    "another tenant on shared hosting is not the authority"
+)
+
+// Every authority's baked roots must be narrower than a public suffix.
+expect(
+    catalog.entries.allSatisfy { entry in
+        entry.allowedDomains.allSatisfy { $0.contains(".") && !$0.hasPrefix("www.") }
+    },
+    "a widenable root must be a real domain, never a bare suffix or a www form"
+)

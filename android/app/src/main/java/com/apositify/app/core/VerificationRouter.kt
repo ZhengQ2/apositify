@@ -53,10 +53,22 @@ object VerificationRouter {
     private fun formEncode(value: String) = URLEncoder.encode(value, "UTF-8")
 }
 
-data class OfficialHostPolicy(val allowedHosts: Set<String>) {
+/**
+ * @param allowedDomains roots the approved hosts may widen to, computed against
+ * the Public Suffix List when the catalogue is generated so a root can never be
+ * a suffix itself. A verifier that redirects to its own www, or to a sibling
+ * subdomain, has not left the authority.
+ */
+data class OfficialHostPolicy(
+    val allowedHosts: Set<String>,
+    val allowedDomains: Set<String> = emptySet(),
+) {
     fun permits(uri: URI): Boolean {
         if (uri.toString() == "about:blank") return true
-        return uri.scheme?.lowercase() == "https" && uri.host?.lowercase() in allowedHosts
+        if (uri.scheme?.lowercase() != "https") return false
+        val host = uri.host?.lowercase() ?: return false
+        if (host in allowedHosts) return true
+        return allowedDomains.any { host == it || host.endsWith(".$it") }
     }
 
     companion object {
@@ -69,7 +81,7 @@ data class OfficialHostPolicy(val allowedHosts: Set<String>) {
                 entry.registerLinks.forEach { addUrl(it.url) }
                 entry.qrRoutes.flatMap { it.allowedUrls }.forEach { add(it.hostname.lowercase()) }
             }
-            return OfficialHostPolicy(hosts)
+            return OfficialHostPolicy(hosts, entry.allowedDomains.map { it.lowercase() }.toSet())
         }
     }
 }

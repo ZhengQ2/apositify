@@ -28,7 +28,8 @@
   },
   "devDependencies": {
     "jimp": "^1.6.1",
-    "jsdom": "^27.0.1"
+    "jsdom": "^27.0.1",
+    "tldts": "^7.4.11"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

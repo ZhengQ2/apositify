@@ -382,7 +382,14 @@ internal fun autofillScript(entry: RegisterEntry, fields: List<ExtractedField>):
           // Never fight a control the page has locked, and never overwrite a
           // value already present — this runs again on every client-side route
           // change, so overwriting would discard what the user just typed.
-          const fillable = el => !!el && !el.disabled && !el.readOnly && !el.value &&
+          // A value the page shipped in its own markup is not something the
+          // user typed, and Andorra prefills its date box with today's date —
+          // which the user would then submit instead of the certificate's.
+          // defaultValue reflects the value attribute, so it separates the two
+          // exactly: anything typed, or already filled by this script, differs
+          // from it and is still left alone.
+          const untouched = el => !el.value || el.value === el.defaultValue;
+          const fillable = el => !!el && !el.disabled && !el.readOnly && untouched(el) &&
             !skippedTypes.includes((el.type || '').toLowerCase()) && !isChallenge(el);
           const controls = [...document.querySelectorAll('input, select, textarea')].filter(fillable);
           const used = new Set();

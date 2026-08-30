@@ -320,7 +320,13 @@ private struct OfficialWebView: UIViewRepresentable {
           };
           const attempt = () => {
             const controls = [...document.querySelectorAll('input:not([type=hidden]):not([type=file]):not([type=password]), select, textarea')]
-              .filter(el => !el.disabled && !el.readOnly && !el.value && !/captcha|recaptcha|turnstile/i.test(`${el.id} ${el.name} ${el.className} ${el.getAttribute('aria-label') || ''}`));
+              // A value the page shipped in its own markup is not something the
+              // user typed, and Andorra prefills its date box with today's date
+              // — which the user would then submit instead of the certificate's.
+              // defaultValue reflects the value attribute, so it separates the
+              // two exactly: anything typed, or already filled by this script,
+              // differs from it and is still left alone.
+              .filter(el => !el.disabled && !el.readOnly && (!el.value || el.value === el.defaultValue) && !/captcha|recaptcha|turnstile/i.test(`${el.id} ${el.name} ${el.className} ${el.getAttribute('aria-label') || ''}`));
             const claimed = new Set();
             for (const field of fields) {
               if (state.filledIds.has(field.id)) continue;

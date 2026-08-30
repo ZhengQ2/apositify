@@ -51,11 +51,22 @@ check('never types a reviewed value into a CAPTCHA box', () => {
   }
 })
 
-check('does not overwrite what is already filled in', () => {
-  // This script now runs again on every client-side route change, so
-  // overwriting would destroy whatever the user had just typed.
-  const document = run('<label>Apostille number <input id="n" value="typed by hand"></label>', [number])
-  assert.equal(document.querySelector('#n').value, 'typed by hand')
+check('does not overwrite what the user typed', () => {
+  // This script runs again on every client-side route change, so overwriting
+  // would destroy whatever the user had just typed. Expressed the way a user's
+  // input actually reaches the DOM: a value attribute would say the opposite —
+  // that the page shipped the value — which is the case asserted just below.
+  const dom = new JSDOM('<!doctype html><body><label>Apostille number <input id="n"></label></body>', { runScripts: 'outside-only' })
+  dom.window.document.querySelector('#n').value = 'typed by hand'
+  dom.window.eval(script([number]))
+  assert.equal(dom.window.document.querySelector('#n').value, 'typed by hand')
+})
+
+check('corrects a value the page shipped in its own markup', () => {
+  // Andorra prefills its date box with today's date; leaving it there means
+  // submitting today's date rather than the one on the certificate.
+  const document = run('<label>Apostille number <input id="n" value="30/08/2026"></label>', [number])
+  assert.equal(document.querySelector('#n').value, 'ON-26-000000-0000')
 })
 
 check('leaves disabled and read-only controls alone', () => {

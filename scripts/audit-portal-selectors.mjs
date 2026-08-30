@@ -70,6 +70,44 @@ async function probe(entry) {
   }
 }
 
+const explain = process.argv.includes('--explain')
+
+async function describePortal(entry) {
+  const fields = entry.verification.fields.filter((f) => f.captureSource === 'document')
+  console.log(`\n=== ${entry.country} — ${entry.registerUrl}`)
+  for (const field of fields) {
+    console.log(`   want ${field.id}: ${field.aliases.slice(0, 5).join(' | ')}`)
+  }
+  let html
+  try {
+    const response = await fetch(entry.registerUrl, {
+      headers: { 'user-agent': 'Mozilla/5.0 (compatible; ApositifySelectorAudit/1.0)' },
+      signal: AbortSignal.timeout(20000)
+    })
+    html = await response.text()
+  } catch (error) {
+    console.log(`   unreachable: ${error.message.slice(0, 50)}`)
+    return
+  }
+  const dom = new JSDOM(html)
+  const norm = (value) =>
+    (value || '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+  const controls = [...dom.window.document.querySelectorAll(
+    'input:not([type=hidden]):not([type=submit]):not([type=button]), select, textarea'
+  )]
+  if (controls.length === 0) console.log('   (no controls in static HTML)')
+  for (const el of controls) {
+    const labels = el.labels ? [...el.labels].map((l) => l.textContent) : []
+    const signal = norm([el.name, el.id, el.placeholder, el.getAttribute('aria-label'), ...labels].filter(Boolean).join(' '))
+    console.log(`   have <${el.tagName.toLowerCase()} type=${el.type}> "${signal.slice(0, 90)}"`)
+  }
+}
+
+if (explain) {
+  for (const entry of targets) await describePortal(entry)
+  process.exit(0)
+}
+
 const summary = {}
 for (const entry of targets) {
   const result = await probe(entry)

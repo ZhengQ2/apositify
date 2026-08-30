@@ -346,12 +346,33 @@ enum PortalAutofill {
               }
               if (!control) {
                 const aliases = (field.aliases || [field.label]).map(normalize).filter(Boolean);
+                // Government forms routinely name a control after the field it
+                // holds but run the words together — New York's is
+                // "txtdocumentnumber", Colombia's date is "tbFechaExpedicion".
+                // Comparing without spaces or connecting words finds those, and
+                // is stricter than matching on words rather than looser: the
+                // control's own name has to spell the alias out. The length
+                // floor keeps a short alias like "date" from matching inside an
+                // unrelated word such as "validatecertificate".
+                const compact = value => normalize(value.replace(/\([^)]*\)/g, ' '))
+                  .replace(/\b(de|del|des|du|da|do|of|the|d|l|von|di)\b/g, ' ')
+                  .replace(/[^\p{L}\p{N}]+/gu, '');
+                const compacted = (field.aliases || [field.label]).map(compact).filter(alias => alias.length >= 8);
                 control = controls
                   .filter(el => !claimed.has(el))
                   .map(el => {
                     const signal = normalize(labelText(el));
+                    const runTogether = compact(labelText(el));
                     const id = normalize(field.id);
-                    let score = aliases.reduce((best, alias) => Math.max(best, signal.includes(alias) ? 100 + alias.length : 0), 0);
+                    // Delimited, not merely contained: "date" sits inside
+                    // "validate", and "validate" is on half the verification
+                    // forms in the corpus. A bare substring test put the
+                    // certificate's date into whatever box was named that way.
+                    const mentions = alias => ` ${signal} `.includes(` ${alias} `);
+                    let score = aliases.reduce((best, alias) => Math.max(best, mentions(alias) ? 100 + alias.length : 0), 0);
+                    if (!score) {
+                      score = compacted.reduce((best, alias) => Math.max(best, runTogether.includes(alias) ? 100 + alias.length : 0), 0);
+                    }
                     if (id && signal.replace(/ /g, '').includes(id.replace(/ /g, ''))) score += 60;
                     return {el, score};
                   })

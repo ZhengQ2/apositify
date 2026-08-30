@@ -75,30 +75,62 @@ It is the next thing to look at.
 
 ## What the failures are
 
-Inspecting the non-matching portals shows they are not one problem:
+Reading the markup of every portal that matched nothing shows they are not one
+problem, and only some of them are the app's to solve.
 
-- **Opaque control names.** Andorra's LANSA form labels nothing; its inputs are
-  named `PONUMREG` and `PODTENTRS`. Alias matching had nothing to work with —
-  while the names it needed were already in the catalogue as that authority's
-  deep-link parameters. Those are now emitted as `browserSelectors` for all six
-  deep-link authorities, which took Andorra from nothing matched to its number
-  field filled.
-- **Local-language labels.** Mongolia's control signal is Mongolian with only
-  the bare word `number` in English; our aliases are longer phrases like
-  "Reference number", and matching requires the alias to be contained in the
-  signal, not the reverse.
-- **Page-supplied defaults.** Andorra prefills its date box with today's date.
-  The "never overwrite" guard then declines to correct it, so the user would
-  submit today's date rather than the certificate's. The guard is right about
-  user input and wrong about a page default, and it cannot currently tell them
-  apart.
+**The page has no verification form on it.** The United Kingdom's
+`gov.uk/verify-apostille` carries a site search, two feedback boxes and a
+honeypot input labelled "this field is for robots only" — the service itself is
+behind a start button. Saint Kitts and the Dominican Republic offer only a
+WordPress search box. No matcher can fix a URL that does not point at the form;
+these need better `registerUrl` data.
+
+**The control is named after the field, without the spaces.** New York's input
+is `txtDocumentNumber`; Colombia's date is `ctl00_contenido_tbFechaExpedicion`.
+The words are all there. Comparing without spaces, connecting words, or the
+parenthetical notes our labels carry — "Fecha de Expedición (Issue date)" — now
+matches these. It is stricter than word matching rather than looser: the
+control's own name has to spell the alias out.
+
+**The control name says nothing.** Kentucky's inputs are `tReqID` and `tOrder`;
+Andorra's were `PONUMREG` and `PODTENTRS`. Andorra was recoverable because those
+names were already in the catalogue as its deep-link parameters. Kentucky's are
+not recoverable from anything we hold.
+
+**The portal's language is not ours, and its words are shorter.** Mongolia's
+input is named `number` with a Mongolian label; our alias is "Reference number".
+Matching the other way round — accepting a control whose signal is contained in
+an alias — would match a phone number or an ID box just as readily, so this is
+left alone.
+
+### A hazard the audit found on the way
+
+The matcher tested whether a control's signal *contained* an alias, as a plain
+substring. "date" is inside "validate", and "validate" appears on a great many
+verification forms. A page with a control named `validateCertificate` could
+therefore receive the certificate's date. Both platforms now require the alias
+to appear delimited.
+
+Tightening that cost about three fills across the corpus, which is the point:
+those were matches by accident, as likely to have been the wrong box as the
+right one. Aggregate coverage is roughly flat as a result — the gains from
+deep-link selectors, page-default correction and run-together matching paid for
+the accidental matches that were removed.
+
+### Copying is the answer for the rest
+
+Autofill can only match an authority's form by what that authority calls its own
+controls, and a third of the corpus names them something the reviewed values
+cannot be matched against. Those pages are still the official verifier, so the
+Android verifier now shows the reviewed values as a row of chips above the page:
+one tap copies a value, ready to paste. It needs no agreement with the portal's
+markup, so it works on the third that will never match — and on a portal that
+reloads its form after a CAPTCHA.
 
 ## Still to do
 
-- Run `PortalAutofillTest` to completion on a connected device to cover the
-  JS-rendered portals. The first attempt was cut short when the device dropped
-  off USB after ten minutes; the test now logs each portal as it is measured
-  rather than at the end, so a dropout leaves partial results.
-- Decide what to do about page-supplied defaults.
-- Consider matching a control when its signal is contained in an alias, not
-  only the reverse, for portals whose labels are shorter than ours.
+- Point `registerUrl` at the actual form for the authorities whose landing page
+  carries no verification controls at all.
+- Work out why Costa Rica fills on Android and in jsdom but not on iOS.
+- Consider authored selectors for the handful whose control names carry no
+  signal, in the way Andorra's came from its deep link.

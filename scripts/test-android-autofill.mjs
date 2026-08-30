@@ -102,4 +102,28 @@ check('never fills password or file controls', () => {
   assert.equal(document.querySelector('#n').value, '')
 })
 
+check('fills a control whose name runs the words together', () => {
+  // New York names its input txtDocumentNumber and labels it nowhere else.
+  const field = { ...number, aliases: ['Document Number'] }
+  const document = run('<input id="n" name="txtDocumentNumber">', [field])
+  assert.equal(document.querySelector('#n').value, 'ON-26-000000-0000')
+})
+
+check('ignores a parenthetical note when matching a run-together name', () => {
+  // Colombia's field is labelled "Fecha de Expedición (Issue date)" and its
+  // control is named tbFechaExpedicion. The note is for the reader, not part
+  // of the name, and the connecting "de" is not in the control either.
+  const field = { ...date, aliases: ['Fecha de Expedición (Issue date)'] }
+  const document = run('<input id="d" name="ctl00_contenido_tbFechaExpedicion">', [field])
+  assert.equal(document.querySelector('#d').value, '2026-06-19')
+})
+
+check('a short alias never matches inside an unrelated word', () => {
+  // "date" appears inside "ValidateCertificate". Matching that would put the
+  // certificate's date into whatever box the page happened to name that way.
+  const field = { ...date, aliases: ['Date'] }
+  const document = run('<input id="x" name="ValidateCertificateButton">', [field])
+  assert.equal(document.querySelector('#x').value, '')
+})
+
 console.log(`Android autofill: ${passed} checks passed.`)

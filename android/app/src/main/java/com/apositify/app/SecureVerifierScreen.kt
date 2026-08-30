@@ -11,6 +11,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,9 +22,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,11 +39,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -89,6 +97,15 @@ fun SecureVerifierScreen(
         if (web?.canGoBack() == true) web.goBack() else close()
     }
 
+    val clipboard = LocalClipboardManager.current
+    var copiedFieldId by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(copiedFieldId) {
+        if (copiedFieldId != null) {
+            kotlinx.coroutines.delay(1_600)
+            copiedFieldId = null
+        }
+    }
+
     Scaffold(topBar = {
         TopAppBar(
             title = { Text("Official verifier") },
@@ -120,6 +137,40 @@ fun SecureVerifierScreen(
                         )
                     }
                 }
+            }
+            // Autofill matches an authority's form by what it calls its own
+            // controls, and a third of the corpus names them something the
+            // reviewed values cannot be matched against. Those pages are still
+            // the official verifier, so the values have to be reachable by hand
+            // rather than retyped from a certificate the user is no longer
+            // looking at.
+            val copyable = fields.filter { it.captureSource == "document" && it.value.isNotBlank() }
+            if (copyable.isNotEmpty()) {
+                Row(
+                    Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    copyable.forEach { field ->
+                        AssistChip(
+                            onClick = {
+                                clipboard.setText(AnnotatedString(field.value))
+                                copiedFieldId = field.id
+                            },
+                            label = {
+                                Text(
+                                    if (copiedFieldId == field.id) "Copied" else "${field.label}: ${field.value}",
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Default.ContentCopy, null, Modifier.width(16.dp))
+                            },
+                        )
+                    }
+                }
+                HorizontalDivider()
             }
             if (loading) {
                 LinearProgressIndicator(
@@ -371,6 +422,17 @@ internal fun autofillScript(entry: RegisterEntry, fields: List<ExtractedField>):
             const labels = el.labels ? [...el.labels].map(label) : [];
             return norm([el.name, el.id, el.placeholder, el.getAttribute('aria-label'), ...labels, label(el.closest('label'))].filter(Boolean).join(' '));
           };
+          // Government forms routinely name a control after the field it holds
+          // but run the words together — New York's is "txtdocumentnumber",
+          // Colombia's date is "tbFechaExpedicion". Comparing without spaces or
+          // connecting words finds those. This is stricter than matching on
+          // words, not looser: the control's own name has to spell the alias
+          // out. The length floor keeps short aliases like "date" from
+          // matching inside an unrelated word such as "validatecertificate".
+          const compact = value => norm(value.replace(/\([^)]*\)/g, ' '))
+            .replace(/\b(de|del|des|du|da|do|of|the|d|l|von|di)\b/g, ' ')
+            .replace(/[^\p{L}\p{N}]+/gu, '');
+          const MINIMUM_COMPACT_ALIAS = 8;
           // A reviewed Apostille value must never land in a challenge box: it
           // fails the challenge and reads as the app malfunctioning. Verifiers
           // that gate their form behind one are common enough that this has to
@@ -409,7 +471,19 @@ internal fun autofillScript(entry: RegisterEntry, fields: List<ExtractedField>):
             }
             if (matched) continue;
             const aliases = (field.aliases || []).map(norm).filter(Boolean);
-            assign(controls.find(el => !used.has(el) && aliases.some(alias => describe(el).includes(alias))), field);
+            const compacted = (field.aliases || []).map(compact).filter(alias => alias.length >= MINIMUM_COMPACT_ALIAS);
+            // Delimited, not merely contained: "date" sits inside "validate",
+            // and "validate" is on half the verification forms in the corpus.
+            // A bare substring test put the certificate's date into whatever
+            // box a page happened to name that way.
+            const mentions = (signal, alias) => (' ' + signal + ' ').includes(' ' + alias + ' ');
+            const matches = el => {
+              const signal = describe(el);
+              if (aliases.some(alias => mentions(signal, alias))) return true;
+              const runTogether = compact(signal);
+              return compacted.some(alias => runTogether.includes(alias));
+            };
+            assign(controls.find(el => !used.has(el) && matches(el)), field);
           }
         })();
     """.trimIndent()

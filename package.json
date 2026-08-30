@@ -16,7 +16,8 @@
     "test": "node scripts/validate-data.mjs && node scripts/test-qr-routing.mjs && node scripts/test-scanner-dom.mjs && node scripts/test-android-autofill.mjs",
     "prepare:ios-device-specimens": "bash scripts/prepare-ios-device-specimens.sh",
     "test:ios-device": "bash scripts/test-ios-device.sh",
-    "prepare:redaction-fixtures": "bash scripts/prepare-redaction-fixtures.sh"
+    "prepare:redaction-fixtures": "bash scripts/prepare-redaction-fixtures.sh",
+    "audit:portals": "node scripts/audit-portal-selectors.mjs"
   },
   "dependencies": {
     "jsqr": "^1.4.0",

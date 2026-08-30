@@ -49,8 +49,14 @@ function genericAliases(label, standardItem) {
   return []
 }
 
-function normalizeField(field, index) {
+function normalizeField(field, index, deepLinkParams) {
   const value = typeof field === 'string' ? { label: field } : field
+  // An authority's deep-link parameters are the names of the controls on its
+  // own form, and the generator already requires the two to line up one to
+  // one. Andorra's LANSA form labels nothing — its inputs are named PONUMREG
+  // and PODTENTRS — so alias matching had nothing to work with while the name
+  // it needed was sitting in the deep link.
+  const deepLinkParam = deepLinkParams?.[index]
   const label = value.label
   const portalOnly = /captcha|code shown on page|from an image/i.test(label)
   const standardItem = value.ocr?.standardItem ?? inferredStandardItem(label)
@@ -60,7 +66,8 @@ function normalizeField(field, index) {
     label,
     placeholder: value.placeholder || 'Exactly as printed',
     aliases,
-    browserSelectors: value.browser?.selectors || [],
+    browserSelectors: value.browser?.selectors
+      || (deepLinkParam ? [`[name="${deepLinkParam}"]`] : []),
     captureSource: portalOnly ? 'portal' : 'document',
     ...(standardItem ? { standardItem } : {}),
     ...(value.ocr?.pattern ? { pattern: value.ocr.pattern } : {}),
@@ -110,7 +117,8 @@ const entries = eRegisters.map((entry) => {
     ...(config ? {
       verification: {
         kind: config.kind,
-        fields: (config.fields || []).map(normalizeField),
+        fields: (config.fields || []).map((field, index) =>
+          normalizeField(field, index, config.deepLink?.paramOrder)),
         ...(config.note ? { note: config.note } : {}),
         ...(config.deepLink ? {
           deepLink: {

@@ -346,7 +346,9 @@ fun SecureVerifierScreen(
     }
 }
 
-private fun autofillScript(entry: RegisterEntry, fields: List<ExtractedField>): String {
+// Internal rather than private so the on-device portal audit can inject the
+// very script the app ships, instead of a copy that could drift from it.
+internal fun autofillScript(entry: RegisterEntry, fields: List<ExtractedField>): String {
     val configById = entry.verification?.fields.orEmpty().associateBy { it.id }
     val payload = fields.filter { it.captureSource == "document" && it.value.isNotBlank() }.map { field ->
         val config = configById[field.id]

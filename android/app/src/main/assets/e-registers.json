@@ -32,7 +32,9 @@
               "附加证明书编号",
               "アポスティーユ番号"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"PONUMREG\"]"
+            ],
             "captureSource": "document",
             "standardItem": 8
           },
@@ -56,7 +58,9 @@
               "签发日期",
               "発行日"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"PODTENTRS\"]"
+            ],
             "captureSource": "document",
             "standardItem": 6
           }
@@ -712,7 +716,9 @@
               "附加证明书编号",
               "アポスティーユ番号"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"id\"]"
+            ],
             "captureSource": "document",
             "standardItem": 8
           }
@@ -808,7 +814,9 @@
               "附加证明书编号",
               "アポスティーユ番号"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"apostilleID\"]"
+            ],
             "captureSource": "document",
             "standardItem": 8
           }
@@ -1492,7 +1500,9 @@
               "Código",
               "Codigo"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"clave\"]"
+            ],
             "captureSource": "document"
           },
           {
@@ -1516,7 +1526,9 @@
               "签发日期",
               "発行日"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"fecha_inicio\"]"
+            ],
             "captureSource": "document",
             "standardItem": 6,
             "format": "date-iso"
@@ -2871,7 +2883,9 @@
               "Código",
               "Codigo"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"apostila_code\"]"
+            ],
             "captureSource": "document",
             "format": "non-arij-apostille-code"
           },
@@ -2886,7 +2900,9 @@
               "Sicherheitscode",
               "安全码"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"security_code\"]"
+            ],
             "captureSource": "document"
           }
         ],
@@ -4020,7 +4036,9 @@
               "附加证明书编号",
               "アポスティーユ番号"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"apoNum\"]"
+            ],
             "captureSource": "document",
             "standardItem": 8
           },
@@ -4034,7 +4052,9 @@
               "Request number",
               "Número de solicitud"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"reqNum\"]"
+            ],
             "captureSource": "document"
           },
           {
@@ -4058,7 +4078,9 @@
               "签发日期",
               "発行日"
             ],
-            "browserSelectors": [],
+            "browserSelectors": [
+              "[name=\"apoDate\"]"
+            ],
             "captureSource": "document",
             "standardItem": 6,
             "format": "date-dotted"

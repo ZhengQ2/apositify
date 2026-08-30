@@ -21,6 +21,8 @@
 		10000000000000000000000C /* PhotoLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000C /* PhotoLibraryPicker.swift */; };
 		10000000000000000000000D /* ReviewScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000D /* ReviewScanView.swift */; };
 		10000000000000000000000E /* WebVerifierView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000E /* WebVerifierView.swift */; };
+		100000000000000000000030 /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000030 /* DirectoryView.swift */; };
+		100000000000000000000031 /* DirectorySearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000031 /* DirectorySearch.swift */; };
 		10000000000000000000000F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000010 /* Assets.xcassets */; };
 		100000000000000000000010 /* e-registers.json in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000011 /* e-registers.json */; };
 		100000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000012 /* PrivacyInfo.xcprivacy */; };
@@ -46,6 +48,8 @@
 		20000000000000000000000C /* PhotoLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPicker.swift; sourceTree = "<group>"; };
 		20000000000000000000000D /* ReviewScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewScanView.swift; sourceTree = "<group>"; };
 		20000000000000000000000E /* WebVerifierView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVerifierView.swift; sourceTree = "<group>"; };
+		200000000000000000000030 /* DirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryView.swift; sourceTree = "<group>"; };
+		200000000000000000000031 /* DirectorySearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorySearch.swift; sourceTree = "<group>"; };
 		20000000000000000000000F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		200000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		200000000000000000000011 /* e-registers.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "e-registers.json"; sourceTree = "<group>"; };
@@ -113,6 +117,7 @@
 				200000000000000000000005 /* FieldValidator.swift */,
 				200000000000000000000006 /* VerificationRouter.swift */,
 				200000000000000000000013 /* QrRouter.swift */,
+				200000000000000000000031 /* DirectorySearch.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -135,6 +140,7 @@
 				20000000000000000000000C /* PhotoLibraryPicker.swift */,
 				20000000000000000000000D /* ReviewScanView.swift */,
 				20000000000000000000000E /* WebVerifierView.swift */,
+				200000000000000000000030 /* DirectoryView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -303,6 +309,8 @@
 				10000000000000000000000C /* PhotoLibraryPicker.swift in Sources */,
 				10000000000000000000000D /* ReviewScanView.swift in Sources */,
 				10000000000000000000000E /* WebVerifierView.swift in Sources */,
+				100000000000000000000030 /* DirectoryView.swift in Sources */,
+				100000000000000000000031 /* DirectorySearch.swift in Sources */,
 				100000000000000000000012 /* QrRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,6 +14,7 @@ struct HomeView: View {
                 VStack(spacing: 24) {
                     hero
                     scanCard
+                    directoryCard
                     privacyCard
                 }
                 .padding(20)
@@ -131,6 +132,24 @@ struct HomeView: View {
                     .font(.footnote)
                     .foregroundStyle(.orange)
             }
+        }
+        .cardStyle()
+    }
+
+    private var directoryCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Can\u{2019}t scan it?", systemImage: "magnifyingglass")
+                .font(.headline)
+            Text("Look the authority up by name and go straight to its official verifier.")
+                .foregroundStyle(.secondary)
+            NavigationLink {
+                DirectoryView(entries: registers.entries, onScanQr: { showsCamera = true })
+            } label: {
+                Label("Find your authority", systemImage: "list.bullet.rectangle")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
         }
         .cardStyle()
     }

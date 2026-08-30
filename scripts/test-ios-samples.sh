@@ -22,6 +22,7 @@ CLANG_MODULE_CACHE_PATH="$module_cache_path" swiftc \
   ios/Apositify/Core/ApostilleModels.swift \
   ios/Apositify/Core/ApostilleParser.swift \
   ios/Apositify/Core/AuthorityMatcher.swift \
+  ios/Apositify/Core/DirectorySearch.swift \
   ios/Apositify/Core/QrRouter.swift \
   ios/ApositifySampleTests/main.swift \
   -o "$test_binary_path"

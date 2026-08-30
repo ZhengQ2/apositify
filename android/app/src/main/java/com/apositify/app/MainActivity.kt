@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Security
@@ -96,11 +97,12 @@ import kotlinx.coroutines.launch
 
 // Shared with the iOS app (BrandBlue.colorset, HomeView.swift) and the web
 // stylesheet, so the three clients read as one product.
-private val BrandBlue = Color(0xFF1554EF)
+// Shared with DirectoryScreen so the fallback path looks like the scan path.
+internal val BrandBlue = Color(0xFF1554EF)
 private val HeroNavy = Color(0xFF0D264D)
-private val PageBackground = Color(0xFFF2F2F7)
-private val CardSurface = Color.White
-private val CardShape = RoundedCornerShape(22.dp)
+internal val PageBackground = Color(0xFFF2F2F7)
+internal val CardSurface = Color.White
+internal val CardShape = RoundedCornerShape(22.dp)
 private val HeroShape = RoundedCornerShape(28.dp)
 
 private sealed interface AppScreen {
@@ -110,6 +112,8 @@ private sealed interface AppScreen {
     data class QrReview(val match: QrMatch, val preview: Bitmap) : AppScreen
     data class Verifier(val entry: RegisterEntry, val route: VerificationRoute, val fields: List<ExtractedField>) : AppScreen
     data class Failure(val message: String) : AppScreen
+    data object Directory : AppScreen
+    data class Authority(val entry: RegisterEntry) : AppScreen
 }
 
 class MainActivity : ComponentActivity() {
@@ -169,7 +173,35 @@ private fun ApositifyApp() {
                     camera.launch(captureUri)
                 },
                 onGallery = { gallery.launch("image/*") },
+                onDirectory = { screen = AppScreen.Directory },
             )
+            AppScreen.Directory -> DirectoryScreen(
+                entries = store.entries,
+                onClose = { screen = AppScreen.Home },
+                onSelect = { screen = AppScreen.Authority(it) },
+            )
+            is AppScreen.Authority -> {
+                BackHandler { screen = AppScreen.Directory }
+                AuthorityScreen(
+                    entry = current.entry,
+                    onBack = { screen = AppScreen.Directory },
+                    onScanQr = {
+                        val directory = File(context.cacheDir, "captured-documents").apply { mkdirs() }
+                        val file = File.createTempFile("apostille-", ".jpg", directory)
+                        val captureUri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+                        cameraUri = captureUri
+                        camera.launch(captureUri)
+                    },
+                    onOpen = { url ->
+                        when (val route = VerificationRouter.routeTo(url)) {
+                            is VerificationRoute.Official ->
+                                screen = AppScreen.Verifier(current.entry, route, emptyList())
+                            is VerificationRoute.ExternalInsecure -> context.openExternally(route.uri.toString())
+                            else -> context.openExternally(url)
+                        }
+                    },
+                )
+            }
             AppScreen.Processing -> ProcessingScreen()
             is AppScreen.Failure -> FailureScreen(current.message) { screen = AppScreen.Home }
             is AppScreen.QrReview -> QrReviewScreen(current.match, current.preview, { screen = AppScreen.Home }) { route ->
@@ -191,7 +223,7 @@ private fun ApositifyApp() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit) {
+private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit, onDirectory: () -> Unit) {
     Scaffold(
         containerColor = PageBackground,
         topBar = {
@@ -211,6 +243,7 @@ private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit) {
         ) {
             HeroCard()
             ScanCard(onCamera = onCamera, onGallery = onGallery)
+            DirectoryCard(onDirectory = onDirectory)
             PrivacyCard()
         }
     }
@@ -266,6 +299,24 @@ private fun HomeScreen(onCamera: () -> Unit, onGallery: () -> Unit) {
         }
         FilledTonalButton(onClick = onGallery, shape = CircleShape, modifier = Modifier.fillMaxWidth().height(50.dp)) {
             Icon(Icons.Default.PhotoLibrary, null); Spacer(Modifier.width(8.dp)); Text("Choose existing photos", fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable private fun DirectoryCard(onDirectory: () -> Unit) {
+    HomeCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Search, null, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(10.dp))
+            Text("Can\u2019t scan it?", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        }
+        Text(
+            "Look the authority up by name and go straight to its official verifier.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.DarkGray,
+        )
+        FilledTonalButton(onClick = onDirectory, shape = CircleShape, modifier = Modifier.fillMaxWidth().height(50.dp)) {
+            Icon(Icons.Default.Search, null); Spacer(Modifier.width(8.dp)); Text("Find your authority", fontWeight = FontWeight.SemiBold)
         }
     }
 }

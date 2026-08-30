@@ -34,18 +34,28 @@ submitted — the script fills controls and the harness reads them back.
 
 Measured 30 August 2026, over the 62 authorities with an HTTPS portal.
 
-| Outcome | Static (jsdom) | Android device |
-| --- | --- | --- |
-| Every field filled | 14 | 21 |
-| Some fields filled | 6 | 12 |
-| Form present, nothing matched | 8 | 16 |
-| No controls seen | 17 not in static HTML | 13 |
-| Unreachable / timeout / 403 | 17 | counted as no controls |
+| Outcome | Static (jsdom) | Android device | iOS device |
+| --- | --- | --- | --- |
+| Every field filled | 14 | 21 | 12 |
+| Some fields filled | 6 | 12 | 6 |
+| Form present, nothing matched | 8 | 16 | 9 |
+| No controls seen | 17 not in static HTML | 13 | 35 |
 
-A real browser roughly doubles what can be judged, because it renders the
-JavaScript portals a static fetch cannot see. On the device, **a third of
-authorities fill completely and a fifth fill partially**; the remaining
-quarter that match nothing are the work still to do.
+The two devices disagree wildly on the last row and agree almost exactly on the
+rest. The iOS run was made over a phone connection that timed out or failed to
+resolve a great many hosts — the log is full of `NSURLErrorTimedOut` (-1001)
+and `cannot find host` (-1003) — so most of that 35 is the network, not the
+app. Comparing only the portals each run could actually reach:
+
+| Share of reachable portals | Android (49) | iOS (27) |
+| --- | --- | --- |
+| Every field filled | 43% | 44% |
+| Some fields filled | 24% | 22% |
+| Nothing matched | 33% | 33% |
+
+**Two independent engines, over different networks, agree that about two in
+five authorities fill completely and a third fill nothing.** That is the
+finding: the remaining third is real work, not measurement noise.
 
 ### Treat per-portal numbers as coarse
 
@@ -55,13 +65,13 @@ WebView, 4 in jsdom, and 3 under an early iOS harness. Aggregates are
 informative; a single authority's row is not evidence on its own without
 looking at the page.
 
-### iOS is not yet measured
+### One authority the platforms genuinely disagree on
 
-The first iOS device run reported 38 authorities as having no controls against
-Android's 13. That was the harness, not the app: a `WKWebView` outside the view
-hierarchy is throttled and may never lay out, so pages were measured before
-they rendered. The harness now borrows the host app's window, but the corrected
-run has not completed on a device, so no iOS figures are published here.
+Costa Rica fills 2/2 in jsdom, 1/2 on Android — which saw 13 controls — and
+0/2 on iOS, which saw 3. Both device runs reached the page, so this is not
+reachability: the two platforms ship separate matcher implementations, and this
+is the clearest evidence yet that they do not behave the same on the same page.
+It is the next thing to look at.
 
 ## What the failures are
 

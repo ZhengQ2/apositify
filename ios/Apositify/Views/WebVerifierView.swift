@@ -354,9 +354,9 @@ enum PortalAutofill {
                 // control's own name has to spell the alias out. The length
                 // floor keeps a short alias like "date" from matching inside an
                 // unrelated word such as "validatecertificate".
-                const compact = value => normalize(value.replace(/\([^)]*\)/g, ' '))
-                  .replace(/\b(de|del|des|du|da|do|of|the|d|l|von|di)\b/g, ' ')
-                  .replace(/[^\p{L}\p{N}]+/gu, '');
+                const compact = value => normalize(value.replace(/\\([^)]*\\)/g, ' '))
+                  .replace(/\\b(de|del|des|du|da|do|of|the|d|l|von|di)\\b/g, ' ')
+                  .replace(/[^\\p{L}\\p{N}]+/gu, '');
                 const compacted = (field.aliases || [field.label]).map(compact).filter(alias => alias.length >= 8);
                 control = controls
                   .filter(el => !claimed.has(el))

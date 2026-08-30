@@ -48,6 +48,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -158,9 +159,15 @@ fun SecureVerifierScreen(
                                 copiedFieldId = field.id
                             },
                             label = {
+                                // The label's parenthetical is guidance for
+                                // filling the field in — "(format
+                                // 11-AA-AAAA-AAAA)" — and on a chip it pushes
+                                // the value itself off the screen edge.
+                                val name = field.label.replace(Regex("\\s*\\([^)]*\\)"), "")
                                 Text(
-                                    if (copiedFieldId == field.id) "Copied" else "${field.label}: ${field.value}",
+                                    if (copiedFieldId == field.id) "Copied" else "$name: ${field.value}",
                                     maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             },
